@@ -55,8 +55,7 @@ public class WebDavStorage extends JavaFileStorageBase {
     private final ICertificateErrorHandler mCertificateErrorHandler;
     private Context appContext;
 
-    public WebDavStorage(ICertificateErrorHandler certificateErrorHandler)
-    {
+    public WebDavStorage(ICertificateErrorHandler certificateErrorHandler) {
 
         mCertificateErrorHandler = certificateErrorHandler;
     }
@@ -64,7 +63,7 @@ public class WebDavStorage extends JavaFileStorageBase {
     public String buildFullPath(String url, String username, String password) throws UnsupportedEncodingException {
         String scheme = url.substring(0, url.indexOf("://"));
         url = url.substring(scheme.length() + 3);
-        return scheme + "://" + encode(username)+":"+encode(password)+"@"+url;
+        return scheme + "://" + encode(username) + ":" + encode(password) + "@" + url;
     }
 
     public ConnectionInfo splitStringToConnectionInfo(String filename)
@@ -74,28 +73,27 @@ public class WebDavStorage extends JavaFileStorageBase {
         String scheme = filename.substring(0, filename.indexOf("://"));
         filename = filename.substring(scheme.length() + 3);
         int idxAt = filename.indexOf('@');
-        if (idxAt >= 0)
-        {
+        if (idxAt >= 0) {
             String userPwd = filename.substring(0, idxAt);
             int idxColon = userPwd.indexOf(":");
-            if (idxColon >= 0);
+            if (idxColon >= 0)
+                ;
             {
                 ci.username = decode(userPwd.substring(0, idxColon));
                 ci.password = decode(userPwd.substring(idxColon + 1));
             }
         }
 
-        ci.URL = scheme + "://" +filename.substring(filename.indexOf('@') + 1);
+        ci.URL = scheme + "://" + filename.substring(filename.indexOf('@') + 1);
         return ci;
     }
-
 
     private static final String HTTP_PROTOCOL_ID = "http";
     private static final String HTTPS_PROTOCOL_ID = "https";
 
     @Override
     public boolean checkForFileChangeFast(String path,
-                                          String previousFileVersion) throws Exception {
+            String previousFileVersion) throws Exception {
         String currentVersion = getCurrentFileVersionFast(path);
         if (currentVersion == null)
             return false;
@@ -107,7 +105,6 @@ public class WebDavStorage extends JavaFileStorageBase {
 
         return null; // no simple way to get the version "fast"
     }
-
 
     @Override
     public InputStream openFileForRead(String path) throws Exception {
@@ -127,16 +124,18 @@ public class WebDavStorage extends JavaFileStorageBase {
         }
     }
 
-    //client to be reused (connection pool/thread pool). We're building a custom client for each ConnectionInfo in getClient for actual usage
+    // client to be reused (connection pool/thread pool). We're building a custom
+    // client for each ConnectionInfo in getClient for actual usage
     final OkHttpClient baseClient = new OkHttpClient();
 
-    private OkHttpClient getClient(ConnectionInfo ci) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
-
+    private OkHttpClient getClient(ConnectionInfo ci)
+            throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
 
         OkHttpClient.Builder builder = baseClient.newBuilder();
         final Map<String, CachingAuthenticator> authCache = new ConcurrentHashMap<>();
 
-        com.burgstaller.okhttp.digest.Credentials credentials = new com.burgstaller.okhttp.digest.Credentials(ci.username, ci.password);
+        com.burgstaller.okhttp.digest.Credentials credentials = new com.burgstaller.okhttp.digest.Credentials(
+                ci.username, ci.password);
         final BasicAuthenticator basicAuthenticator = new BasicAuthenticator(credentials);
         final DigestAuthenticator digestAuthenticator = new DigestAuthenticator(credentials);
 
@@ -149,7 +148,6 @@ public class WebDavStorage extends JavaFileStorageBase {
         builder = builder.authenticator(new CachingAuthenticatorDecorator(authenticator, authCache))
                 .addInterceptor(new AuthenticationCacheInterceptor(authCache));
         if ((mCertificateErrorHandler != null) && (!mCertificateErrorHandler.alwaysFailOnValidationError())) {
-
 
             TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
                     TrustManagerFactory.getDefaultAlgorithm());
@@ -165,22 +163,19 @@ public class WebDavStorage extends JavaFileStorageBase {
             sslContext.init(null, new TrustManager[] { trustManager }, null);
             SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
 
-
             builder = builder.sslSocketFactory(sslSocketFactory, trustManager)
-                             .hostnameVerifier(new DecoratedHostnameVerifier(OkHostnameVerifier.INSTANCE, mCertificateErrorHandler));
-
+                    .hostnameVerifier(
+                            new DecoratedHostnameVerifier(OkHostnameVerifier.INSTANCE, mCertificateErrorHandler));
 
             builder.connectTimeout(25, TimeUnit.SECONDS);
             builder.readTimeout(25, TimeUnit.SECONDS);
             builder.writeTimeout(25, TimeUnit.SECONDS);
         }
 
-        OkHttpClient client =  builder.build();
-
+        OkHttpClient client = builder.build();
 
         return client;
     }
-
 
     @Override
     public void uploadFile(String path, byte[] data, boolean writeTransactional)
@@ -194,8 +189,8 @@ public class WebDavStorage extends JavaFileStorageBase {
                     .put(RequestBody.create(MediaType.parse("application/binary"), data))
                     .build();
 
-            //TODO consider writeTransactional
-            //TODO check for error
+            // TODO consider writeTransactional
+            // TODO check for error
 
             Response response = getClient(ci).newCall(request).execute();
             checkStatus(response);
@@ -225,7 +220,6 @@ public class WebDavStorage extends JavaFileStorageBase {
             throw convertException(e);
         }
 
-
     }
 
     private String concatPaths(String parentPath, String newDirName) {
@@ -245,10 +239,10 @@ public class WebDavStorage extends JavaFileStorageBase {
     }
 
     public List<FileEntry> listFiles(String parentPath, int depth) throws Exception {
-    ArrayList<FileEntry> result = new ArrayList<>();
+        ArrayList<FileEntry> result = new ArrayList<>();
         try {
             if (parentPath.endsWith("/"))
-                parentPath = parentPath.substring(0,parentPath.length()-1);
+                parentPath = parentPath.substring(0, parentPath.length() - 1);
 
             ConnectionInfo ci = splitStringToConnectionInfo(parentPath);
             String requestBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
@@ -258,8 +252,8 @@ public class WebDavStorage extends JavaFileStorageBase {
             Log.d("WEBDAV", "starting query for " + ci.URL);
             Request request = new Request.Builder()
                     .url(new URL(ci.URL))
-                    .method("PROPFIND", RequestBody.create(MediaType.parse("application/xml"),requestBody))
-                    .addHeader("Depth",String.valueOf(depth))
+                    .method("PROPFIND", RequestBody.create(MediaType.parse("application/xml"), requestBody))
+                    .addHeader("Depth", String.valueOf(depth))
 
                     .build();
 
@@ -272,18 +266,15 @@ public class WebDavStorage extends JavaFileStorageBase {
             PropfindXmlParser parser = new PropfindXmlParser();
             List<PropfindXmlParser.Response> responses = parser.parse(new StringReader(xml));
 
-            for (PropfindXmlParser.Response r: responses)
-            {
-                PropfindXmlParser.Response.PropStat.Prop okprop  =r.getOkProp();
-                if (okprop != null)
-                {
+            for (PropfindXmlParser.Response r : responses) {
+                PropfindXmlParser.Response.PropStat.Prop okprop = r.getOkProp();
+                if (okprop != null) {
                     FileEntry e = new FileEntry();
                     e.canRead = e.canWrite = true;
                     Date lastMod = WebDavUtil.parseDate(okprop.LastModified);
                     if (lastMod != null)
                         e.lastModifiedTime = lastMod.getTime();
-                    if (okprop.ContentLength != null)
-                    {
+                    if (okprop.ContentLength != null) {
                         try {
                             e.sizeInBytes = Integer.parseInt(okprop.ContentLength);
                         } catch (NumberFormatException exc) {
@@ -293,27 +284,24 @@ public class WebDavStorage extends JavaFileStorageBase {
                     e.isDirectory = r.href.endsWith("/");
 
                     e.displayName = okprop.DisplayName;
-                    if (e.displayName == null)
-                    {
+                    if (e.displayName == null) {
                         e.displayName = getDisplayNameFromHref(r.href);
                     }
                     e.path = r.href;
 
-                    if (e.path.indexOf("://") == -1)
-                    {
-                        //relative path:
+                    if (e.path.indexOf("://") == -1) {
+                        // relative path:
                         e.path = buildPathFromHref(parentPath, r.href);
                     }
 
-                    if ((depth == 1) && e.isDirectory)
-                    {
+                    if ((depth == 1) && e.isDirectory) {
                         String path = e.path;
                         if (!path.endsWith("/"))
                             path += "/";
 
                         String parentPathWithTrailingSlash = parentPath + "/";
 
-                        //for depth==1 only list children, not directory itself
+                        // for depth==1 only list children, not directory itself
                         if (path.equals(parentPathWithTrailingSlash))
                             continue;
                     }
@@ -322,7 +310,6 @@ public class WebDavStorage extends JavaFileStorageBase {
                 }
             }
             return result;
-
 
         } catch (Exception e) {
             throw convertException(e);
@@ -337,12 +324,10 @@ public class WebDavStorage extends JavaFileStorageBase {
         String username_enc = (userPwd.substring(0, userPwd.indexOf(":")));
         String password_enc = (userPwd.substring(userPwd.indexOf(":") + 1));
 
-
-        String host = filename.substring(filename.indexOf('@')+1);
+        String host = filename.substring(filename.indexOf('@') + 1);
         int firstSlashPos = host.indexOf("/");
-        if (firstSlashPos >= 0)
-        {
-            host = host.substring(0,firstSlashPos);
+        if (firstSlashPos >= 0) {
+            host = host.substring(0, firstSlashPos);
         }
         if (!href.startsWith("/"))
             href = "/" + href;
@@ -353,18 +338,16 @@ public class WebDavStorage extends JavaFileStorageBase {
     @Override
     public List<FileEntry> listFiles(String parentPath) throws Exception {
         return listFiles(parentPath, 1);
-            }
+    }
 
     private void checkStatus(Response response) throws Exception {
-        if((response.code() < 200)
-            || (response.code() >= 300))
-        {
+        if ((response.code() < 200)
+                || (response.code() >= 300)) {
             if (response.code() == 404)
                 throw new FileNotFoundException();
             throw new Exception("Received unexpected response: " + response.toString());
         }
     }
-
 
     private Exception convertException(Exception e) {
 
@@ -374,7 +357,7 @@ public class WebDavStorage extends JavaFileStorageBase {
 
     @Override
     public FileEntry getFileEntry(String filename) throws Exception {
-        List<FileEntry> list = listFiles(filename,0);
+        List<FileEntry> list = listFiles(filename, 0);
         if (list.size() != 1)
             throw new FileNotFoundException();
         return list.get(0);
@@ -419,9 +402,9 @@ public class WebDavStorage extends JavaFileStorageBase {
         return java.net.URLEncoder.encode(unencoded, UTF_8);
     }
 
-
     @Override
-    public void prepareFileUsage(JavaFileStorage.FileStorageSetupInitiatorActivity activity, String path, int requestCode, boolean alwaysReturnSuccess) {
+    public void prepareFileUsage(JavaFileStorage.FileStorageSetupInitiatorActivity activity, String path,
+            int requestCode, boolean alwaysReturnSuccess) {
         Intent intent = new Intent();
         intent.putExtra(EXTRA_PATH, path);
         activity.onImmediateResult(requestCode, RESULT_FILEUSAGE_PREPARED, intent);
@@ -444,14 +427,13 @@ public class WebDavStorage extends JavaFileStorageBase {
 
     @Override
     public void onCreate(FileStorageSetupActivity activity,
-                         Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
 
     }
 
-    String getDisplayNameFromHref(String href)
-    {
+    String getDisplayNameFromHref(String href) {
         if (href.endsWith("/"))
-            href = href.substring(0, href.length()-1);
+            href = href.substring(0, href.length() - 1);
         int lastIndex = href.lastIndexOf("/");
 
         String displayName;
@@ -475,9 +457,7 @@ public class WebDavStorage extends JavaFileStorageBase {
         try {
             ConnectionInfo ci = splitStringToConnectionInfo(path);
             return ci.URL;
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return getDisplayNameFromHref(path);
         }
 
@@ -501,11 +481,9 @@ public class WebDavStorage extends JavaFileStorageBase {
 
     @Override
     public void onActivityResult(FileStorageSetupActivity activity,
-                                 int requestCode, int resultCode, Intent data) {
-
+            int requestCode, int resultCode, Intent data) {
 
     }
-
 
     @Override
     public void prepareFileUsage(Context appContext, String path) {

@@ -49,7 +49,8 @@ import java.util.EnumMap;
 import java.util.Map;
 
 /**
- * This class does the work of decoding the user's request and extracting all the data
+ * This class does the work of decoding the user's request and extracting all
+ * the data
  * to be encoded in a barcode.
  *
  * @author dswitkin@google.com (Daniel Switkin)
@@ -100,7 +101,7 @@ final class QRCodeEncoder {
   // It would be nice if the string encoding lived in the core ZXing library,
   // but we use platform specific code like PhoneNumberUtils, so it can't.
   private boolean encodeContentsFromZXingIntent(Intent intent) {
-     // Default to QR_CODE if no format given.
+    // Default to QR_CODE if no format given.
     String formatString = intent.getStringExtra(Intents.Encode.FORMAT);
     format = null;
     if (formatString != null) {
@@ -264,12 +265,12 @@ final class QRCodeEncoder {
 
         ContactEncoder mecardEncoder = useVCard ? new VCardContactEncoder() : new MECARDContactEncoder();
         String[] encoded = mecardEncoder.encode(Collections.singleton(name),
-                                                organization,
-                                                Collections.singleton(address),
-                                                phones,
-                                                emails,
-                                                urls,
-                                                note);
+            organization,
+            Collections.singleton(address),
+            phones,
+            emails,
+            urls,
+            note);
         // Make sure we've encoded at least one field.
         if (!encoded[1].isEmpty()) {
           contents = encoded[0];
@@ -297,12 +298,12 @@ final class QRCodeEncoder {
   private void encodeQRCodeContents(AddressBookParsedResult contact) {
     ContactEncoder encoder = useVCard ? new VCardContactEncoder() : new MECARDContactEncoder();
     String[] encoded = encoder.encode(toIterable(contact.getNames()),
-                                      contact.getOrg(),
-                                      toIterable(contact.getAddresses()),
-                                      toIterable(contact.getPhoneNumbers()),
-                                      toIterable(contact.getEmails()),
-                                      toIterable(contact.getURLs()),
-                                      null);
+        contact.getOrg(),
+        toIterable(contact.getAddresses()),
+        toIterable(contact.getPhoneNumbers()),
+        toIterable(contact.getEmails()),
+        toIterable(contact.getURLs()),
+        null);
     // Make sure we've encoded at least one field.
     if (!encoded[1].isEmpty()) {
       contents = encoded[0];
@@ -320,10 +321,10 @@ final class QRCodeEncoder {
     if (contentsToEncode == null) {
       return null;
     }
-    Map<EncodeHintType,Object> hints = null;
+    Map<EncodeHintType, Object> hints = null;
     String encoding = guessAppropriateEncoding(contentsToEncode);
     if (encoding != null) {
-      hints = new EnumMap<EncodeHintType,Object>(EncodeHintType.class);
+      hints = new EnumMap<EncodeHintType, Object>(EncodeHintType.class);
       hints.put(EncodeHintType.CHARACTER_SET, encoding);
     }
     BitMatrix result;

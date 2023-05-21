@@ -28,6 +28,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 package com.jcraft.jsch.jzlib;
+
 import java.io.*;
 
 final class DeflaterOutputStream extends FilterOutputStream {
@@ -49,9 +50,9 @@ final class DeflaterOutputStream extends FilterOutputStream {
   protected static final int DEFAULT_BUFSIZE = 512;
 
   DeflaterOutputStream(OutputStream out) throws IOException {
-    this(out, 
-         new Deflater(JZlib.Z_DEFAULT_COMPRESSION),
-         DEFAULT_BUFSIZE, true);
+    this(out,
+        new Deflater(JZlib.Z_DEFAULT_COMPRESSION),
+        DEFAULT_BUFSIZE, true);
     mydeflater = true;
   }
 
@@ -60,19 +61,19 @@ final class DeflaterOutputStream extends FilterOutputStream {
   }
 
   DeflaterOutputStream(OutputStream out,
-                              Deflater deflater,
-                              int size) throws IOException {
+      Deflater deflater,
+      int size) throws IOException {
     this(out, deflater, size, true);
   }
+
   DeflaterOutputStream(OutputStream out,
-                              Deflater deflater,
-                              int size,
-                              boolean close_out)  throws IOException {
+      Deflater deflater,
+      int size,
+      boolean close_out) throws IOException {
     super(out);
     if (out == null || deflater == null) {
       throw new NullPointerException();
-    }
-    else if (size <= 0) {
+    } else if (size <= 0) {
       throw new IllegalArgumentException("buffer size must be greater than 0");
     }
     this.deflater = deflater;
@@ -82,7 +83,7 @@ final class DeflaterOutputStream extends FilterOutputStream {
 
   @Override
   public void write(int b) throws IOException {
-    buf1[0] = (byte)(b & 0xff);
+    buf1[0] = (byte) (b & 0xff);
     write(buf1, 0, 1);
   }
 
@@ -90,17 +91,14 @@ final class DeflaterOutputStream extends FilterOutputStream {
   public void write(byte[] b, int off, int len) throws IOException {
     if (deflater.finished()) {
       throw new IOException("finished");
-    }
-    else if (off<0 || len<0 || off+len>b.length) {
+    } else if (off < 0 || len < 0 || off + len > b.length) {
       throw new IndexOutOfBoundsException();
-    }
-    else if (len == 0) {
+    } else if (len == 0) {
       return;
-    }
-    else {
+    } else {
       int flush = syncFlush ? JZlib.Z_SYNC_FLUSH : JZlib.Z_NO_FLUSH;
       deflater.setInput(b, off, len, true);
-      while (deflater.avail_in>0) {
+      while (deflater.avail_in > 0) {
         int err = deflate(flush);
         if (err == JZlib.Z_STREAM_END)
           break;
@@ -118,10 +116,10 @@ final class DeflaterOutputStream extends FilterOutputStream {
   public void close() throws IOException {
     if (!closed) {
       finish();
-      if (mydeflater){
+      if (mydeflater) {
         deflater.end();
       }
-      if(close_out)
+      if (close_out)
         out.close();
       closed = true;
     }
@@ -131,17 +129,17 @@ final class DeflaterOutputStream extends FilterOutputStream {
   protected int deflate(int flush) throws IOException {
     deflater.setOutput(buffer, 0, buffer.length);
     int err = deflater.deflate(flush);
-    switch(err) {
+    switch (err) {
       case JZlib.Z_OK:
       case JZlib.Z_STREAM_END:
         break;
       case JZlib.Z_BUF_ERROR:
-        if(deflater.avail_in<=0 && flush!=JZlib.Z_FINISH){
+        if (deflater.avail_in <= 0 && flush != JZlib.Z_FINISH) {
           // flush() without any data
           break;
         }
       default:
-        throw new IOException("failed to deflate: error="+err+" avail_out="+deflater.avail_out);
+        throw new IOException("failed to deflate: error=" + err + " avail_out=" + deflater.avail_out);
     }
     int len = deflater.next_out_index;
     if (len > 0) {
@@ -172,15 +170,15 @@ final class DeflaterOutputStream extends FilterOutputStream {
     return deflater.getTotalOut();
   }
 
-  void setSyncFlush(boolean syncFlush){
+  void setSyncFlush(boolean syncFlush) {
     this.syncFlush = syncFlush;
   }
 
-  boolean getSyncFlush(){
+  boolean getSyncFlush() {
     return this.syncFlush;
   }
 
-  Deflater getDeflater(){
+  Deflater getDeflater() {
     return deflater;
   }
 }

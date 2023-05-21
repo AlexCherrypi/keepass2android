@@ -29,24 +29,24 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
-class RequestShell extends Request{
+class RequestShell extends Request {
   @Override
-  public void request(Session session, Channel channel) throws Exception{
+  public void request(Session session, Channel channel) throws Exception {
     super.request(session, channel);
 
-    Buffer buf=new Buffer();
-    Packet packet=new Packet(buf);
+    Buffer buf = new Buffer();
+    Packet packet = new Packet(buf);
 
     // send
-    // byte     SSH_MSG_CHANNEL_REQUEST(98)
+    // byte SSH_MSG_CHANNEL_REQUEST(98)
     // uint32 recipient channel
-    // string request type       // "shell"
-    // boolean want reply        // 0
+    // string request type // "shell"
+    // boolean want reply // 0
     packet.reset();
     buf.putByte((byte) Session.SSH_MSG_CHANNEL_REQUEST);
     buf.putInt(channel.getRecipient());
     buf.putString(Util.str2byte("shell"));
-    buf.putByte((byte)(waitForReply() ? 1 : 0));
+    buf.putByte((byte) (waitForReply() ? 1 : 0));
     write(packet);
   }
 }

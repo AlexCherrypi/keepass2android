@@ -1,7 +1,8 @@
 package com.jcraft.jsch;
 
 /**
- * Extension of {@link JSchException} to indicate when a connection fails during algorithm
+ * Extension of {@link JSchException} to indicate when a connection fails during
+ * algorithm
  * negotiation.
  */
 public class JSchAlgoNegoFailException extends JSchException {

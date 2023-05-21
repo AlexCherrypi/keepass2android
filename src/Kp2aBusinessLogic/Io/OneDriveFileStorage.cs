@@ -16,28 +16,28 @@ using Keepass2android.Javafilestorage;
 
 namespace keepass2android.Io
 {
-	public class OneDriveFileStorage: JavaFileStorage
-	{
-		private const string ClientId = "000000004010C234";
+    public class OneDriveFileStorage : JavaFileStorage
+    {
+        private const string ClientId = "000000004010C234";
 
-		public OneDriveFileStorage(Context ctx, IKp2aApp app) :
-			base(new Keepass2android.Javafilestorage.OneDriveStorage(ctx, ClientId), app)
-		{
-		}
+        public OneDriveFileStorage(Context ctx, IKp2aApp app) :
+            base(new Keepass2android.Javafilestorage.OneDriveStorage(ctx, ClientId), app)
+        {
+        }
 
-		public override IEnumerable<string> SupportedProtocols
-		{
-			get
-			{
-				yield return "skydrive";
-				yield return "onedrive";
-			}
-		}
+        public override IEnumerable<string> SupportedProtocols
+        {
+            get
+            {
+                yield return "skydrive";
+                yield return "onedrive";
+            }
+        }
 
-	    public override bool UserShouldBackup
-	    {
-	        get { return false; }
-	    }
-	}
+        public override bool UserShouldBackup
+        {
+            get { return false; }
+        }
+    }
 }
 #endif

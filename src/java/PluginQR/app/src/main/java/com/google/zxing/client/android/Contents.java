@@ -19,7 +19,8 @@ package com.google.zxing.client.android;
 import android.provider.ContactsContract;
 
 /**
- * The set of constants to use when sending Barcode Scanner an Intent which requests a barcode
+ * The set of constants to use when sending Barcode Scanner an Intent which
+ * requests a barcode
  * to be encoded.
  *
  * @author dswitkin@google.com (Daniel Switkin)
@@ -30,13 +31,15 @@ public final class Contents {
 
   public static final class Type {
     /**
-     * Plain text. Use Intent.putExtra(DATA, string). This can be used for URLs too, but string
+     * Plain text. Use Intent.putExtra(DATA, string). This can be used for URLs too,
+     * but string
      * must include "http://" or "https://".
      */
     public static final String TEXT = "TEXT_TYPE";
 
     /**
-     * An email type. Use Intent.putExtra(DATA, string) where string is the email address.
+     * An email type. Use Intent.putExtra(DATA, string) where string is the email
+     * address.
      */
     public static final String EMAIL = "EMAIL_TYPE";
 
@@ -46,7 +49,8 @@ public final class Contents {
     public static final String PHONE = "PHONE_TYPE";
 
     /**
-     * An SMS type. Use Intent.putExtra(DATA, string) where string is the number to SMS.
+     * An SMS type. Use Intent.putExtra(DATA, string) where string is the number to
+     * SMS.
      */
     public static final String SMS = "SMS_TYPE";
 
@@ -61,7 +65,8 @@ public final class Contents {
      * bundle.putString(Contacts.Intents.Insert.NAME, "Jenny");
      * bundle.putString(Contacts.Intents.Insert.PHONE, "8675309");
      * bundle.putString(Contacts.Intents.Insert.EMAIL, "jenny@the80s.com");
-     * bundle.putString(Contacts.Intents.Insert.POSTAL, "123 Fake St. San Francisco, CA 94102");
+     * bundle.putString(Contacts.Intents.Insert.POSTAL, "123 Fake St. San Francisco,
+     * CA 94102");
      * intent.putExtra(Intents.Encode.DATA, bundle);
      */
     public static final String CONTACT = "CONTACT_TYPE";
@@ -84,7 +89,8 @@ public final class Contents {
   public static final String NOTE_KEY = "NOTE_KEY";
 
   /**
-   * When using Type.CONTACT, these arrays provide the keys for adding or retrieving multiple
+   * When using Type.CONTACT, these arrays provide the keys for adding or
+   * retrieving multiple
    * phone numbers and addresses.
    */
   public static final String[] PHONE_KEYS = {

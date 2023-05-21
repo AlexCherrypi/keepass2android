@@ -53,9 +53,9 @@ public final class EmailAddressResultHandler extends ResultHandler {
     switch (index) {
       case 0:
         sendEmailFromUri(emailResult.getMailtoURI(),
-                         emailResult.getEmailAddress(),
-                         emailResult.getSubject(),
-                         emailResult.getBody());
+            emailResult.getEmailAddress(),
+            emailResult.getSubject(),
+            emailResult.getBody());
         break;
       case 1:
         String[] addresses = new String[1];

@@ -23,7 +23,8 @@ import com.google.zxing.client.result.ParsedResult;
 import android.app.Activity;
 
 /**
- * This class handles TextParsedResult as well as unknown formats. It's the fallback handler.
+ * This class handles TextParsedResult as well as unknown formats. It's the
+ * fallback handler.
  *
  * @author dswitkin@google.com (Daniel Switkin)
  */

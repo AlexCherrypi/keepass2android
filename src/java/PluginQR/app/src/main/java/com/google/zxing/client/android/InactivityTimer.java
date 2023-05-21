@@ -26,7 +26,8 @@ import android.os.BatteryManager;
 import android.util.Log;
 
 /**
- * Finishes an activity after a period of inactivity if the device is on battery power.
+ * Finishes an activity after a period of inactivity if the device is on battery
+ * power.
  */
 final class InactivityTimer {
 
@@ -37,7 +38,7 @@ final class InactivityTimer {
   private final Activity activity;
   private final BroadcastReceiver powerStatusReceiver;
   private boolean registered;
-  private AsyncTask<?,?,?> inactivityTask;
+  private AsyncTask<?, ?, ?> inactivityTask;
 
   InactivityTimer(Activity activity) {
     this.activity = activity;
@@ -73,7 +74,7 @@ final class InactivityTimer {
   }
 
   private synchronized void cancel() {
-    AsyncTask<?,?,?> task = inactivityTask;
+    AsyncTask<?, ?, ?> task = inactivityTask;
     if (task != null) {
       task.cancel(true);
       inactivityTask = null;
@@ -86,7 +87,7 @@ final class InactivityTimer {
 
   private final class PowerStatusReceiver extends BroadcastReceiver {
     @Override
-    public void onReceive(Context context, Intent intent){
+    public void onReceive(Context context, Intent intent) {
       if (Intent.ACTION_BATTERY_CHANGED.equals(intent.getAction())) {
         // 0 indicates that we're on battery
         boolean onBatteryNow = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) <= 0;
@@ -99,7 +100,7 @@ final class InactivityTimer {
     }
   }
 
-  private final class InactivityAsyncTask extends AsyncTask<Object,Object,Object> {
+  private final class InactivityAsyncTask extends AsyncTask<Object, Object, Object> {
     @Override
     protected Object doInBackground(Object... objects) {
       try {

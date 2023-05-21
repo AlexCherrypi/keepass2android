@@ -21,7 +21,7 @@ namespace keepass2android.services.AutofillBase
             ClassName = viewNode.ClassName;
             AutofillHints = viewNode.GetAutofillHints();
             IsFocused = viewNode.IsFocused;
-            InputType = (Kp2aAutofillParser.InputTypes) ((int)viewNode.InputType);
+            InputType = (Kp2aAutofillParser.InputTypes)((int)viewNode.InputType);
             HtmlInfoTag = viewNode.HtmlInfo?.Tag;
             HtmlInfoTypeAttribute = viewNode.HtmlInfo?.Attributes?.FirstOrDefault(p => p.First?.ToString() == "type")?.Second?.ToString();
         }
@@ -74,8 +74,8 @@ namespace keepass2android.services.AutofillBase
         public AutofillView<ViewNodeInputField> GetAutofillView(bool isManualRequest)
         {
             AutofillView<ViewNodeInputField> autofillView = new AutofillView<ViewNodeInputField>();
-            
-            
+
+
             int nodeCount = _structure.WindowNodeCount;
             for (int i = 0; i < nodeCount; i++)
             {
@@ -121,7 +121,7 @@ namespace keepass2android.services.AutofillBase
             }
 
             autofillView.InputFields.Add(new ViewNodeInputField(viewNode));
-          
+
             var childrenSize = viewNode.ChildCount;
             if (childrenSize > 0)
             {
@@ -133,24 +133,24 @@ namespace keepass2android.services.AutofillBase
         }
     }
 
-	/// <summary>
-	///	Parser for an AssistStructure object. This is invoked when the Autofill Service receives an
-	/// AssistStructure from the client Activity, representing its View hierarchy. In this sample, it
-	/// parses the hierarchy and collects autofill metadata from {@link ViewNode}s along the way.
-	/// </summary>
-	public sealed class StructureParser: StructureParserBase<ViewNodeInputField>
-	{
+    /// <summary>
+    ///	Parser for an AssistStructure object. This is invoked when the Autofill Service receives an
+    /// AssistStructure from the client Activity, representing its View hierarchy. In this sample, it
+    /// parses the hierarchy and collects autofill metadata from {@link ViewNode}s along the way.
+    /// </summary>
+    public sealed class StructureParser : StructureParserBase<ViewNodeInputField>
+    {
         private readonly AssistStructure _structure;
         public Context _context { get; }
-	    public AutofillFieldMetadataCollection AutofillFields { get; set; }
-		public FilledAutofillFieldCollection<ViewNodeInputField> ClientFormData { get; set; }
+        public AutofillFieldMetadataCollection AutofillFields { get; set; }
+        public FilledAutofillFieldCollection<ViewNodeInputField> ClientFormData { get; set; }
 
         public string PackageId { get; set; }
 
-		public StructureParser(Context context, AssistStructure structure)
+        public StructureParser(Context context, AssistStructure structure)
         : base(new Kp2aLogger(), new Kp2aDigitalAssetLinksDataSource(context))
         {
-		    _context = context;
+            _context = context;
             _structure = structure;
             AutofillFields = new AutofillFieldMetadataCollection();
             LogAutofillView = PreferenceManager.GetDefaultSharedPreferences(context).GetBoolean(context.GetString(Resource.String.LogAutofillView_key), false);
@@ -176,7 +176,7 @@ namespace keepass2android.services.AutofillBase
                 foreach (var p in FieldsMappedToHints)
                     ClientFormData.Add(new FilledAutofillField(p.Key, p.Value));
             }
-            
+
 
             return result;
         }
@@ -192,7 +192,7 @@ namespace keepass2android.services.AutofillBase
             var autofillView = new AutofillViewFromAssistStructureFinder(_context, _structure).GetAutofillView(isManual);
             return Parse(true, isManual, autofillView);
         }
-        
+
 
     }
 

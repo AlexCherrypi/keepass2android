@@ -28,7 +28,7 @@ public class E {
      * Shows it!
      * 
      * @param context
-     *            {@link Context}
+     *                {@link Context}
      */
     public static void show(Context context) {
         String msg = null;

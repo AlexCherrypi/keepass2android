@@ -19,7 +19,7 @@ public interface HistoryFilter<A> {
      * Filters item.
      * 
      * @param item
-     *            {@link A}
+     *             {@link A}
      * @return {@code true} if the {@code item} is accepted
      */
     boolean accept(A item);

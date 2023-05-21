@@ -59,7 +59,9 @@
       "InputType": 97,
       "HtmlInfoTag": null,
       "HtmlInfoTypeAttribute": null,
-      "ExpectedAssignedHints": [ "username" ]
+      "ExpectedAssignedHints": [
+        "username"
+      ]
     },
     {
       "IdEntry": "password_text_input_layout",
@@ -82,8 +84,9 @@
       "InputType": 129,
       "HtmlInfoTag": null,
       "HtmlInfoTypeAttribute": null,
-
-      "ExpectedAssignedHints": [ "password" ]
+      "ExpectedAssignedHints": [
+        "password"
+      ]
     },
     {
       "IdEntry": "login_button",

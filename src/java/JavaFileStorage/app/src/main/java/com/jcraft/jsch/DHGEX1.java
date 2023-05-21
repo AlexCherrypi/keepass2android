@@ -30,7 +30,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.jcraft.jsch;
 
 class DHGEX1 extends DHGEX {
-  DHGEX1(){
-    hash="sha-1";
+  DHGEX1() {
+    hash = "sha-1";
   }
 }

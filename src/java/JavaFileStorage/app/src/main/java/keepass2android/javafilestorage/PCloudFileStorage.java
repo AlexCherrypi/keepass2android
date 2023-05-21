@@ -35,8 +35,7 @@ import com.pcloud.sdk.UploadOptions;
  * FileStorage implementation for PCloud provider.
  * https://www.pcloud.com/
  */
-public class PCloudFileStorage extends JavaFileStorageBase
-{
+public class PCloudFileStorage extends JavaFileStorageBase {
     final static private int PCLOUD_AUTHORIZATION_REQUEST_CODE = 1001845497;
 
     final static private String SHARED_PREF_NAME = "PCLOUD";
@@ -74,7 +73,7 @@ public class PCloudFileStorage extends JavaFileStorageBase
 
     @Override
     public void prepareFileUsage(FileStorageSetupInitiatorActivity activity, String path, int requestCode,
-                                 boolean alwaysReturnSuccess) {
+            boolean alwaysReturnSuccess) {
         if (this.isConnected()) {
             Intent intent = new Intent();
             intent.putExtra(EXTRA_PATH, path);
@@ -141,8 +140,7 @@ public class PCloudFileStorage extends JavaFileStorageBase
 
         try {
             RemoteFile remoteFile = this.apiClient.createFile(
-                remoteFolder, filename, dataSource, null, null, UploadOptions.OVERRIDE_FILE
-            ).execute();
+                    remoteFolder, filename, dataSource, null, null, UploadOptions.OVERRIDE_FILE).execute();
         } catch (ApiError e) {
             throw convertApiError(e);
         }
@@ -165,12 +163,10 @@ public class PCloudFileStorage extends JavaFileStorageBase
 
     @Override
     public String createFilePath(String parentPath, String newFileName) throws Exception {
-        return (
-            this.getProtocolId() + "://" +
-            this.cleanPath(parentPath) +
-            ("".equals(newFileName) ? "" : "/") +
-            newFileName
-        );
+        return (this.getProtocolId() + "://" +
+                this.cleanPath(parentPath) +
+                ("".equals(newFileName) ? "" : "/") +
+                newFileName);
     }
 
     @Override
@@ -195,9 +191,8 @@ public class PCloudFileStorage extends JavaFileStorageBase
         RemoteEntry remoteEntry = this.getRemoteEntryByPath(path);
 
         return this.convertRemoteEntryToFileEntry(
-            remoteEntry,
-            path.substring(0, path.lastIndexOf("/"))
-        );
+                remoteEntry,
+                path.substring(0, path.lastIndexOf("/")));
     }
 
     @Override
@@ -227,7 +222,7 @@ public class PCloudFileStorage extends JavaFileStorageBase
         if (this.isConnected()) {
             finishActivityWithSuccess(activity);
         } else if (!activity.getState().getBoolean("hasStartedAuth", false)) {
-            Activity castedActivity = (Activity)activity;
+            Activity castedActivity = (Activity) activity;
             Intent authIntent = AuthorizationActivity.createIntent(castedActivity, this.clientId);
             castedActivity.startActivityForResult(authIntent, PCLOUD_AUTHORIZATION_REQUEST_CODE);
             activity.getState().putBoolean("hasStartedAuth", true);
@@ -241,7 +236,6 @@ public class PCloudFileStorage extends JavaFileStorageBase
             activity.getState().putBoolean("hasStartedAuth", false);
             AuthorizationData authData = AuthorizationActivity.getResult(data);
 
-
             this.handleAuthResult(activity, authData);
         }
     }
@@ -254,12 +248,13 @@ public class PCloudFileStorage extends JavaFileStorageBase
             setAuthToken(authToken, apiHost);
             finishActivityWithSuccess(activity);
         } else {
-            android.util.Log.d("KP2A", "Auth failed with " + authorizationData.result.toString() + ", code=" + authorizationData.authCode + ", error=" + authorizationData.errorMessage);
-            Activity castedActivity = (Activity)activity;
+            android.util.Log.d("KP2A", "Auth failed with " + authorizationData.result.toString() + ", code="
+                    + authorizationData.authCode + ", error=" + authorizationData.errorMessage);
+            Activity castedActivity = (Activity) activity;
             Intent resultData = new Intent();
             resultData.putExtra(EXTRA_ERROR_MESSAGE, "Authentication failed!");
 
-            //reset any stored token in case we have an invalid one
+            // reset any stored token in case we have an invalid one
             clearAuthToken();
 
             castedActivity.setResult(Activity.RESULT_CANCELED, resultData);
@@ -288,7 +283,7 @@ public class PCloudFileStorage extends JavaFileStorageBase
 
         return builder
                 .authenticator(Authenticators.newOAuthAuthenticator(authToken))
-            .create();
+                .create();
     }
 
     private boolean isConnected() {
@@ -313,9 +308,7 @@ public class PCloudFileStorage extends JavaFileStorageBase
     }
 
     private String cleanPath(String path) {
-        return (
-            "/" + path.replaceAll("^(" + Pattern.quote(this.getProtocolId()) + "://)?/*", "")
-        );
+        return ("/" + path.replaceAll("^(" + Pattern.quote(this.getProtocolId()) + "://)?/*", ""));
     }
 
     private RemoteFile getRemoteFileByPath(String path) throws Exception {
@@ -400,11 +393,9 @@ public class PCloudFileStorage extends JavaFileStorageBase
         FileEntry fileEntry = new FileEntry();
         fileEntry.canRead = true;
         fileEntry.canWrite = true;
-        fileEntry.path = (
-            this.getProtocolId() + "://" +
-            ("/".equals(parentPath) ? "" : parentPath) +
-            "/" + remoteEntry.name()
-        );
+        fileEntry.path = (this.getProtocolId() + "://" +
+                ("/".equals(parentPath) ? "" : parentPath) +
+                "/" + remoteEntry.name());
         fileEntry.displayName = remoteEntry.name();
         fileEntry.isDirectory = !remoteEntry.isFile();
         fileEntry.lastModifiedTime = remoteEntry.lastModified().getTime();

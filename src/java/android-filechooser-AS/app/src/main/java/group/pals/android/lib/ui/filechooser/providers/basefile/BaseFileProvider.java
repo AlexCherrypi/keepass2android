@@ -56,7 +56,6 @@ public abstract class BaseFileProvider extends ContentProvider {
      */
     protected static final int URI_CHECK_CONNECTION = 5;
 
-
     /**
      * A {@link UriMatcher} instance.
      */
@@ -83,17 +82,17 @@ public abstract class BaseFileProvider extends ContentProvider {
          * Chooses the MIME type based on the incoming URI pattern.
          */
         switch (URI_MATCHER.match(uri)) {
-        case URI_API:
-        case URI_API_COMMAND:
-            case URI_DIRECTORY :
+            case URI_API:
+            case URI_API_COMMAND:
+            case URI_DIRECTORY:
             case URI_CHECK_CONNECTION:
                 return BaseFile.CONTENT_TYPE;
 
-        case URI_FILE:
-            return BaseFile.CONTENT_ITEM_TYPE;
+            case URI_FILE:
+                return BaseFile.CONTENT_ITEM_TYPE;
 
-        default:
-            throw new IllegalArgumentException("UNKNOWN URI " + uri);
+            default:
+                throw new IllegalArgumentException("UNKNOWN URI " + uri);
         }
     }// getType()
 

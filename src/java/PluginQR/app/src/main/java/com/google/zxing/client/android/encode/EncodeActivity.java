@@ -46,7 +46,8 @@ import java.io.IOException;
 import java.util.regex.Pattern;
 
 /**
- * This class encodes data from an Intent into a QR code, and then displays it full screen so that
+ * This class encodes data from an Intent into a QR code, and then displays it
+ * full screen so that
  * another person can scan it with their device.
  *
  * @author dswitkin@google.com (Daniel Switkin)
@@ -112,7 +113,7 @@ public final class EncodeActivity extends Activity {
         return false;
     }
   }
-  
+
   private void share() {
     QRCodeEncoder encoder = qrCodeEncoder;
     if (encoder == null) { // Odd

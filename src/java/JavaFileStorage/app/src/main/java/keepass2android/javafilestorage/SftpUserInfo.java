@@ -18,7 +18,10 @@ import com.jcraft.jsch.UserInfo;
 
 public class SftpUserInfo implements UserInfo {
 
-	private Object /* pick one type, and fixate on it */ dance(final String type, final String text)	/* for inside the thread */
+	private Object /* pick one type, and fixate on it */ dance(final String type, final String text) /*
+																										 * for inside
+																										 * the thread
+																										 */
 	{
 
 		final Message msg = Message.obtain();
@@ -27,9 +30,10 @@ public class SftpUserInfo implements UserInfo {
 		Thread t = new Thread() {
 			public void run() {
 				Looper.prepare();
-				int bogon = (int)SystemClock.elapsedRealtime();
+				int bogon = (int) SystemClock.elapsedRealtime();
 
-				NotificationManager mNotificationManager = (NotificationManager)_appContext.getSystemService(Context.NOTIFICATION_SERVICE);
+				NotificationManager mNotificationManager = (NotificationManager) _appContext
+						.getSystemService(Context.NOTIFICATION_SERVICE);
 				NotificationCompat.Builder builder = new NotificationCompat.Builder(_appContext);
 				builder.setContentText("SFTP prompt");
 				builder.setSmallIcon(R.drawable.ic_logo_green_foreground);
@@ -48,8 +52,7 @@ public class SftpUserInfo implements UserInfo {
 				intent.putExtra("keepass2android.sftp.returnmessenger", m);
 				intent.putExtra("keepass2android.sftp.reqtype", type);
 				intent.putExtra("keepass2android.sftp.prompt", text);
-				intent.setData((Uri.parse("suckit://"+SystemClock.elapsedRealtime())));
-
+				intent.setData((Uri.parse("suckit://" + SystemClock.elapsedRealtime())));
 
 				Log.e("KP2AJFS[thread]", "built after 2023-03-14");
 
@@ -74,19 +77,15 @@ public class SftpUserInfo implements UserInfo {
 					_appContext.startActivity(directIntent);
 				}
 
-
-
 				Log.e("KP2AJFS[thread]", "Notifying...");
 
 				mNotificationManager.notify(bogon, builder.build());
-
-
 
 				Log.e("KP2AJFS[thread]", "About to go to 'sleep'...");
 				Looper.loop();
 				Log.e("KP2AJFS[thread]", "And we're alive!");
 
-				Log.e("KP2AJFS[thread]", "result was: "+(Integer.toString(msg.arg1)));
+				Log.e("KP2AJFS[thread]", "result was: " + (Integer.toString(msg.arg1)));
 
 				mNotificationManager.cancel(bogon);
 			}
@@ -112,26 +111,24 @@ public class SftpUserInfo implements UserInfo {
 			return null;
 	}
 
-
 	Context _appContext;
 
 	String _password;
-	
-	public SftpUserInfo(String password, Context appContext)
-	{
+
+	public SftpUserInfo(String password, Context appContext) {
 		_password = password;
 		_appContext = appContext;
 	}
 
 	@Override
 	public String getPassphrase() {
-		
+
 		return null;
 	}
 
 	@Override
 	public String getPassword() {
-		
+
 		return _password;
 	}
 
@@ -142,19 +139,18 @@ public class SftpUserInfo implements UserInfo {
 
 	@Override
 	public boolean promptPassphrase(String message) {
-		return false; //passphrase not supported
+		return false; // passphrase not supported
 	}
 
 	@Override
 	public boolean promptYesNo(String message) {
-		return (Boolean)dance("yesno", message);
+		return (Boolean) dance("yesno", message);
 
-		//test with https://www.sftp.net/public-online-sftp-servers?
+		// test with https://www.sftp.net/public-online-sftp-servers?
 	}
 
 	@Override
-	public void showMessage(String message)
-	{
+	public void showMessage(String message) {
 		dance("message", message);
 	}
 

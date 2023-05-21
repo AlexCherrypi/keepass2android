@@ -32,16 +32,19 @@ public class KeepassDefs {
 	/// </summary>
 	public static String NotesField = "Notes";
 
-	
-	public static boolean IsStandardField(String strFieldName)
-	{
-		if(strFieldName == null)
+	public static boolean IsStandardField(String strFieldName) {
+		if (strFieldName == null)
 			return false;
-		if(strFieldName.equals(TitleField)) return true;
-		if(strFieldName.equals(UserNameField)) return true;
-		if(strFieldName.equals(PasswordField)) return true;
-		if(strFieldName.equals(UrlField)) return true;
-		if(strFieldName.equals(NotesField)) return true;
+		if (strFieldName.equals(TitleField))
+			return true;
+		if (strFieldName.equals(UserNameField))
+			return true;
+		if (strFieldName.equals(PasswordField))
+			return true;
+		if (strFieldName.equals(UrlField))
+			return true;
+		if (strFieldName.equals(NotesField))
+			return true;
 
 		return false;
 	}

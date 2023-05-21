@@ -75,48 +75,49 @@ public class LocalFileProvider extends BaseFileProvider {
         int count = 0;
 
         switch (URI_MATCHER.match(uri)) {
-        case URI_FILE: {
-            int taskId = ProviderUtils.getIntQueryParam(uri,
-                    BaseFile.PARAM_TASK_ID, 0);
+            case URI_FILE: {
+                int taskId = ProviderUtils.getIntQueryParam(uri,
+                        BaseFile.PARAM_TASK_ID, 0);
 
-            boolean isRecursive = ProviderUtils.getBooleanQueryParam(uri,
-                    BaseFile.PARAM_RECURSIVE, true);
-            File file = extractFile(uri);
-            if (file.canWrite()) {
-                File parentFile = file.getParentFile();
+                boolean isRecursive = ProviderUtils.getBooleanQueryParam(uri,
+                        BaseFile.PARAM_RECURSIVE, true);
+                File file = extractFile(uri);
+                if (file.canWrite()) {
+                    File parentFile = file.getParentFile();
 
-                if (file.isFile() || !isRecursive) {
-                    if (file.delete())
-                        count = 1;
-                } else {
-                    mMapInterruption.put(taskId, false);
-                    count = deleteFile(taskId, file, isRecursive);
-                    if (mMapInterruption.get(taskId))
-                        if (Utils.doLog())
-                            Log.d(CLASSNAME, "delete() >> cancelled...");
-                    mMapInterruption.delete(taskId);
+                    if (file.isFile() || !isRecursive) {
+                        if (file.delete())
+                            count = 1;
+                    } else {
+                        mMapInterruption.put(taskId, false);
+                        count = deleteFile(taskId, file, isRecursive);
+                        if (mMapInterruption.get(taskId))
+                            if (Utils.doLog())
+                                Log.d(CLASSNAME, "delete() >> cancelled...");
+                        mMapInterruption.delete(taskId);
+                    }
+
+                    if (count > 0) {
+                        getContext()
+                                .getContentResolver()
+                                .notifyChange(
+                                        BaseFile.genContentUriBase(
+                                                LocalFileContract
+                                                        .getAuthority(getContext()))
+                                                .buildUpon()
+                                                .appendPath(
+                                                        Uri.fromFile(parentFile)
+                                                                .toString())
+                                                .build(),
+                                        null);
+                    }
                 }
 
-                if (count > 0) {
-                    getContext()
-                            .getContentResolver()
-                            .notifyChange(
-                                    BaseFile.genContentUriBase(
-                                            LocalFileContract
-                                                    .getAuthority(getContext()))
-                                            .buildUpon()
-                                            .appendPath(
-                                                    Uri.fromFile(parentFile)
-                                                            .toString())
-                                            .build(), null);
-                }
+                break;// URI_FILE
             }
 
-            break;// URI_FILE
-        }
-
-        default:
-            throw new IllegalArgumentException("UNKNOWN URI " + uri);
+            default:
+                throw new IllegalArgumentException("UNKNOWN URI " + uri);
         }
 
         if (Utils.doLog())
@@ -134,46 +135,46 @@ public class LocalFileProvider extends BaseFileProvider {
             Log.d(CLASSNAME, "insert() >> " + uri);
 
         switch (URI_MATCHER.match(uri)) {
-        case URI_DIRECTORY:
-            File file = extractFile(uri);
-            if (!file.isDirectory() || !file.canWrite())
-                return null;
+            case URI_DIRECTORY:
+                File file = extractFile(uri);
+                if (!file.isDirectory() || !file.canWrite())
+                    return null;
 
-            File newFile = new File(String.format("%s/%s",
-                    file.getAbsolutePath(),
-                    uri.getQueryParameter(BaseFile.PARAM_NAME)));
+                File newFile = new File(String.format("%s/%s",
+                        file.getAbsolutePath(),
+                        uri.getQueryParameter(BaseFile.PARAM_NAME)));
 
-            switch (ProviderUtils.getIntQueryParam(uri,
-                    BaseFile.PARAM_FILE_TYPE, BaseFile.FILE_TYPE_DIRECTORY)) {
-            case BaseFile.FILE_TYPE_DIRECTORY:
-                newFile.mkdir();
-                break;// FILE_TYPE_DIRECTORY
+                switch (ProviderUtils.getIntQueryParam(uri,
+                        BaseFile.PARAM_FILE_TYPE, BaseFile.FILE_TYPE_DIRECTORY)) {
+                    case BaseFile.FILE_TYPE_DIRECTORY:
+                        newFile.mkdir();
+                        break;// FILE_TYPE_DIRECTORY
 
-            case BaseFile.FILE_TYPE_FILE:
-                try {
-                    newFile.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    case BaseFile.FILE_TYPE_FILE:
+                        try {
+                            newFile.createNewFile();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        break;// FILE_TYPE_FILE
+
+                    default:
+                        return null;
                 }
-                break;// FILE_TYPE_FILE
+
+                if (newFile.exists()) {
+                    Uri newUri = BaseFile
+                            .genContentIdUriBase(
+                                    LocalFileContract.getAuthority(getContext()))
+                            .buildUpon()
+                            .appendPath(Uri.fromFile(newFile).toString()).build();
+                    getContext().getContentResolver().notifyChange(uri, null);
+                    return newUri;
+                }
+                return null;// URI_FILE
 
             default:
-                return null;
-            }
-
-            if (newFile.exists()) {
-                Uri newUri = BaseFile
-                        .genContentIdUriBase(
-                                LocalFileContract.getAuthority(getContext()))
-                        .buildUpon()
-                        .appendPath(Uri.fromFile(newFile).toString()).build();
-                getContext().getContentResolver().notifyChange(uri, null);
-                return newUri;
-            }
-            return null;// URI_FILE
-
-        default:
-            throw new IllegalArgumentException("UNKNOWN URI " + uri);
+                throw new IllegalArgumentException("UNKNOWN URI " + uri);
         }
     }// insert()
 
@@ -186,32 +187,32 @@ public class LocalFileProvider extends BaseFileProvider {
                     uri.getLastPathSegment(), URI_MATCHER.match(uri)));
 
         switch (URI_MATCHER.match(uri)) {
-        case URI_API: {
-            /*
-             * If there is no command given, return provider ID and name.
-             */
-            MatrixCursor matrixCursor = new MatrixCursor(new String[] {
-                    BaseFile.COLUMN_PROVIDER_ID, BaseFile.COLUMN_PROVIDER_NAME,
-                    BaseFile.COLUMN_PROVIDER_ICON_ATTR });
-            matrixCursor.newRow().add(LocalFileContract._ID)
-                    .add(getContext().getString(R.string.afc_phone))
-                    .add(R.attr.afc_badge_file_provider_localfile);
-            return matrixCursor;
-        }
-        case URI_API_COMMAND: {
-            return doAnswerApiCommand(uri);
-        }// URI_API
+            case URI_API: {
+                /*
+                 * If there is no command given, return provider ID and name.
+                 */
+                MatrixCursor matrixCursor = new MatrixCursor(new String[] {
+                        BaseFile.COLUMN_PROVIDER_ID, BaseFile.COLUMN_PROVIDER_NAME,
+                        BaseFile.COLUMN_PROVIDER_ICON_ATTR });
+                matrixCursor.newRow().add(LocalFileContract._ID)
+                        .add(getContext().getString(R.string.afc_phone))
+                        .add(R.attr.afc_badge_file_provider_localfile);
+                return matrixCursor;
+            }
+            case URI_API_COMMAND: {
+                return doAnswerApiCommand(uri);
+            } // URI_API
 
-        case URI_DIRECTORY: {
-            return doListFiles(uri);
-        }// URI_DIRECTORY
+            case URI_DIRECTORY: {
+                return doListFiles(uri);
+            } // URI_DIRECTORY
 
-        case URI_FILE: {
-            return doRetrieveFileInfo(uri);
-        }// URI_FILE
+            case URI_FILE: {
+                return doRetrieveFileInfo(uri);
+            } // URI_FILE
 
-        default:
-            throw new IllegalArgumentException("UNKNOWN URI " + uri);
+            default:
+                throw new IllegalArgumentException("UNKNOWN URI " + uri);
         }
     }// query()
 
@@ -247,9 +248,10 @@ public class LocalFileProvider extends BaseFileProvider {
             File file = Environment.getExternalStorageDirectory();
             if (file == null || !file.isDirectory())
                 file = new File("/");
-            int type = file.isFile() ? BaseFile.FILE_TYPE_FILE : (file
-                    .isDirectory() ? BaseFile.FILE_TYPE_DIRECTORY
-                    : BaseFile.FILE_TYPE_UNKNOWN);
+            int type = file.isFile() ? BaseFile.FILE_TYPE_FILE
+                    : (file
+                            .isDirectory() ? BaseFile.FILE_TYPE_DIRECTORY
+                                    : BaseFile.FILE_TYPE_UNKNOWN);
             RowBuilder newRow = matrixCursor.newRow();
             newRow.add(0);// _ID
             newRow.add(BaseFile
@@ -265,7 +267,7 @@ public class LocalFileProvider extends BaseFileProvider {
             newRow.add(type);
             newRow.add(file.lastModified());
             newRow.add(FileUtils.getResIcon(type, file.getName()));
-        }// get default path
+        } // get default path
         else if (BaseFile.CMD_IS_ANCESTOR_OF.equals(uri.getLastPathSegment())) {
             return doCheckAncestor(uri);
         } else if (BaseFile.CMD_GET_PARENT.equals(uri.getLastPathSegment())) {
@@ -277,10 +279,12 @@ public class LocalFileProvider extends BaseFileProvider {
 
             matrixCursor = BaseFileProviderUtils.newBaseFileCursor();
 
-            int type = file.isFile() ? BaseFile.FILE_TYPE_FILE : (file
-                    .isDirectory() ? BaseFile.FILE_TYPE_DIRECTORY : (file
-                    .exists() ? BaseFile.FILE_TYPE_UNKNOWN
-                    : BaseFile.FILE_TYPE_NOT_EXISTED));
+            int type = file.isFile() ? BaseFile.FILE_TYPE_FILE
+                    : (file
+                            .isDirectory() ? BaseFile.FILE_TYPE_DIRECTORY
+                                    : (file
+                                            .exists() ? BaseFile.FILE_TYPE_UNKNOWN
+                                                    : BaseFile.FILE_TYPE_NOT_EXISTED));
 
             RowBuilder newRow = matrixCursor.newRow();
             newRow.add(0);// _ID
@@ -371,9 +375,10 @@ public class LocalFileProvider extends BaseFileProvider {
                         break;
 
                     File f = files.get(i);
-                    int type = f.isFile() ? BaseFile.FILE_TYPE_FILE : (f
-                            .isDirectory() ? BaseFile.FILE_TYPE_DIRECTORY
-                            : BaseFile.FILE_TYPE_UNKNOWN);
+                    int type = f.isFile() ? BaseFile.FILE_TYPE_FILE
+                            : (f
+                                    .isDirectory() ? BaseFile.FILE_TYPE_DIRECTORY
+                                            : BaseFile.FILE_TYPE_UNKNOWN);
                     RowBuilder newRow = matrixCursor.newRow();
                     newRow.add(i);// _ID
                     newRow.add(BaseFile
@@ -390,7 +395,7 @@ public class LocalFileProvider extends BaseFileProvider {
                     newRow.add(type);
                     newRow.add(f.lastModified());
                     newRow.add(FileUtils.getResIcon(type, f.getName()));
-                }// for files
+                } // for files
 
                 /*
                  * The last row contains:
@@ -413,7 +418,8 @@ public class LocalFileProvider extends BaseFileProvider {
                         .buildUpon()
                         .appendPath(Uri.fromFile(dir).toString())
                         .appendQueryParameter(BaseFile.PARAM_HAS_MORE_FILES,
-                                Boolean.toString(hasMoreFiles[0])).build()
+                                Boolean.toString(hasMoreFiles[0]))
+                        .build()
                         .toString());
                 newRow.add(Uri.fromFile(dir).toString());
                 newRow.add(dir.getName());
@@ -456,10 +462,11 @@ public class LocalFileProvider extends BaseFileProvider {
         MatrixCursor matrixCursor = BaseFileProviderUtils.newBaseFileCursor();
 
         File file = extractFile(uri);
-        int type = file.isFile() ? BaseFile.FILE_TYPE_FILE : (file
-                .isDirectory() ? BaseFile.FILE_TYPE_DIRECTORY
-                : (file.exists() ? BaseFile.FILE_TYPE_UNKNOWN
-                        : BaseFile.FILE_TYPE_NOT_EXISTED));
+        int type = file.isFile() ? BaseFile.FILE_TYPE_FILE
+                : (file
+                        .isDirectory() ? BaseFile.FILE_TYPE_DIRECTORY
+                                : (file.exists() ? BaseFile.FILE_TYPE_UNKNOWN
+                                        : BaseFile.FILE_TYPE_NOT_EXISTED));
         RowBuilder newRow = matrixCursor.newRow();
         newRow.add(0);// _ID
         newRow.add(BaseFile
@@ -483,26 +490,28 @@ public class LocalFileProvider extends BaseFileProvider {
      * Lists all file inside {@code dir}.
      * 
      * @param taskId
-     *            the task ID.
+     *                        the task ID.
      * @param dir
-     *            the source directory.
+     *                        the source directory.
      * @param showHiddenFiles
-     *            {@code true} or {@code false}.
+     *                        {@code true} or {@code false}.
      * @param filterMode
-     *            can be one of {@link BaseFile#FILTER_DIRECTORIES_ONLY},
-     *            {@link BaseFile#FILTER_FILES_ONLY},
-     *            {@link BaseFile#FILTER_FILES_AND_DIRECTORIES}.
+     *                        can be one of
+     *                        {@link BaseFile#FILTER_DIRECTORIES_ONLY},
+     *                        {@link BaseFile#FILTER_FILES_ONLY},
+     *                        {@link BaseFile#FILTER_FILES_AND_DIRECTORIES}.
      * @param limit
-     *            the limit.
+     *                        the limit.
      * @param positiveRegex
-     *            the positive regex filter.
+     *                        the positive regex filter.
      * @param negativeRegex
-     *            the negative regex filter.
+     *                        the negative regex filter.
      * @param results
-     *            the results.
+     *                        the results.
      * @param hasMoreFiles
-     *            the first item will contain a value representing that there is
-     *            more files (exceeding {@code limit}) or not.
+     *                        the first item will contain a value representing that
+     *                        there is
+     *                        more files (exceeding {@code limit}) or not.
      */
     private void listFiles(final int taskId, final File dir,
             final boolean showHiddenFiles, final int filterMode,
@@ -560,14 +569,15 @@ public class LocalFileProvider extends BaseFileProvider {
      * Sorts {@code files}.
      * 
      * @param taskId
-     *            the task ID.
+     *                  the task ID.
      * @param files
-     *            list of files.
+     *                  list of files.
      * @param ascending
-     *            {@code true} or {@code false}.
+     *                  {@code true} or {@code false}.
      * @param sortBy
-     *            can be one of {@link BaseFile.#_SortByModificationTime},
-     *            {@link BaseFile.#_SortByName}, {@link BaseFile.#_SortBySize}.
+     *                  can be one of {@link BaseFile.#_SortByModificationTime},
+     *                  {@link BaseFile.#_SortByName},
+     *                  {@link BaseFile.#_SortBySize}.
      */
     private void sortFiles(final int taskId, final List<File> files,
             final boolean ascending, final int sortBy) {
@@ -590,22 +600,22 @@ public class LocalFileProvider extends BaseFileProvider {
                     int res = mCollator.compare(lhs.getName(), rhs.getName());
 
                     switch (sortBy) {
-                    case BaseFile.SORT_BY_NAME:
-                        break;// SortByName
+                        case BaseFile.SORT_BY_NAME:
+                            break;// SortByName
 
-                    case BaseFile.SORT_BY_SIZE:
-                        if (lhs.length() > rhs.length())
-                            res = 1;
-                        else if (lhs.length() < rhs.length())
-                            res = -1;
-                        break;// SortBySize
+                        case BaseFile.SORT_BY_SIZE:
+                            if (lhs.length() > rhs.length())
+                                res = 1;
+                            else if (lhs.length() < rhs.length())
+                                res = -1;
+                            break;// SortBySize
 
-                    case BaseFile.SORT_BY_MODIFICATION_TIME:
-                        if (lhs.lastModified() > rhs.lastModified())
-                            res = 1;
-                        else if (lhs.lastModified() < rhs.lastModified())
-                            res = -1;
-                        break;// SortByDate
+                        case BaseFile.SORT_BY_MODIFICATION_TIME:
+                            if (lhs.lastModified() > rhs.lastModified())
+                                res = 1;
+                            else if (lhs.lastModified() < rhs.lastModified())
+                                res = -1;
+                            break;// SortByDate
                     }
 
                     return ascending ? res : -res;
@@ -621,12 +631,12 @@ public class LocalFileProvider extends BaseFileProvider {
      * Deletes {@code file}.
      * 
      * @param taskId
-     *            the task ID.
+     *                  the task ID.
      * @param file
-     *            {@link File}.
+     *                  {@link File}.
      * @param recursive
-     *            if {@code true} and {@code file} is a directory, this thread
-     *            will delete all sub files/ folders of it recursively.
+     *                  if {@code true} and {@code file} is a directory, this thread
+     *                  will delete all sub files/ folders of it recursively.
      * @return the total files deleted.
      */
     private int deleteFile(final int taskId, final File file,

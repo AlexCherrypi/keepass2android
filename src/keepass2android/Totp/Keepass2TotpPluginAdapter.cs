@@ -35,8 +35,8 @@ namespace PluginTOTP
             {
                 uint.TryParse(strLength, out uLength);
             }
-            
-            
+
+
             if (uLength == 0) uLength = 6;
 
             string strAlg;

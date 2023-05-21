@@ -29,8 +29,10 @@ import com.google.zxing.client.android.camera.open.OpenCameraInterface;
 import java.io.IOException;
 
 /**
- * This object wraps the Camera service object and expects to be the only one talking to it. The
- * implementation encapsulates the steps needed to take preview-sized images, which are used for
+ * This object wraps the Camera service object and expects to be the only one
+ * talking to it. The
+ * implementation encapsulates the steps needed to take preview-sized images,
+ * which are used for
  * both preview and decoding.
  *
  * @author dswitkin@google.com (Daniel Switkin)
@@ -55,7 +57,8 @@ public final class CameraManager {
   private int requestedFramingRectWidth;
   private int requestedFramingRectHeight;
   /**
-   * Preview frames are delivered here, which we pass on to the registered handler. Make sure to
+   * Preview frames are delivered here, which we pass on to the registered
+   * handler. Make sure to
    * clear the handler so it will only receive one message.
    */
   private final PreviewCallback previewCallback;
@@ -69,7 +72,8 @@ public final class CameraManager {
   /**
    * Opens the camera driver and initializes the hardware parameters.
    *
-   * @param holder The surface object which the camera will draw preview frames into.
+   * @param holder The surface object which the camera will draw preview frames
+   *               into.
    * @throws IOException Indicates the camera driver failed to open.
    */
   public synchronized void openDriver(SurfaceHolder holder) throws IOException {
@@ -128,7 +132,8 @@ public final class CameraManager {
     if (camera != null) {
       camera.release();
       camera = null;
-      // Make sure to clear these each time we close the camera, so that any scanning rect
+      // Make sure to clear these each time we close the camera, so that any scanning
+      // rect
       // requested by intent is forgotten.
       framingRect = null;
       framingRectInPreview = null;
@@ -163,7 +168,8 @@ public final class CameraManager {
   }
 
   /**
-   * Convenience method for {@link com.google.zxing.client.android.CaptureActivity}
+   * Convenience method for
+   * {@link com.google.zxing.client.android.CaptureActivity}
    */
   public synchronized void setTorch(boolean newSetting) {
     if (newSetting != configManager.getTorchState(camera)) {
@@ -180,8 +186,10 @@ public final class CameraManager {
   }
 
   /**
-   * A single preview frame will be returned to the handler supplied. The data will arrive as byte[]
-   * in the message.obj field, with width and height encoded as message.arg1 and message.arg2,
+   * A single preview frame will be returned to the handler supplied. The data
+   * will arrive as byte[]
+   * in the message.obj field, with width and height encoded as message.arg1 and
+   * message.arg2,
    * respectively.
    *
    * @param handler The handler to send the message to.
@@ -196,8 +204,10 @@ public final class CameraManager {
   }
 
   /**
-   * Calculates the framing rect which the UI should draw to show the user where to place the
-   * barcode. This target helps with alignment as well as forces the user to hold the device
+   * Calculates the framing rect which the UI should draw to show the user where
+   * to place the
+   * barcode. This target helps with alignment as well as forces the user to hold
+   * the device
    * far enough away to ensure the image will be in focus.
    *
    * @return The rectangle to draw on screen in window coordinates.
@@ -223,7 +233,7 @@ public final class CameraManager {
     }
     return framingRect;
   }
-  
+
   private static int findDesiredDimensionInRange(int resolution, int hardMin, int hardMax) {
     int dim = 5 * resolution / 8; // Target 5/8 of each dimension
     if (dim < hardMin) {
@@ -236,7 +246,8 @@ public final class CameraManager {
   }
 
   /**
-   * Like {@link #getFramingRect} but coordinates are in terms of the preview frame,
+   * Like {@link #getFramingRect} but coordinates are in terms of the preview
+   * frame,
    * not UI / screen.
    */
   public synchronized Rect getFramingRectInPreview() {
@@ -256,17 +267,18 @@ public final class CameraManager {
       rect.right = rect.right * cameraResolution.y / screenResolution.x;
       rect.top = rect.top * cameraResolution.x / screenResolution.y;
       rect.bottom = rect.bottom * cameraResolution.x / screenResolution.y;
-      
+
       framingRectInPreview = rect;
     }
     return framingRectInPreview;
   }
 
   /**
-   * Allows third party apps to specify the scanning rectangle dimensions, rather than determine
+   * Allows third party apps to specify the scanning rectangle dimensions, rather
+   * than determine
    * them automatically based on screen resolution.
    *
-   * @param width The width in pixels to scan.
+   * @param width  The width in pixels to scan.
    * @param height The height in pixels to scan.
    */
   public synchronized void setManualFramingRect(int width, int height) {
@@ -290,11 +302,12 @@ public final class CameraManager {
   }
 
   /**
-   * A factory method to build the appropriate LuminanceSource object based on the format
+   * A factory method to build the appropriate LuminanceSource object based on the
+   * format
    * of the preview buffers, as described by Camera.Parameters.
    *
-   * @param data A preview frame.
-   * @param width The width of the image.
+   * @param data   A preview frame.
+   * @param width  The width of the image.
    * @param height The height of the image.
    * @return A PlanarYUVLuminanceSource instance.
    */
@@ -305,7 +318,7 @@ public final class CameraManager {
     }
     // Go ahead and assume it's YUV rather than die.
     return new PlanarYUVLuminanceSource(data, width, height, rect.left, rect.top,
-                                        rect.width(), rect.height(), false);
+        rect.width(), rect.height(), false);
   }
 
 }

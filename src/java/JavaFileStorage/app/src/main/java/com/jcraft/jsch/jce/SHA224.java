@@ -35,23 +35,33 @@ import java.security.*;
 
 public class SHA224 implements HASH {
   MessageDigest md;
+
   @Override
-  public int getBlockSize(){return 28;}
+  public int getBlockSize() {
+    return 28;
+  }
+
   @Override
   public void init() throws Exception {
-    try{ md=MessageDigest.getInstance("SHA-224"); }
-    catch(Exception e){
+    try {
+      md = MessageDigest.getInstance("SHA-224");
+    } catch (Exception e) {
       System.err.println(e);
     }
   }
+
   @Override
   public void update(byte[] foo, int start, int len) throws Exception {
     md.update(foo, start, len);
   }
+
   @Override
   public byte[] digest() throws Exception {
     return md.digest();
   }
+
   @Override
-  public String name(){return "SHA224";}
+  public String name() {
+    return "SHA224";
+  }
 }

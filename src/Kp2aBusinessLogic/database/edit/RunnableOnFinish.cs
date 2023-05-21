@@ -21,58 +21,64 @@ using Android.Content;
 namespace keepass2android
 {
 
-	public abstract class RunnableOnFinish  {
-		
-		protected OnFinish _onFinishToRun;
-		public ProgressDialogStatusLogger StatusLogger = new ProgressDialogStatusLogger(); //default: empty but not null
-	    private Activity _activeActivity;
+    public abstract class RunnableOnFinish
+    {
 
-	    protected RunnableOnFinish(Activity activeActivity, OnFinish finish)
-	    {
-	        _activeActivity = activeActivity;
-			_onFinishToRun = finish;
-		}
+        protected OnFinish _onFinishToRun;
+        public ProgressDialogStatusLogger StatusLogger = new ProgressDialogStatusLogger(); //default: empty but not null
+        private Activity _activeActivity;
 
-		public OnFinish OnFinishToRun
-		{
-			get { return _onFinishToRun; }
-			set { _onFinishToRun = value; }
-		}
+        protected RunnableOnFinish(Activity activeActivity, OnFinish finish)
+        {
+            _activeActivity = activeActivity;
+            _onFinishToRun = finish;
+        }
 
-	    public Activity ActiveActivity
-	    {
-	        get { return _activeActivity; }
-	        set
+        public OnFinish OnFinishToRun
+        {
+            get { return _onFinishToRun; }
+            set { _onFinishToRun = value; }
+        }
+
+        public Activity ActiveActivity
+        {
+            get { return _activeActivity; }
+            set
             {
-	            _activeActivity = value;
-	            if (_onFinishToRun != null)
-	                _onFinishToRun.ActiveActivity = _activeActivity;
-	        }
-	    }
+                _activeActivity = value;
+                if (_onFinishToRun != null)
+                    _onFinishToRun.ActiveActivity = _activeActivity;
+            }
+        }
 
-        protected void Finish(bool result, String message, bool importantMessage = false, Exception exception = null) {
-			if ( OnFinishToRun != null ) {
-				OnFinishToRun.SetResult(result, message, importantMessage, exception);
-				OnFinishToRun.Run();
-			}
-		}
-		
-		protected void Finish(bool result) {
-			if ( OnFinishToRun != null ) {
-				OnFinishToRun.SetResult(result);
-				OnFinishToRun.Run();
-			}
-		}
-		
-		public void SetStatusLogger(ProgressDialogStatusLogger status) {
-			if (OnFinishToRun != null)
-			{
-				OnFinishToRun.StatusLogger = status;
-			}
-			StatusLogger = status;
-		}
-		
-		public abstract void Run();
-	}
+        protected void Finish(bool result, String message, bool importantMessage = false, Exception exception = null)
+        {
+            if (OnFinishToRun != null)
+            {
+                OnFinishToRun.SetResult(result, message, importantMessage, exception);
+                OnFinishToRun.Run();
+            }
+        }
+
+        protected void Finish(bool result)
+        {
+            if (OnFinishToRun != null)
+            {
+                OnFinishToRun.SetResult(result);
+                OnFinishToRun.Run();
+            }
+        }
+
+        public void SetStatusLogger(ProgressDialogStatusLogger status)
+        {
+            if (OnFinishToRun != null)
+            {
+                OnFinishToRun.StatusLogger = status;
+            }
+            StatusLogger = status;
+        }
+
+        public abstract void Run();
+    }
 }
 

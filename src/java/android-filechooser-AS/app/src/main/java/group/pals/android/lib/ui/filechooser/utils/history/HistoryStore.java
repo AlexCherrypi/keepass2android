@@ -52,8 +52,8 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
      * Creates new {@link HistoryStore}
      * 
      * @param capcacity
-     *            the maximum size that allowed, if it is {@code <= 0},
-     *            {@link #DEFAULT_CAPACITY} will be used
+     *                  the maximum size that allowed, if it is {@code <= 0},
+     *                  {@link #DEFAULT_CAPACITY} will be used
      */
     public HistoryStore(int capcacity) {
         mCapacity = capcacity > 0 ? capcacity : DEFAULT_CAPACITY;
@@ -120,7 +120,7 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
                 if (!changed)
                     changed = true;
             }
-        }// for
+        } // for
 
         if (changed)
             notifyHistoryChanged();
@@ -225,7 +225,7 @@ public class HistoryStore<A extends Parcelable> implements History<A> {
      * Reads data from {@code in}.
      * 
      * @param in
-     *            {@link Parcel}.
+     *           {@link Parcel}.
      */
     @SuppressWarnings("unchecked")
     public void readFromParcel(Parcel in) {

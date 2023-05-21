@@ -48,75 +48,75 @@ using KeePassLib.Utility;
 
 namespace KeePassLib.Cryptography
 {
-	/// <summary>
-	/// Class containing self-test methods.
-	/// </summary>
-	public static class SelfTest
-	{
-		/// <summary>
-		/// Perform a self-test.
-		/// </summary>
-		public static void Perform()
-		{
-			TestFipsComplianceProblems(); // Must be the first test
+    /// <summary>
+    /// Class containing self-test methods.
+    /// </summary>
+    public static class SelfTest
+    {
+        /// <summary>
+        /// Perform a self-test.
+        /// </summary>
+        public static void Perform()
+        {
+            TestFipsComplianceProblems(); // Must be the first test
 
-			TestRijndael();
-			TestSalsa20();
-			TestChaCha20();
-			TestBlake2b();
-			TestArgon2();
-			TestHmac();
+            TestRijndael();
+            TestSalsa20();
+            TestChaCha20();
+            TestBlake2b();
+            TestArgon2();
+            TestHmac();
 
-			TestNativeKeyTransform();
-			
-			TestHmacOtp();
+            TestNativeKeyTransform();
 
-			TestProtectedObjects();
-			TestMemUtil();
-			TestStrUtil();
-			TestUrlUtil();
+            TestHmacOtp();
 
-			Debug.Assert((int)PwIcon.World == 1);
-			Debug.Assert((int)PwIcon.Warning == 2);
-			Debug.Assert((int)PwIcon.BlackBerry == 68);
+            TestProtectedObjects();
+            TestMemUtil();
+            TestStrUtil();
+            TestUrlUtil();
+
+            Debug.Assert((int)PwIcon.World == 1);
+            Debug.Assert((int)PwIcon.Warning == 2);
+            Debug.Assert((int)PwIcon.BlackBerry == 68);
 
 #if KeePassUAP
 			SelfTestEx.Perform();
 #endif
-		}
+        }
 
-		internal static void TestFipsComplianceProblems()
-		{
+        internal static void TestFipsComplianceProblems()
+        {
 #if !KeePassUAP
-			try { using(RijndaelManaged r = new RijndaelManaged()) { } }
-			catch(Exception exAes)
-			{
-				throw new SecurityException("AES/Rijndael: " + exAes.Message);
-			}
+            try { using (RijndaelManaged r = new RijndaelManaged()) { } }
+            catch (Exception exAes)
+            {
+                throw new SecurityException("AES/Rijndael: " + exAes.Message);
+            }
 #endif
 
-			try { using(SHA256Managed h = new SHA256Managed()) { } }
-			catch(Exception exSha256)
-			{
-				throw new SecurityException("SHA-256: " + exSha256.Message);
-			}
-		}
+            try { using (SHA256Managed h = new SHA256Managed()) { } }
+            catch (Exception exSha256)
+            {
+                throw new SecurityException("SHA-256: " + exSha256.Message);
+            }
+        }
 
-		private static void TestRijndael()
-		{
-			// Test vector (official ECB test vector #356)
-			byte[] pbIV = new byte[16];
-			byte[] pbTestKey = new byte[32];
-			byte[] pbTestData = new byte[16];
-			byte[] pbReferenceCT = new byte[16] {
-				0x75, 0xD1, 0x1B, 0x0E, 0x3A, 0x68, 0xC4, 0x22,
-				0x3D, 0x88, 0xDB, 0xF0, 0x17, 0x97, 0x7D, 0xD7 };
-			int i;
+        private static void TestRijndael()
+        {
+            // Test vector (official ECB test vector #356)
+            byte[] pbIV = new byte[16];
+            byte[] pbTestKey = new byte[32];
+            byte[] pbTestData = new byte[16];
+            byte[] pbReferenceCT = new byte[16] {
+                0x75, 0xD1, 0x1B, 0x0E, 0x3A, 0x68, 0xC4, 0x22,
+                0x3D, 0x88, 0xDB, 0xF0, 0x17, 0x97, 0x7D, 0xD7 };
+            int i;
 
-			for(i = 0; i < 16; ++i) pbIV[i] = 0;
-			for(i = 0; i < 32; ++i) pbTestKey[i] = 0;
-			for(i = 0; i < 16; ++i) pbTestData[i] = 0;
-			pbTestData[0] = 0x04;
+            for (i = 0; i < 16; ++i) pbIV[i] = 0;
+            for (i = 0; i < 32; ++i) pbTestKey[i] = 0;
+            for (i = 0; i < 16; ++i) pbTestData[i] = 0;
+            pbTestData[0] = 0x04;
 
 #if KeePassUAP
 			AesEngine r = new AesEngine();
@@ -125,29 +125,29 @@ namespace KeePassLib.Cryptography
 				throw new SecurityException("AES (BC)");
 			r.ProcessBlock(pbTestData, 0, pbTestData, 0);
 #else
-			RijndaelManaged r = new RijndaelManaged();
+            RijndaelManaged r = new RijndaelManaged();
 
-			if(r.BlockSize != 128) // AES block size
-			{
-				Debug.Assert(false);
-				r.BlockSize = 128;
-			}
+            if (r.BlockSize != 128) // AES block size
+            {
+                Debug.Assert(false);
+                r.BlockSize = 128;
+            }
 
-			r.IV = pbIV;
-			r.KeySize = 256;
-			r.Key = pbTestKey;
-			r.Mode = CipherMode.ECB;
-			ICryptoTransform iCrypt = r.CreateEncryptor();
+            r.IV = pbIV;
+            r.KeySize = 256;
+            r.Key = pbTestKey;
+            r.Mode = CipherMode.ECB;
+            ICryptoTransform iCrypt = r.CreateEncryptor();
 
-			iCrypt.TransformBlock(pbTestData, 0, 16, pbTestData, 0);
+            iCrypt.TransformBlock(pbTestData, 0, 16, pbTestData, 0);
 #endif
 
-			if(!MemUtil.ArraysEqual(pbTestData, pbReferenceCT))
-				throw new SecurityException("AES");
-		}
+            if (!MemUtil.ArraysEqual(pbTestData, pbReferenceCT))
+                throw new SecurityException("AES");
+        }
 
-		private static void TestSalsa20()
-		{
+        private static void TestSalsa20()
+        {
 #if DEBUG
 			// Test values from official set 6, vector 3
 			byte[] pbKey = new byte[32] {
@@ -203,7 +203,7 @@ namespace KeePassLib.Cryptography
 			}
 			if(d.Count != nRounds) throw new SecurityException("Salsa20-4");
 #endif
-		}
+        }
 
 #if DEBUG
 		private static int Salsa20ToPos(Salsa20Cipher c, Random r, int nPos,
@@ -223,39 +223,39 @@ namespace KeePassLib.Cryptography
 		}
 #endif
 
-		private static void TestChaCha20()
-		{
-			// ======================================================
-			// Test vector from RFC 7539, section 2.3.2
+        private static void TestChaCha20()
+        {
+            // ======================================================
+            // Test vector from RFC 7539, section 2.3.2
 
-			byte[] pbKey = new byte[32];
-			for(int i = 0; i < 32; ++i) pbKey[i] = (byte)i;
+            byte[] pbKey = new byte[32];
+            for (int i = 0; i < 32; ++i) pbKey[i] = (byte)i;
 
-			byte[] pbIV = new byte[12];
-			pbIV[3] = 0x09;
-			pbIV[7] = 0x4A;
+            byte[] pbIV = new byte[12];
+            pbIV[3] = 0x09;
+            pbIV[7] = 0x4A;
 
-			byte[] pbExpc = new byte[64] {
-				0x10, 0xF1, 0xE7, 0xE4, 0xD1, 0x3B, 0x59, 0x15,
-				0x50, 0x0F, 0xDD, 0x1F, 0xA3, 0x20, 0x71, 0xC4,
-				0xC7, 0xD1, 0xF4, 0xC7, 0x33, 0xC0, 0x68, 0x03,
-				0x04, 0x22, 0xAA, 0x9A, 0xC3, 0xD4, 0x6C, 0x4E,
-				0xD2, 0x82, 0x64, 0x46, 0x07, 0x9F, 0xAA, 0x09,
-				0x14, 0xC2, 0xD7, 0x05, 0xD9, 0x8B, 0x02, 0xA2,
-				0xB5, 0x12, 0x9C, 0xD1, 0xDE, 0x16, 0x4E, 0xB9,
-				0xCB, 0xD0, 0x83, 0xE8, 0xA2, 0x50, 0x3C, 0x4E
-			};
+            byte[] pbExpc = new byte[64] {
+                0x10, 0xF1, 0xE7, 0xE4, 0xD1, 0x3B, 0x59, 0x15,
+                0x50, 0x0F, 0xDD, 0x1F, 0xA3, 0x20, 0x71, 0xC4,
+                0xC7, 0xD1, 0xF4, 0xC7, 0x33, 0xC0, 0x68, 0x03,
+                0x04, 0x22, 0xAA, 0x9A, 0xC3, 0xD4, 0x6C, 0x4E,
+                0xD2, 0x82, 0x64, 0x46, 0x07, 0x9F, 0xAA, 0x09,
+                0x14, 0xC2, 0xD7, 0x05, 0xD9, 0x8B, 0x02, 0xA2,
+                0xB5, 0x12, 0x9C, 0xD1, 0xDE, 0x16, 0x4E, 0xB9,
+                0xCB, 0xD0, 0x83, 0xE8, 0xA2, 0x50, 0x3C, 0x4E
+            };
 
-			byte[] pb = new byte[64];
+            byte[] pb = new byte[64];
 
-			using(ChaCha20Cipher c = new ChaCha20Cipher(pbKey, pbIV))
-			{
-				c.Seek(64, SeekOrigin.Begin); // Skip first block
-				c.Encrypt(pb, 0, pb.Length);
+            using (ChaCha20Cipher c = new ChaCha20Cipher(pbKey, pbIV))
+            {
+                c.Seek(64, SeekOrigin.Begin); // Skip first block
+                c.Encrypt(pb, 0, pb.Length);
 
-				if(!MemUtil.ArraysEqual(pb, pbExpc))
-					throw new SecurityException("ChaCha20-1");
-			}
+                if (!MemUtil.ArraysEqual(pb, pbExpc))
+                    throw new SecurityException("ChaCha20-1");
+            }
 
 #if DEBUG
 			// ======================================================
@@ -416,10 +416,10 @@ namespace KeePassLib.Cryptography
 					throw new SecurityException("ChaCha20-7");
 			}
 #endif
-		}
+        }
 
-		private static void TestBlake2b()
-		{
+        private static void TestBlake2b()
+        {
 #if DEBUG
 			Blake2b h = new Blake2b();
 
@@ -496,10 +496,10 @@ namespace KeePassLib.Cryptography
 
 			h.Clear();
 #endif
-		}
+        }
 
-		private static void TestArgon2()
-		{
+        private static void TestArgon2()
+        {
 #if DEBUG
 			Argon2Kdf kdf = new Argon2Kdf();
 
@@ -642,10 +642,10 @@ namespace KeePassLib.Cryptography
 #endif // SELFTEST_ARGON2_LONGER
 #endif // SELFTEST_ARGON2_LONG
 #endif // DEBUG
-		}
+        }
 
-		private static void TestHmac()
-		{
+        private static void TestHmac()
+        {
 #if DEBUG
 			// Test vectors from RFC 4231
 
@@ -674,7 +674,7 @@ namespace KeePassLib.Cryptography
 			};
 			HmacEval(pbKey, pbMsg, pbExpc, "2");
 #endif
-		}
+        }
 
 #if DEBUG
 		private static void HmacEval(byte[] pbKey, byte[] pbMsg,
@@ -701,8 +701,8 @@ namespace KeePassLib.Cryptography
 		}
 #endif
 
-		private static void TestNativeKeyTransform()
-		{
+        private static void TestNativeKeyTransform()
+        {
 #if DEBUG
 			byte[] pbOrgKey = CryptoRandom.Instance.GetRandomBytes(32);
 			byte[] pbSeed = CryptoRandom.Instance.GetRandomBytes(32);
@@ -721,10 +721,10 @@ namespace KeePassLib.Cryptography
 			if(!MemUtil.ArraysEqual(pbManaged, pbNative))
 				throw new SecurityException("AES-KDF-2");
 #endif
-		}
+        }
 
-		private static void TestMemUtil()
-		{
+        private static void TestMemUtil()
+        {
 #if DEBUG
 			Random r = new Random();
 			byte[] pb = CryptoRandom.Instance.GetRandomBytes((uint)r.Next(
@@ -795,10 +795,10 @@ namespace KeePassLib.Cryptography
 			if(MemUtil.BytesToInt32(pbRes) != i)
 				throw new Exception("MemUtil-10");
 #endif
-		}
+        }
 
-		private static void TestHmacOtp()
-		{
+        private static void TestHmacOtp()
+        {
 #if (DEBUG && !KeePassLibSD)
 			byte[] pbSecret = StrUtil.Utf8.GetBytes("12345678901234567890");
 			string[] vExp = new string[]{ "755224", "287082", "359152",
@@ -811,10 +811,10 @@ namespace KeePassLib.Cryptography
 					throw new InvalidOperationException("HmacOtp");
 			}
 #endif
-		}
+        }
 
-		private static void TestProtectedObjects()
-		{
+        private static void TestProtectedObjects()
+        {
 #if DEBUG
 			Encoding enc = StrUtil.Utf8;
 
@@ -903,10 +903,10 @@ namespace KeePassLib.Cryptography
 					throw new SecurityException("ProtectedString-14");
 			}
 #endif
-		}
+        }
 
-		private static void TestStrUtil()
-		{
+        private static void TestStrUtil()
+        {
 #if DEBUG
 			string[] vSeps = new string[]{ "ax", "b", "c" };
 			const string str1 = "axbqrstcdeax";
@@ -1000,10 +1000,10 @@ namespace KeePassLib.Cryptography
 			if(string.Equals(@"a<b", @"a>b", StrUtil.CaseIgnoreCmp))
 				throw new InvalidOperationException("StrUtil-Case2");
 #endif
-		}
+        }
 
-		private static void TestUrlUtil()
-		{
+        private static void TestUrlUtil()
+        {
 #if DEBUG
 #if !KeePassUAP
 			Debug.Assert(Uri.UriSchemeHttp.Equals("http", StrUtil.CaseIgnoreCmp));
@@ -1046,6 +1046,6 @@ namespace KeePassLib.Cryptography
 			str = UrlUtil.GetQuotedAppPath("Reg.exe \"Test\" \"Test 2\"");
 			if(str != "Reg.exe \"Test\" \"Test 2\"") throw new InvalidOperationException("UrlUtil-Q3");
 #endif
-		}
-	}
+        }
+    }
 }

@@ -31,7 +31,8 @@ import java.util.Collection;
 import java.util.HashSet;
 
 /**
- * Utility methods for retrieving content over HTTP using the more-supported {@code java.net} classes
+ * Utility methods for retrieving content over HTTP using the more-supported
+ * {@code java.net} classes
  * in Android.
  */
 public final class HttpHelper {
@@ -39,13 +40,12 @@ public final class HttpHelper {
   private static final String TAG = HttpHelper.class.getSimpleName();
 
   private static final Collection<String> REDIRECTOR_DOMAINS = new HashSet<String>(Arrays.asList(
-    "amzn.to", "bit.ly", "bitly.com", "fb.me", "goo.gl", "is.gd", "j.mp", "lnkd.in", "ow.ly",
-    "R.BEETAGG.COM", "r.beetagg.com", "SCN.BY", "su.pr", "t.co", "tinyurl.com", "tr.im"
-  ));
+      "amzn.to", "bit.ly", "bitly.com", "fb.me", "goo.gl", "is.gd", "j.mp", "lnkd.in", "ow.ly",
+      "R.BEETAGG.COM", "r.beetagg.com", "SCN.BY", "su.pr", "t.co", "tinyurl.com", "tr.im"));
 
   private HttpHelper() {
   }
-  
+
   public enum ContentType {
     /** HTML-like content type, including HTML, XHTML, etc. */
     HTML,
@@ -67,11 +67,12 @@ public final class HttpHelper {
   }
 
   /**
-   * @param uri URI to retrieve
-   * @param type expected text-like MIME type of that content
+   * @param uri      URI to retrieve
+   * @param type     expected text-like MIME type of that content
    * @param maxChars approximate maximum characters to read from the source
    * @return content as a {@code String}
-   * @throws IOException if the content can't be retrieved because of a bad URI, network problem, etc.
+   * @throws IOException if the content can't be retrieved because of a bad URI,
+   *                     network problem, etc.
    */
   public static CharSequence downloadViaHttp(String uri, ContentType type, int maxChars) throws IOException {
     String contentTypes;
@@ -192,7 +193,7 @@ public final class HttpHelper {
       connection.disconnect();
     }
   }
-  
+
   private static HttpURLConnection safelyOpenConnection(URL url) throws IOException {
     URLConnection conn;
     try {
@@ -212,7 +213,8 @@ public final class HttpHelper {
     try {
       connection.connect();
     } catch (NullPointerException npe) {
-      // this is an Android bug: http://code.google.com/p/android/issues/detail?id=16895
+      // this is an Android bug:
+      // http://code.google.com/p/android/issues/detail?id=16895
       throw new IOException(npe);
     } catch (IllegalArgumentException iae) {
       // Also seen this in the wild, not sure what to make of it. Probably a bad URL
@@ -222,16 +224,19 @@ public final class HttpHelper {
       Log.w(TAG, "Restricted URI? " + uri);
       throw new IOException(se);
     } catch (IndexOutOfBoundsException ioobe) {
-      // Another Android problem? https://groups.google.com/forum/?fromgroups#!topic/google-admob-ads-sdk/U-WfmYa9or0
+      // Another Android problem?
+      // https://groups.google.com/forum/?fromgroups#!topic/google-admob-ads-sdk/U-WfmYa9or0
       throw new IOException(ioobe);
     }
     try {
       return connection.getResponseCode();
     } catch (NullPointerException npe) {
-      // this is maybe this Android bug: http://code.google.com/p/android/issues/detail?id=15554
+      // this is maybe this Android bug:
+      // http://code.google.com/p/android/issues/detail?id=15554
       throw new IOException(npe);
     } catch (IllegalArgumentException iae) {
-      // Again seen this in the wild for bad header fields in the server response! or bad reads
+      // Again seen this in the wild for bad header fields in the server response! or
+      // bad reads
       Log.w(TAG, "Bad server status? " + uri);
       throw new IOException(iae);
     } catch (StringIndexOutOfBoundsException sioobe) {

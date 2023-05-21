@@ -38,7 +38,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 /**
- * @see <a href="http://www.ietf.org/rfc/rfc1952.txt">http://www.ietf.org/rfc/rfc1952.txt</a>
+ * @see <a href=
+ *      "http://www.ietf.org/rfc/rfc1952.txt">http://www.ietf.org/rfc/rfc1952.txt</a>
  */
 final class GZIPHeader implements Cloneable {
 
@@ -79,112 +80,113 @@ final class GZIPHeader implements Cloneable {
   }
 
   void setOS(int os) {
-    if((0<=os && os <=13) || os==255)
-      this.os=os;
+    if ((0 <= os && os <= 13) || os == 255)
+      this.os = os;
     else
-      throw new IllegalArgumentException("os: "+os);
+      throw new IllegalArgumentException("os: " + os);
   }
 
-  int getOS(){
+  int getOS() {
     return os;
   }
 
   void setName(String name) {
-    this.name=name.getBytes(StandardCharsets.ISO_8859_1);
+    this.name = name.getBytes(StandardCharsets.ISO_8859_1);
   }
 
-  String getName(){
-    if(name==null) return "";
+  String getName() {
+    if (name == null)
+      return "";
     return new String(name, StandardCharsets.ISO_8859_1);
   }
 
   void setComment(String comment) {
-    this.comment=comment.getBytes(StandardCharsets.ISO_8859_1);
+    this.comment = comment.getBytes(StandardCharsets.ISO_8859_1);
   }
 
-  String getComment(){
-    if(comment==null) return "";
+  String getComment() {
+    if (comment == null)
+      return "";
     return new String(comment, StandardCharsets.ISO_8859_1);
   }
 
-  void setCRC(long crc){
+  void setCRC(long crc) {
     this.crc = crc;
   }
 
-  long getCRC(){
+  long getCRC() {
     return crc;
   }
 
-  void put(Deflate d){
+  void put(Deflate d) {
     int flag = 0;
-    if(text){
-      flag |= 1;     // FTEXT
+    if (text) {
+      flag |= 1; // FTEXT
     }
-    if(fhcrc){
-      flag |= 2;     // FHCRC
+    if (fhcrc) {
+      flag |= 2; // FHCRC
     }
-    if(extra!=null){
-      flag |= 4;     // FEXTRA
+    if (extra != null) {
+      flag |= 4; // FEXTRA
     }
-    if(name!=null){
-      flag |= 8;    // FNAME
+    if (name != null) {
+      flag |= 8; // FNAME
     }
-    if(comment!=null){
-      flag |= 16;   // FCOMMENT
+    if (comment != null) {
+      flag |= 16; // FCOMMENT
     }
     int xfl = 0;
-    if(d.level == JZlib.Z_BEST_SPEED){
+    if (d.level == JZlib.Z_BEST_SPEED) {
       xfl |= 4;
-    }
-    else if (d.level == JZlib.Z_BEST_COMPRESSION){
+    } else if (d.level == JZlib.Z_BEST_COMPRESSION) {
       xfl |= 2;
     }
 
-    d.put_short((short)0x8b1f);  // ID1 ID2
-    d.put_byte((byte)8);         // CM(Compression Method)
-    d.put_byte((byte)flag);
-    d.put_byte((byte)mtime);
-    d.put_byte((byte)(mtime>>8));
-    d.put_byte((byte)(mtime>>16));
-    d.put_byte((byte)(mtime>>24));
-    d.put_byte((byte)xfl);
-    d.put_byte((byte)os);
+    d.put_short((short) 0x8b1f); // ID1 ID2
+    d.put_byte((byte) 8); // CM(Compression Method)
+    d.put_byte((byte) flag);
+    d.put_byte((byte) mtime);
+    d.put_byte((byte) (mtime >> 8));
+    d.put_byte((byte) (mtime >> 16));
+    d.put_byte((byte) (mtime >> 24));
+    d.put_byte((byte) xfl);
+    d.put_byte((byte) os);
 
-    if(extra!=null){
-      d.put_byte((byte)extra.length);
-      d.put_byte((byte)(extra.length>>8));
+    if (extra != null) {
+      d.put_byte((byte) extra.length);
+      d.put_byte((byte) (extra.length >> 8));
       d.put_byte(extra, 0, extra.length);
     }
 
-    if(name!=null){
+    if (name != null) {
       d.put_byte(name, 0, name.length);
-      d.put_byte((byte)0);
+      d.put_byte((byte) 0);
     }
 
-    if(comment!=null){
+    if (comment != null) {
       d.put_byte(comment, 0, comment.length);
-      d.put_byte((byte)0);
+      d.put_byte((byte) 0);
     }
   }
 
   @Override
   public Object clone() throws CloneNotSupportedException {
-    GZIPHeader gheader = (GZIPHeader)super.clone();
+    GZIPHeader gheader = (GZIPHeader) super.clone();
     byte[] tmp;
-    if(gheader.extra!=null){
-      tmp=new byte[gheader.extra.length];
+    if (gheader.extra != null) {
+      tmp = new byte[gheader.extra.length];
       System.arraycopy(gheader.extra, 0, tmp, 0, tmp.length);
       gheader.extra = tmp;
     }
 
-    if(gheader.name!=null){
-      tmp=new byte[gheader.name.length];
+    if (gheader.name != null) {
+      tmp = new byte[gheader.name.length];
       System.arraycopy(gheader.name, 0, tmp, 0, tmp.length);
       gheader.name = tmp;
     }
 
-    if(gheader.comment!=null){
-      tmp=new byte[gheader.comment.length];
+    if (gheader.comment != null) {
+      tmp = new byte[gheader.comment.length];
       System.arraycopy(gheader.comment, 0, tmp, 0, tmp.length);
       gheader.comment = tmp;
     }

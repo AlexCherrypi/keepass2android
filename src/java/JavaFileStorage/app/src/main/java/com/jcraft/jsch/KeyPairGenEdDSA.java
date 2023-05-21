@@ -29,8 +29,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
-public interface KeyPairGenEdDSA{
-  void init(String Name, int keylen) throws Exception;
-  byte[] getPub();
-  byte[] getPrv();
+public interface KeyPairGenEdDSA {
+   void init(String Name, int keylen) throws Exception;
+
+   byte[] getPub();
+
+   byte[] getPrv();
 }

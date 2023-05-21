@@ -44,11 +44,11 @@ public abstract class LoadingDialog<Params, Progress, Result> extends
      * Creates new {@link LoadingDialog}
      * 
      * @param context
-     *            {@link Context}
+     *                   {@link Context}
      * @param msg
-     *            message will be shown in the dialog.
+     *                   message will be shown in the dialog.
      * @param cancelable
-     *            as the name means.
+     *                   as the name means.
      */
     public LoadingDialog(Context context, String msg, boolean cancelable) {
         mDialog = new ProgressDialog(context);
@@ -71,11 +71,11 @@ public abstract class LoadingDialog<Params, Progress, Result> extends
      * Creates new {@link LoadingDialog}
      * 
      * @param context
-     *            {@link Context}
+     *                   {@link Context}
      * @param msgId
-     *            resource id of the message will be shown in the dialog.
+     *                   resource id of the message will be shown in the dialog.
      * @param cancelable
-     *            as the name means.
+     *                   as the name means.
      */
     public LoadingDialog(Context context, int msgId, boolean cancelable) {
         this(context, context.getString(msgId), cancelable);
@@ -86,9 +86,9 @@ public abstract class LoadingDialog<Params, Progress, Result> extends
      * {@link R.string#afc_msg_loading}).
      * 
      * @param context
-     *            {@link Context}
+     *                   {@link Context}
      * @param cancelable
-     *            as the name means.
+     *                   as the name means.
      */
     public LoadingDialog(Context context, boolean cancelable) {
         this(context, context.getString(R.string.afc_msg_loading), cancelable);
@@ -166,7 +166,7 @@ public abstract class LoadingDialog<Params, Progress, Result> extends
      * Sets the delay time before showing the dialog.
      * 
      * @param delayTime
-     *            the delay time to set
+     *                  the delay time to set
      * @return the instance of this dialog, for chaining multiple calls into a
      *         single statement.
      */
@@ -180,7 +180,7 @@ public abstract class LoadingDialog<Params, Progress, Result> extends
      * inside {@link #doInBackground(Void...)}
      * 
      * @param t
-     *            {@link Throwable}
+     *          {@link Throwable}
      */
     protected void setLastException(Throwable t) {
         mLastException = t;

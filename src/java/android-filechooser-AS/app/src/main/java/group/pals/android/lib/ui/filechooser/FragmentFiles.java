@@ -147,7 +147,7 @@ public class FragmentFiles extends Fragment implements
      * Creates new instance.
      * 
      * @param intent
-     *            the intent you got from {@link FileChooserActivity}.
+     *               the intent you got from {@link FileChooserActivity}.
      * @return the new instance of this fragment.
      */
     public static FragmentFiles newInstance(Intent intent) {
@@ -176,7 +176,7 @@ public class FragmentFiles extends Fragment implements
      * Creates new instance.
      * 
      * @param args
-     *            the arguments.
+     *             the arguments.
      * @return the new instance of this fragment.
      */
     public static FragmentFiles newInstance(Bundle args) {
@@ -269,7 +269,6 @@ public class FragmentFiles extends Fragment implements
                 FileChooserActivity.EXTRA_MAX_FILE_COUNT, 1000);
         mFileAdapter = new BaseFileAdapter(getActivity(), mFilterMode,
                 mIsMultiSelection);
-        
 
         /*
          * History.
@@ -325,7 +324,6 @@ public class FragmentFiles extends Fragment implements
          * INIT CONTROLS
          */
 
-        
         return rootView;
     }// onCreateView()
 
@@ -366,21 +364,21 @@ public class FragmentFiles extends Fragment implements
         MenuItem miSort = menu.findItem(R.id.afc_menuitem_sort);
 
         switch (DisplayPrefs.getSortType(getActivity())) {
-        case BaseFile.SORT_BY_NAME:
-            miSort.setIcon(Ui.resolveAttribute(getActivity(),
-                    sortAscending ? R.attr.afc_ic_menu_sort_by_name_asc
-                            : R.attr.afc_ic_menu_sort_by_name_desc));
-            break;
-        case BaseFile.SORT_BY_SIZE:
-            miSort.setIcon(Ui.resolveAttribute(getActivity(),
-                    sortAscending ? R.attr.afc_ic_menu_sort_by_size_asc
-                            : R.attr.afc_ic_menu_sort_by_size_desc));
-            break;
-        case BaseFile.SORT_BY_MODIFICATION_TIME:
-            miSort.setIcon(Ui.resolveAttribute(getActivity(),
-                    sortAscending ? R.attr.afc_ic_menu_sort_by_date_asc
-                            : R.attr.afc_ic_menu_sort_by_date_desc));
-            break;
+            case BaseFile.SORT_BY_NAME:
+                miSort.setIcon(Ui.resolveAttribute(getActivity(),
+                        sortAscending ? R.attr.afc_ic_menu_sort_by_name_asc
+                                : R.attr.afc_ic_menu_sort_by_name_desc));
+                break;
+            case BaseFile.SORT_BY_SIZE:
+                miSort.setIcon(Ui.resolveAttribute(getActivity(),
+                        sortAscending ? R.attr.afc_ic_menu_sort_by_size_asc
+                                : R.attr.afc_ic_menu_sort_by_size_desc));
+                break;
+            case BaseFile.SORT_BY_MODIFICATION_TIME:
+                miSort.setIcon(Ui.resolveAttribute(getActivity(),
+                        sortAscending ? R.attr.afc_ic_menu_sort_by_date_asc
+                                : R.attr.afc_ic_menu_sort_by_date_desc));
+                break;
         }
 
         /*
@@ -389,16 +387,16 @@ public class FragmentFiles extends Fragment implements
 
         MenuItem menuItem = menu.findItem(R.id.afc_menuitem_switch_viewmode);
         switch (DisplayPrefs.getViewType(getActivity())) {
-        case GRID:
-            menuItem.setIcon(Ui.resolveAttribute(getActivity(),
-                    R.attr.afc_ic_menu_listview));
-            menuItem.setTitle(R.string.afc_cmd_list_view);
-            break;
-        case LIST:
-            menuItem.setIcon(Ui.resolveAttribute(getActivity(),
-                    R.attr.afc_ic_menu_gridview));
-            menuItem.setTitle(R.string.afc_cmd_grid_view);
-            break;
+            case GRID:
+                menuItem.setIcon(Ui.resolveAttribute(getActivity(),
+                        R.attr.afc_ic_menu_listview));
+                menuItem.setTitle(R.string.afc_cmd_list_view);
+                break;
+            case LIST:
+                menuItem.setIcon(Ui.resolveAttribute(getActivity(),
+                        R.attr.afc_ic_menu_gridview));
+                menuItem.setTitle(R.string.afc_cmd_grid_view);
+                break;
         }
 
         /*
@@ -509,7 +507,9 @@ public class FragmentFiles extends Fragment implements
                         .appendQueryParameter(
                                 BaseFile.PARAM_NEGATIVE_REGEX_FILTER,
                                 TextUtils.isEmpty(negativeRegex) ? ""
-                                        : negativeRegex).build(), null, null,
+                                        : negativeRegex)
+                        .build(),
+                null, null,
                 null, null);
     }// onCreateLoader()
 
@@ -565,7 +565,7 @@ public class FragmentFiles extends Fragment implements
                 }// onPostExecute()
 
             }.execute();
-        }// if
+        } // if
 
         boolean hasMoreFiles = ProviderUtils.getBooleanQueryParam(uriInfo,
                 BaseFile.PARAM_HAS_MORE_FILES);
@@ -620,26 +620,26 @@ public class FragmentFiles extends Fragment implements
             getActivity().setTitle(R.string.afc_title_save_as);
         } else {
             switch (mFilterMode) {
-            case BaseFile.FILTER_FILES_ONLY:
-                getActivity().setTitle(
-                        getResources().getQuantityText(
-                                R.plurals.afc_title_choose_files,
-                                mIsMultiSelection ? 2 : 1));
-                break;
-            case BaseFile.FILTER_FILES_AND_DIRECTORIES:
-                getActivity().setTitle(
-                        getResources().getQuantityText(
-                                R.plurals.afc_title_choose_files_directories,
-                                mIsMultiSelection ? 2 : 1));
-                break;
-            case BaseFile.FILTER_DIRECTORIES_ONLY:
-                getActivity().setTitle(
-                        getResources().getQuantityText(
-                                R.plurals.afc_title_choose_directories,
-                                mIsMultiSelection ? 2 : 1));
-                break;
+                case BaseFile.FILTER_FILES_ONLY:
+                    getActivity().setTitle(
+                            getResources().getQuantityText(
+                                    R.plurals.afc_title_choose_files,
+                                    mIsMultiSelection ? 2 : 1));
+                    break;
+                case BaseFile.FILTER_FILES_AND_DIRECTORIES:
+                    getActivity().setTitle(
+                            getResources().getQuantityText(
+                                    R.plurals.afc_title_choose_files_directories,
+                                    mIsMultiSelection ? 2 : 1));
+                    break;
+                case BaseFile.FILTER_DIRECTORIES_ONLY:
+                    getActivity().setTitle(
+                            getResources().getQuantityText(
+                                    R.plurals.afc_title_choose_directories,
+                                    mIsMultiSelection ? 2 : 1));
+                    break;
             }
-        }// title of activity
+        } // title of activity
 
         mViewGoBack.setEnabled(false);
         mViewGoBack.setOnClickListener(mBtnGoBackOnClickListener);
@@ -647,7 +647,6 @@ public class FragmentFiles extends Fragment implements
         mViewGoForward.setEnabled(false);
         mViewGoForward.setOnClickListener(mBtnGoForwardOnClickListener);
 
-        
     }// setupHeader()
 
     /**
@@ -661,14 +660,14 @@ public class FragmentFiles extends Fragment implements
      */
     private void setupViewFiles() {
         switch (DisplayPrefs.getViewType(getActivity())) {
-        case GRID:
-            mViewFiles = (AbsListView) getLayoutInflater(null).inflate(
-                    R.layout.afc_gridview_files, null);
-            break;
-        case LIST:
-            mViewFiles = (AbsListView) getLayoutInflater(null).inflate(
-                    R.layout.afc_listview_files, null);
-            break;
+            case GRID:
+                mViewFiles = (AbsListView) getLayoutInflater(null).inflate(
+                        R.layout.afc_gridview_files, null);
+                break;
+            case LIST:
+                mViewFiles = (AbsListView) getLayoutInflater(null).inflate(
+                        R.layout.afc_listview_files, null);
+                break;
         }
 
         mViewFilesContainer.removeAllViews();
@@ -795,7 +794,7 @@ public class FragmentFiles extends Fragment implements
             lp.width = size;
             lp.height = size;
             mBtnOk.setLayoutParams(lp);
-        }// this is in save mode
+        } // this is in save mode
         else {
             if (mIsMultiSelection) {
                 viewGroupFooterContainer.setVisibility(View.VISIBLE);
@@ -811,18 +810,18 @@ public class FragmentFiles extends Fragment implements
                 mBtnOk.setVisibility(View.VISIBLE);
                 mBtnOk.setOnClickListener(mBtnOk_OpenDialog_OnClickListener);
             }
-        }// this is in open mode
+        } // this is in open mode
     }// setupFooter()
 
     /**
      * Shows footer view.
      * 
      * @param show
-     *            {@code true} or {@code false}.
+     *               {@code true} or {@code false}.
      * @param text
-     *            the message you want to set.
+     *               the message you want to set.
      * @param center
-     *            {@code true} or {@code false}.
+     *               {@code true} or {@code false}.
      */
     @SuppressLint("InlinedApi")
     private void showFooterView(boolean show, String text, boolean center) {
@@ -878,7 +877,7 @@ public class FragmentFiles extends Fragment implements
                      * Gets {@link Cursor} from {@code e}.
                      * 
                      * @param e
-                     *            {@link MotionEvent}.
+                     *          {@link MotionEvent}.
                      * @return the cursor, or {@code null} if not available.
                      */
                     private Cursor getData(MotionEvent e) {
@@ -935,13 +934,13 @@ public class FragmentFiles extends Fragment implements
                                     return false;
                             } else
                                 finish(BaseFileProviderUtils.getUri(cursor));
-                        }// double tap to choose files
+                        } // double tap to choose files
                         else {
                             /*
                              * Do nothing.
                              */
                             return false;
-                        }// single tap to choose files
+                        } // single tap to choose files
 
                         return true;
                     }// onDoubleTap()
@@ -1036,9 +1035,11 @@ public class FragmentFiles extends Fragment implements
 
                 log += "savedInstanceState != null ? " + (savedInstanceState != null);
                 log += "\npath != null ? " + (path != null);
-                if (path != null) log += path;
+                if (path != null)
+                    log += path;
                 log += "\nmRoot != null ? " + (mRoot != null);
-                if (mRoot != null) log += mRoot;
+                if (mRoot != null)
+                    log += mRoot;
 
                 if (mRoot != null) {
                     Uri queryUri = BaseFile.genContentUriApi(mRoot.getAuthority())
@@ -1046,7 +1047,8 @@ public class FragmentFiles extends Fragment implements
                             .appendPath(BaseFile.CMD_CHECK_CONNECTION)
                             .appendQueryParameter(
                                     BaseFile.PARAM_SOURCE,
-                                    mRoot.getLastPathSegment()).build();
+                                    mRoot.getLastPathSegment())
+                            .build();
                     Cursor cursor = getActivity().getContentResolver().query(
                             queryUri,
                             null, null, null, null);
@@ -1054,18 +1056,18 @@ public class FragmentFiles extends Fragment implements
                     if (cursor != null) {
                         cursor.moveToFirst();
 
-                        errMsg = getString(R.string.afc_msg_cannot_connect_to_file_provider_service) + " " + " " + cursor.getString(0);
+                        errMsg = getString(R.string.afc_msg_cannot_connect_to_file_provider_service) + " " + " "
+                                + cursor.getString(0);
                         errorMessageInDialog = true;
                         return null;
                     }
 
                 }
 
-                try
-                {
-                /*
-                 * Selected file
-                 */
+                try {
+                    /*
+                     * Selected file
+                     */
                     log += "try selected file ";
                     if (path == null) {
                         path = (Uri) getArguments().getParcelable(
@@ -1073,19 +1075,19 @@ public class FragmentFiles extends Fragment implements
 
                         if (path != null
                                 && BaseFileProviderUtils.fileExists(getActivity(),
-                                path))
+                                        path))
                             path = BaseFileProviderUtils.getParentFile(
                                     getActivity(), path);
                     }
                     log += "success ? " + (path != null);
 
-                /*
-                 * Rootpath
-                 */
+                    /*
+                     * Rootpath
+                     */
                     log += "rootpath";
                     if ((path == null)
                             || (!BaseFileProviderUtils.isDirectory(getActivity(),
-                            path))) {
+                                    path))) {
                         log += " assign";
                         path = mRoot;
                     }
@@ -1095,9 +1097,9 @@ public class FragmentFiles extends Fragment implements
                                 path);
                     }
 
-                /*
-                 * Last location
-                 */
+                    /*
+                     * Last location
+                     */
                     if (path == null
                             && DisplayPrefs.isRememberLastLocation(getActivity())) {
                         String lastLocation = DisplayPrefs
@@ -1110,21 +1112,19 @@ public class FragmentFiles extends Fragment implements
 
                     if (path == null
                             || !BaseFileProviderUtils.isDirectory(getActivity(),
-                            path)) {
+                                    path)) {
                         path = BaseFileProviderUtils.getDefaultPath(
                                 getActivity(),
-                                path == null ? mFileProviderAuthority : path
-                                        .getAuthority());
+                                path == null ? mFileProviderAuthority
+                                        : path
+                                                .getAuthority());
                         log += " getDefault. path==null?" + (path == null);
                     }
-                }
-                catch (Exception ex)
-                {
-                    errMsg = getString(R.string.afc_msg_cannot_connect_to_file_provider_service)  + " " + ex.toString() ;
+                } catch (Exception ex) {
+                    errMsg = getString(R.string.afc_msg_cannot_connect_to_file_provider_service) + " " + ex.toString();
                     errorMessageInDialog = true;
                     return null;
                 }
-
 
                 if (path == null) {
                     errMsg = "Did not find initial path.";
@@ -1167,8 +1167,7 @@ public class FragmentFiles extends Fragment implements
                     getLoaderManager().initLoader(mIdLoaderData, result,
                             FragmentFiles.this);
                 } else if (errMsg != null) {
-                    if (errorMessageInDialog)
-                    {
+                    if (errorMessageInDialog) {
                         Dlg.showError(getActivity(),
                                 errMsg,
                                 new DialogInterface.OnCancelListener() {
@@ -1179,9 +1178,7 @@ public class FragmentFiles extends Fragment implements
                                         getActivity().finish();
                                     }// onCancel()
                                 });
-                    }
-                    else
-                    {
+                    } else {
                         Dlg.toast(getActivity(), errMsg, Dlg.LENGTH_SHORT);
                         getActivity().finish();
                     }
@@ -1255,7 +1252,7 @@ public class FragmentFiles extends Fragment implements
      * Sets current location.
      * 
      * @param location
-     *            the location to set.
+     *                 the location to set.
      */
     private void setCurrentLocation(Uri location) {
         /*
@@ -1278,7 +1275,6 @@ public class FragmentFiles extends Fragment implements
         goTo(mRoot);
     }// goHome()
 
-
     private static final int[] BUTTON_SORT_IDS = {
             R.id.afc_button_sort_by_name_asc,
             R.id.afc_button_sort_by_name_desc,
@@ -1298,15 +1294,15 @@ public class FragmentFiles extends Fragment implements
         // get the index of button of current sort type
         int btnCurrentSortTypeIdx = 0;
         switch (DisplayPrefs.getSortType(getActivity())) {
-        case BaseFile.SORT_BY_NAME:
-            btnCurrentSortTypeIdx = 0;
-            break;
-        case BaseFile.SORT_BY_SIZE:
-            btnCurrentSortTypeIdx = 2;
-            break;
-        case BaseFile.SORT_BY_MODIFICATION_TIME:
-            btnCurrentSortTypeIdx = 4;
-            break;
+            case BaseFile.SORT_BY_NAME:
+                btnCurrentSortTypeIdx = 0;
+                break;
+            case BaseFile.SORT_BY_SIZE:
+                btnCurrentSortTypeIdx = 2;
+                break;
+            case BaseFile.SORT_BY_MODIFICATION_TIME:
+                btnCurrentSortTypeIdx = 4;
+                break;
         }
         if (!DisplayPrefs.isSortAscending(getActivity()))
             btnCurrentSortTypeIdx++;
@@ -1373,12 +1369,12 @@ public class FragmentFiles extends Fragment implements
      */
     private void switchViewType() {
         switch (DisplayPrefs.getViewType(getActivity())) {
-        case GRID:
-            DisplayPrefs.setViewType(getActivity(), ViewType.LIST);
-            break;
-        case LIST:
-            DisplayPrefs.setViewType(getActivity(), ViewType.GRID);
-            break;
+            case GRID:
+                DisplayPrefs.setViewType(getActivity(), ViewType.LIST);
+                break;
+            case LIST:
+                DisplayPrefs.setViewType(getActivity(), ViewType.GRID);
+                break;
         }
 
         setupViewFiles();
@@ -1467,7 +1463,8 @@ public class FragmentFiles extends Fragment implements
                                     getActivity(),
                                     getString(
                                             R.string.afc_pmsg_filename_is_invalid,
-                                            name), Dlg.LENGTH_SHORT);
+                                            name),
+                                    Dlg.LENGTH_SHORT);
                             return;
                         }
 
@@ -1507,7 +1504,8 @@ public class FragmentFiles extends Fragment implements
                                             getActivity(),
                                             getString(
                                                     R.string.afc_pmsg_cannot_create_folder,
-                                                    name), Dlg.LENGTH_SHORT);
+                                                    name),
+                                            Dlg.LENGTH_SHORT);
                             }// onPostExecute()
 
                         }.execute();
@@ -1550,7 +1548,7 @@ public class FragmentFiles extends Fragment implements
      * Deletes a file.
      * 
      * @param position
-     *            the position of item to be delete.
+     *                 the position of item to be delete.
      */
     private void deleteFile(final int position) {
         Cursor cursor = (Cursor) mFileAdapter.getItem(position);
@@ -1567,7 +1565,8 @@ public class FragmentFiles extends Fragment implements
                     getActivity(),
                     getString(R.string.afc_pmsg_cannot_delete_file,
                             isFile ? getString(R.string.afc_file)
-                                    : getString(R.string.afc_folder), filename),
+                                    : getString(R.string.afc_folder),
+                            filename),
                     Dlg.LENGTH_SHORT);
             return;
         }
@@ -1596,7 +1595,8 @@ public class FragmentFiles extends Fragment implements
                 getActivity(),
                 getString(R.string.afc_pmsg_confirm_delete_file,
                         isFile ? getString(R.string.afc_file)
-                                : getString(R.string.afc_folder), filename),
+                                : getString(R.string.afc_folder),
+                        filename),
                 new DialogInterface.OnClickListener() {
 
                     @Override
@@ -1607,7 +1607,8 @@ public class FragmentFiles extends Fragment implements
                                         R.string.afc_pmsg_deleting_file,
                                         isFile ? getString(R.string.afc_file)
                                                 : getString(R.string.afc_folder),
-                                        filename), true) {
+                                        filename),
+                                true) {
 
                             final int taskId = EnvUtils.genId();
 
@@ -1618,7 +1619,8 @@ public class FragmentFiles extends Fragment implements
                                                 R.string.afc_pmsg_file_has_been_deleted,
                                                 isFile ? getString(R.string.afc_file)
                                                         : getString(R.string.afc_folder),
-                                                filename), Dlg.LENGTH_SHORT);
+                                                filename),
+                                        Dlg.LENGTH_SHORT);
                             }// notifyFileDeleted()
 
                             @Override
@@ -1641,7 +1643,8 @@ public class FragmentFiles extends Fragment implements
                                 if (getCurrentLocation() != null)
                                     BaseFileProviderUtils.cancelTask(
                                             getActivity(), getCurrentLocation()
-                                                    .getAuthority(), taskId);
+                                                    .getAuthority(),
+                                            taskId);
 
                                 new LoadingDialog<Void, Void, Boolean>(
                                         getActivity(), false) {
@@ -1686,7 +1689,8 @@ public class FragmentFiles extends Fragment implements
                                                     R.string.afc_pmsg_cannot_delete_file,
                                                     isFile ? getString(R.string.afc_file)
                                                             : getString(R.string.afc_folder),
-                                                    filename), Dlg.LENGTH_SHORT);
+                                                    filename),
+                                            Dlg.LENGTH_SHORT);
                                 }
                             }// onPostExecute()
 
@@ -1758,7 +1762,8 @@ public class FragmentFiles extends Fragment implements
                     fileUri = getCurrentLocation()
                             .buildUpon()
                             .appendQueryParameter(BaseFile.PARAM_APPEND_NAME,
-                                    filename).build();
+                                    filename)
+                            .build();
                 final Cursor cursor = getActivity().getContentResolver().query(
                         fileUri, null, null, null, null);
                 try {
@@ -1791,35 +1796,36 @@ public class FragmentFiles extends Fragment implements
                 }
 
                 switch (fileType) {
-                case BaseFile.FILE_TYPE_DIRECTORY: {
-                    Dlg.toast(
-                            getActivity(),
-                            getString(R.string.afc_pmsg_filename_is_directory,
-                                    filename), Dlg.LENGTH_SHORT);
-                    break;
-                }// FILE_TYPE_DIRECTORY
+                    case BaseFile.FILE_TYPE_DIRECTORY: {
+                        Dlg.toast(
+                                getActivity(),
+                                getString(R.string.afc_pmsg_filename_is_directory,
+                                        filename),
+                                Dlg.LENGTH_SHORT);
+                        break;
+                    } // FILE_TYPE_DIRECTORY
 
-                case BaseFile.FILE_TYPE_FILE: {
-                    Dlg.confirmYesno(
-                            getActivity(),
-                            getString(R.string.afc_pmsg_confirm_replace_file,
-                                    filename),
-                            new DialogInterface.OnClickListener() {
+                    case BaseFile.FILE_TYPE_FILE: {
+                        Dlg.confirmYesno(
+                                getActivity(),
+                                getString(R.string.afc_pmsg_confirm_replace_file,
+                                        filename),
+                                new DialogInterface.OnClickListener() {
 
-                                @Override
-                                public void onClick(DialogInterface dialog,
-                                        int which) {
-                                    finish(result, true);
-                                }// onClick()
-                            });
+                                    @Override
+                                    public void onClick(DialogInterface dialog,
+                                            int which) {
+                                        finish(result, true);
+                                    }// onClick()
+                                });
 
-                    break;
-                }// FILE_TYPE_FILE
+                        break;
+                    } // FILE_TYPE_FILE
 
-                case BaseFile.FILE_TYPE_NOT_EXISTED: {
-                    finish(result, false);
-                    break;
-                }// FILE_TYPE_NOT_EXISTED
+                    case BaseFile.FILE_TYPE_NOT_EXISTED: {
+                        finish(result, false);
+                        break;
+                    } // FILE_TYPE_NOT_EXISTED
                 }
             }// onPostExecute()
 
@@ -1869,7 +1875,7 @@ public class FragmentFiles extends Fragment implements
                     Bundle bundle = new Bundle();
                     bundle.putParcelable(PATH, params[0]);
                     return bundle;
-                }// if
+                } // if
 
                 errMsg = getString(R.string.afc_pmsg_cannot_access_dir,
                         BaseFileProviderUtils.getFileName(getActivity(),
@@ -1889,8 +1895,7 @@ public class FragmentFiles extends Fragment implements
                 } else if (errMsg != null) {
 
                     Dlg.toast(getActivity(), errMsg, Dlg.LENGTH_SHORT);
-                }
-                else
+                } else
                     showCannotConnectToServiceAndWaitForTheUserToFinish("goTo: " + dir.toString());
             }// onPostExecute()
 
@@ -1908,12 +1913,13 @@ public class FragmentFiles extends Fragment implements
         final long beginTodayMillis = cal.getTimeInMillis()
                 - (cal.get(Calendar.HOUR_OF_DAY) * 60 * 60 * 1000
                         + cal.get(Calendar.MINUTE) * 60 * 1000 + cal
-                        .get(Calendar.SECOND) * 1000);
+                                .get(Calendar.SECOND) * 1000);
         if (BuildConfig.DEBUG) {
             Log.d(CLASSNAME,
                     String.format("beginToday = %s (%s)", DbUtils
-                            .formatNumber(beginTodayMillis), new Date(
-                            beginTodayMillis)));
+                            .formatNumber(beginTodayMillis),
+                            new Date(
+                                    beginTodayMillis)));
             Log.d(CLASSNAME, String.format("endToday = %s (%s)", DbUtils
                     .formatNumber(beginTodayMillis + DateUtils.DAY_IN_MILLIS),
                     new Date(beginTodayMillis + DateUtils.DAY_IN_MILLIS)));
@@ -2008,9 +2014,10 @@ public class FragmentFiles extends Fragment implements
                                     .appendPath(BaseFile.CMD_GET_PARENT)
                                     .appendQueryParameter(
                                             BaseFile.PARAM_SOURCE,
-                                            uri.getLastPathSegment()).build(),
+                                            uri.getLastPathSegment())
+                                    .build(),
                             null, null, null, null);
-                }// while
+                } // while
 
                 return null;
             }// doInBackground()
@@ -2058,7 +2065,7 @@ public class FragmentFiles extends Fragment implements
                         mTextFullDirName.setVisibility(View.VISIBLE);
                     } else
                         mTextFullDirName.setVisibility(View.GONE);
-                }// if
+                } // if
             }// onProgressUpdate()
 
             @Override
@@ -2079,12 +2086,12 @@ public class FragmentFiles extends Fragment implements
 
         }.execute();
     }// buildAddressBar()
-    
+
     /**
      * Finishes this activity when save-as.
      * 
      * @param file
-     *            @link Uri.
+     * @link Uri.
      */
     private void finish(Uri file, boolean fileExists) {
         ArrayList<Uri> list = new ArrayList<Uri>();
@@ -2104,7 +2111,7 @@ public class FragmentFiles extends Fragment implements
      * Finishes this activity.
      * 
      * @param files
-     *            list of {@link Uri}.
+     *              list of {@link Uri}.
      */
     private void finish(Uri... files) {
         List<Uri> list = new ArrayList<Uri>();
@@ -2117,7 +2124,7 @@ public class FragmentFiles extends Fragment implements
      * Finishes this activity.
      * 
      * @param files
-     *            list of {@link Uri}.
+     *              list of {@link Uri}.
      */
     private void finish(ArrayList<Uri> files) {
         if (files == null || files.isEmpty()) {
@@ -2127,13 +2134,12 @@ public class FragmentFiles extends Fragment implements
         }
 
         Intent intent = new Intent();
-        if (files.size() == 1)
-        {
-        	intent.setData(files.get(0));
+        if (files.size() == 1) {
+            intent.setData(files.get(0));
         }
         intent.putParcelableArrayListExtra(FileChooserActivity.EXTRA_RESULTS,
                 files);
-        
+
         getActivity().setResult(FileChooserActivity.RESULT_OK, intent);
 
         if (DisplayPrefs.isRememberLastLocation(getActivity())
@@ -2159,8 +2165,6 @@ public class FragmentFiles extends Fragment implements
             goHome();
         }// onClick()
     };// mBtnGoHomeOnClickListener
-
-
 
     private final View.OnClickListener mBtnGoBackOnClickListener = new View.OnClickListener() {
 
@@ -2228,7 +2232,6 @@ public class FragmentFiles extends Fragment implements
         }// onClick()
     };// mBtnGoForwardOnClickListener
 
-    
     private final View.OnClickListener mBtnOk_SaveDialog_OnClickListener = new View.OnClickListener() {
 
         @Override
@@ -2250,7 +2253,6 @@ public class FragmentFiles extends Fragment implements
      * FRAGMENT LISTENERS
      */
 
-    
     /*
      * LISTVIEW HELPER
      */
@@ -2281,7 +2283,7 @@ public class FragmentFiles extends Fragment implements
                  * Do nothing.
                  */
                 return;
-            }// double tap to choose files
+            } // double tap to choose files
             else {
                 if (mIsMultiSelection)
                     return;
@@ -2290,7 +2292,7 @@ public class FragmentFiles extends Fragment implements
                     checkSaveasFilenameAndFinish();
                 else
                     finish(BaseFileProviderUtils.getUri(cursor));
-            }// single tap to choose files
+            } // single tap to choose files
         }// onItemClick()
     };// mViewFilesOnItemClickListener
 
@@ -2303,15 +2305,16 @@ public class FragmentFiles extends Fragment implements
 
             if (mDoubleTapToChooseFiles) {
                 // do nothing
-            }// double tap to choose files
+            } // double tap to choose files
             else {
                 if (!mIsSaveDialog
                         && !mIsMultiSelection
                         && BaseFileProviderUtils.isDirectory(cursor)
-                        && (BaseFile.FILTER_DIRECTORIES_ONLY == mFilterMode || BaseFile.FILTER_FILES_AND_DIRECTORIES == mFilterMode)) {
+                        && (BaseFile.FILTER_DIRECTORIES_ONLY == mFilterMode
+                                || BaseFile.FILTER_FILES_AND_DIRECTORIES == mFilterMode)) {
                     finish(BaseFileProviderUtils.getUri(cursor));
                 }
-            }// single tap to choose files
+            } // single tap to choose files
 
             /*
              * Notify that we already handled long click here.
@@ -2319,8 +2322,6 @@ public class FragmentFiles extends Fragment implements
             return true;
         }// onItemLongClick()
     };// mViewFilesOnItemLongClickListener
-
-
 
     /**
      * We use a {@link LoadingDialog} to avoid of
@@ -2371,8 +2372,8 @@ public class FragmentFiles extends Fragment implements
                         getActivity(), uri);
                 if ((uri == getLastLocation()
                         && !getCurrentLocation().equals(getLastLocation()) && BaseFileProviderUtils
-                            .isAncestorOf(getActivity(), getCurrentLocation(),
-                                    uri))
+                                .isAncestorOf(getActivity(), getCurrentLocation(),
+                                        uri))
                         || getCurrentLocation().equals(parentUri)) {
                     if (cursor.moveToFirst()) {
                         while (!cursor.isLast()) {
@@ -2402,9 +2403,9 @@ public class FragmentFiles extends Fragment implements
                             }
 
                             cursor.moveToNext();
-                        }// while
-                    }// if
-                }// if
+                        } // while
+                    } // if
+                } // if
 
                 return shouldBeSelectedIdx;
             }// doInBackground()

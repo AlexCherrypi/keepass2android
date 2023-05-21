@@ -27,11 +27,12 @@ public class ProviderUtils {
      * Gets integer parameter.
      * 
      * @param uri
-     *            the original URI.
+     *                     the original URI.
      * @param key
-     *            the key of query parameter.
+     *                     the key of query parameter.
      * @param defaultValue
-     *            will be returned if nothing found or parsing value failed.
+     *                     will be returned if nothing found or parsing value
+     *                     failed.
      * @return the integer value.
      */
     public static int getIntQueryParam(Uri uri, String key, int defaultValue) {
@@ -46,11 +47,12 @@ public class ProviderUtils {
      * Gets long parameter.
      * 
      * @param uri
-     *            the original URI.
+     *                     the original URI.
      * @param key
-     *            the key of query parameter.
+     *                     the key of query parameter.
      * @param defaultValue
-     *            will be returned if nothing found or parsing value failed.
+     *                     will be returned if nothing found or parsing value
+     *                     failed.
      * @return the long value.
      */
     public static long getLongQueryParam(Uri uri, String key, long defaultValue) {
@@ -83,11 +85,11 @@ public class ProviderUtils {
      * Gets boolean parameter.
      * 
      * @param uri
-     *            the original URI.
+     *                     the original URI.
      * @param key
-     *            the key of query parameter.
+     *                     the key of query parameter.
      * @param defaultValue
-     *            the default value if the parameter does not exist.
+     *                     the default value if the parameter does not exist.
      * @return {@code defaultValue} if the parameter does not exist, or it is
      *         either {@code "false"} or {@code "0"}. {@code true} otherwise.
      */

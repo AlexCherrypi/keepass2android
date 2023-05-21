@@ -30,7 +30,7 @@ public final class HistoryContract implements BaseColumns {
      * Gets the authority of this provider.
      * 
      * @param context
-     *            the context.
+     *                the context.
      * @return the authority.
      */
     public static final String getAuthority(Context context) {

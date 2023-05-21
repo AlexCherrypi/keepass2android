@@ -64,7 +64,7 @@ namespace keepass2android
             prefs.Edit().PutStringSet("AutoFillDisabledQueries", disabledValues).Commit();
 
             bool isManual = Intent.GetBooleanExtra(ChooseForAutofillActivityBase.ExtraIsManualRequest, false);
-            
+
             Intent reply = new Intent();
             FillResponse.Builder builder = new FillResponse.Builder();
             AssistStructure structure = (AssistStructure)Intent.GetParcelableExtra(AutofillManager.ExtraAssistStructure);
@@ -89,7 +89,7 @@ namespace keepass2android
 
             try
             {
-                
+
                 reply.PutExtra(AutofillManager.ExtraAuthenticationResult, (FillResponse)null);
             }
             catch (Exception e)
@@ -99,7 +99,7 @@ namespace keepass2android
             }
 
             SetResult(Result.Ok, reply);
-            
+
 
             Finish();
         }

@@ -19,7 +19,7 @@ public interface HistoryListener<A> {
      * Will be called after the history changed.
      * 
      * @param history
-     *            {@link History}
+     *                {@link History}
      */
     void onChanged(History<A> history);
 

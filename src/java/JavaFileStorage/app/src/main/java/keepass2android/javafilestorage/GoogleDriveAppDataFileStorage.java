@@ -2,8 +2,7 @@ package keepass2android.javafilestorage;
 
 import com.google.android.gms.common.Scopes;
 
-public class GoogleDriveAppDataFileStorage extends GoogleDriveBaseFileStorage
-{
+public class GoogleDriveAppDataFileStorage extends GoogleDriveBaseFileStorage {
     private static final String GDRIVE_PROTOCOL_ID = "gdriveKP2A";
 
     @Override

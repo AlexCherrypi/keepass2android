@@ -28,9 +28,9 @@ using Object = Java.Lang.Object;
 
 namespace keepass2android
 {
-    [Activity(Label = AppNames.AppName, 
-        MainLauncher = false, 
-        Theme = "@style/MyTheme_Blue", 
+    [Activity(Label = AppNames.AppName,
+        MainLauncher = false,
+        Theme = "@style/MyTheme_Blue",
         Exported = true,
         LaunchMode = LaunchMode.SingleInstance)] //caution, see manifest file
     public class SelectCurrentDbActivity : LifecycleAwareActivity
@@ -96,13 +96,13 @@ namespace keepass2android
                     // if it's not recycled, initialize some attributes
 
                     btn = new Button(_context);
-                    btn.LayoutParameters = new GridView.LayoutParams((int) convertDpToPixel(140, _context),
-                        (int) convertDpToPixel(150, _context));
-                    
-                    btn.SetPadding((int) convertDpToPixel(4, _context),
-                        (int) convertDpToPixel(20, _context),
-                        (int) convertDpToPixel(4, _context),
-                        (int) convertDpToPixel(4, _context));
+                    btn.LayoutParameters = new GridView.LayoutParams((int)convertDpToPixel(140, _context),
+                        (int)convertDpToPixel(150, _context));
+
+                    btn.SetPadding((int)convertDpToPixel(4, _context),
+                        (int)convertDpToPixel(20, _context),
+                        (int)convertDpToPixel(4, _context),
+                        (int)convertDpToPixel(4, _context));
                     btn.SetTextSize(ComplexUnitType.Sp, 11);
                     btn.SetTextColor(new Color(115, 115, 115));
                     btn.SetSingleLine(false);
@@ -110,7 +110,7 @@ namespace keepass2android
                     btn.Click += (sender, args) =>
                     {
                         int pos;
-                        int.TryParse(((Button) sender).Tag.ToString(), out pos);
+                        int.TryParse(((Button)sender).Tag.ToString(), out pos);
                         if (pos < _displayedDatabases.Count)
                             _context.OnDatabaseSelected(_displayedDatabases[pos]);
                         else if (pos < _displayedDatabases.Count + _autoExecItems.Count)
@@ -122,7 +122,7 @@ namespace keepass2android
                 }
                 else
                 {
-                    btn = (Button) convertView;
+                    btn = (Button)convertView;
                 }
 
                 btn.Tag = position.ToString();
@@ -162,7 +162,7 @@ namespace keepass2android
 
             public override int Count
             {
-                get { return _displayedDatabases.Count+_autoExecItems.Count+1; }
+                get { return _displayedDatabases.Count + _autoExecItems.Count + 1; }
             }
 
             public void Update()
@@ -183,13 +183,13 @@ namespace keepass2android
                                    displayedDb.Ioc.IsSameFileAs(itemIoc);
                         })
                         && IsValidIoc(item)
-                        
+
                         )
 
                     .ToList();
             }
 
-            
+
         }
 
         private void OnAutoExecItemSelected(AutoExecItem autoExecItem)
@@ -268,7 +268,7 @@ namespace keepass2android
 
             _adapter = new OpenDatabaseAdapter(this);
             var gridView = FindViewById<GridView>(Resource.Id.gridview);
-            
+
             gridView.Adapter = _adapter;
 
             if (!string.IsNullOrEmpty(Intent.GetStringExtra(Util.KeyFilename)))
@@ -315,7 +315,7 @@ namespace keepass2android
         protected override void OnStart()
         {
             base.OnStart();
-            
+
             if (_intentReceiver == null)
             {
                 _intentReceiver = new MyBroadcastReceiver(this);
@@ -417,7 +417,7 @@ namespace keepass2android
                 }
 
                 //see if there are any AutoOpen items to open
-                
+
                 foreach (var db in App.Kp2a.OpenDatabases)
                 {
                     try
@@ -426,10 +426,10 @@ namespace keepass2android
                     }
                     catch (Exception e)
                     {
-                        Toast.MakeText(this, "Failed to open child databases",ToastLength.Long).Show();
+                        Toast.MakeText(this, "Failed to open child databases", ToastLength.Long).Show();
                         Kp2aLog.LogUnexpectedError(e);
                     }
-                    
+
                 }
 
                 //database(s) unlocked
@@ -442,7 +442,7 @@ namespace keepass2android
 
 
             }
-            
+
             //more than one database open or user requested to load another db. Don't launch another activity.
             _adapter.Update();
             _adapter.NotifyDataSetChanged();
@@ -463,7 +463,7 @@ namespace keepass2android
                         continue;
                     if (!IsValidIoc(autoOpenItem))
                         continue;
-                    
+
                     IOConnectionInfo dbIoc;
                     if (KeeAutoExecExt.TryGetDatabaseIoc(autoOpenItem, out dbIoc) &&
                         App.Kp2a.TryGetDatabase(dbIoc) == null &&
@@ -482,7 +482,7 @@ namespace keepass2android
             {
                 Kp2aLog.LogUnexpectedError(e);
             }
-            
+
             return false;
         }
 
@@ -588,7 +588,7 @@ namespace keepass2android
                 case KeePass.ExitNormal: // Returned to this screen using the Back key
                     if (App.Kp2a.OpenDatabases.Count() == 1)
                     {
-                        OnBackPressed(); 
+                        OnBackPressed();
                     }
                     break;
                 case KeePass.ExitLock:
@@ -615,7 +615,7 @@ namespace keepass2android
                     break;
                 case KeePass.ExitReloadDb:
 
-                    if (App.Kp2a.CurrentDb!= null)
+                    if (App.Kp2a.CurrentDb != null)
                     {
                         //remember the composite key for reloading:
                         var compositeKey = App.Kp2a.CurrentDb.KpDatabase.MasterKey;
@@ -632,7 +632,7 @@ namespace keepass2android
                     StartFileSelect(true, true);
                     break;
             }
-        
+
         }
 
         private void LaunchPasswordActivityForReload(IOConnectionInfo ioc, CompositeKey compositeKey)

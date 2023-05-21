@@ -42,11 +42,14 @@ import java.net.URLEncoder;
 import java.util.Locale;
 
 /**
- * A base class for the Android-specific barcode handlers. These allow the app to polymorphically
+ * A base class for the Android-specific barcode handlers. These allow the app
+ * to polymorphically
  * suggest the appropriate actions for each data type.
  *
- * This class also contains a bunch of utility methods to take common actions like opening a URL.
- * They could easily be moved into a helper object, but it can't be static because the Activity
+ * This class also contains a bunch of utility methods to take common actions
+ * like opening a URL.
+ * They could easily be moved into a helper object, but it can't be static
+ * because the Activity
  * instance is needed to launch an intent.
  *
  * @author dswitkin@google.com (Daniel Switkin)
@@ -56,9 +59,9 @@ public abstract class ResultHandler {
 
   private static final String TAG = ResultHandler.class.getSimpleName();
 
-  private static final String[] EMAIL_TYPE_STRINGS = {"home", "work", "mobile"};
-  private static final String[] PHONE_TYPE_STRINGS = {"home", "work", "mobile", "fax", "pager", "main"};
-  private static final String[] ADDRESS_TYPE_STRINGS = {"home", "work"};
+  private static final String[] EMAIL_TYPE_STRINGS = { "home", "work", "mobile" };
+  private static final String[] PHONE_TYPE_STRINGS = { "home", "work", "mobile", "fax", "pager", "main" };
+  private static final String[] ADDRESS_TYPE_STRINGS = { "home", "work" };
   private static final int[] EMAIL_TYPE_VALUES = {
       ContactsContract.CommonDataKinds.Email.TYPE_HOME,
       ContactsContract.CommonDataKinds.Email.TYPE_WORK,
@@ -123,7 +126,6 @@ public abstract class ResultHandler {
    */
   public abstract int getButtonText(int index);
 
-
   /**
    * Execute the action which corresponds to the nth button.
    *
@@ -132,7 +134,8 @@ public abstract class ResultHandler {
   public abstract void handleButtonPress(int index);
 
   /**
-   * Some barcode contents are considered secure, and should not be saved to history, copied to
+   * Some barcode contents are considered secure, and should not be saved to
+   * history, copied to
    * the clipboard, or otherwise persisted.
    *
    * @return If true, do not create any permanent record of these contents.
@@ -152,7 +155,8 @@ public abstract class ResultHandler {
   }
 
   /**
-   * A string describing the kind of barcode that was found, e.g. "Found contact info".
+   * A string describing the kind of barcode that was found, e.g. "Found contact
+   * info".
    *
    * @return The resource ID of the string.
    */
@@ -167,8 +171,9 @@ public abstract class ResultHandler {
     return result.getType();
   }
 
-  final void addPhoneOnlyContact(String[] phoneNumbers,String[] phoneTypes) {
-    addContact(null, null, null, phoneNumbers, phoneTypes, null, null, null, null, null, null, null, null, null, null, null);
+  final void addPhoneOnlyContact(String[] phoneNumbers, String[] phoneTypes) {
+    addContact(null, null, null, phoneNumbers, phoneTypes, null, null, null, null, null, null, null, null, null, null,
+        null);
   }
 
   final void addEmailOnlyContact(String[] emails, String[] emailTypes) {
@@ -176,21 +181,21 @@ public abstract class ResultHandler {
   }
 
   final void addContact(String[] names,
-                        String[] nicknames,
-                        String pronunciation,
-                        String[] phoneNumbers,
-                        String[] phoneTypes,
-                        String[] emails,
-                        String[] emailTypes,
-                        String note,
-                        String instantMessenger,
-                        String address,
-                        String addressType,
-                        String org,
-                        String title,
-                        String[] urls,
-                        String birthday,
-                        String[] geo) {
+      String[] nicknames,
+      String pronunciation,
+      String[] phoneNumbers,
+      String[] phoneTypes,
+      String[] emails,
+      String[] emailTypes,
+      String note,
+      String instantMessenger,
+      String address,
+      String addressType,
+      String org,
+      String title,
+      String[] urls,
+      String birthday,
+      String[] geo) {
 
     // Only use the first name in the array, if present.
     Intent intent = new Intent(Intent.ACTION_INSERT_OR_EDIT, ContactsContract.Contacts.CONTENT_URI);
@@ -250,7 +255,7 @@ public abstract class ResultHandler {
       // Remove extra leading '\n'
       putExtra(intent, ContactsContract.Intents.Insert.NOTES, aggregatedNotes.substring(1));
     }
-    
+
     putExtra(intent, ContactsContract.Intents.Insert.IM_HANDLE, instantMessenger);
     putExtra(intent, ContactsContract.Intents.Insert.POSTAL, address);
     if (addressType != null) {
@@ -297,11 +302,12 @@ public abstract class ResultHandler {
     sendEmailFromUri("mailto:" + address, address, subject, body);
   }
 
-  // Use public Intent fields rather than private GMail app fields to specify subject and body.
+  // Use public Intent fields rather than private GMail app fields to specify
+  // subject and body.
   final void sendEmailFromUri(String uri, String email, String subject, String body) {
     Intent intent = new Intent(Intent.ACTION_SEND, Uri.parse(uri));
     if (email != null) {
-      intent.putExtra(Intent.EXTRA_EMAIL, new String[] {email});
+      intent.putExtra(Intent.EXTRA_EMAIL, new String[] { email });
     }
     putExtra(intent, Intent.EXTRA_SUBJECT, subject);
     putExtra(intent, Intent.EXTRA_TEXT, body);
@@ -331,7 +337,8 @@ public abstract class ResultHandler {
 
   final void sendMMSFromUri(String uri, String subject, String body) {
     Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse(uri));
-    // The Messaging app needs to see a valid subject or else it will treat this an an SMS.
+    // The Messaging app needs to see a valid subject or else it will treat this an
+    // an SMS.
     if (subject == null || subject.isEmpty()) {
       putExtra(intent, "subject", activity.getString(R.string.msg_default_mms_subject));
     } else {
@@ -358,7 +365,8 @@ public abstract class ResultHandler {
    * Do a geo search using the address as the query.
    *
    * @param address The address to find
-   * @param title An optional title, e.g. the name of the business at this address
+   * @param title   An optional title, e.g. the name of the business at this
+   *                address
    */
   final void searchMap(String address, String title) {
     String query = address;
@@ -373,7 +381,8 @@ public abstract class ResultHandler {
         LocaleManager.getCountryTLD(activity) + "/maps?f=d&daddr=" + latitude + ',' + longitude)));
   }
 
-  // Uses the mobile-specific version of Product Search, which is formatted for small screens.
+  // Uses the mobile-specific version of Product Search, which is formatted for
+  // small screens.
   final void openProductSearch(String upc) {
     Uri uri = Uri.parse("http://www.google." + LocaleManager.getProductSearchCountryTLD(activity) +
         "/m/products?q=" + upc + "&source=zxing");
@@ -394,7 +403,8 @@ public abstract class ResultHandler {
   }
 
   final void openURL(String url) {
-    // Strangely, some Android browsers don't seem to register to handle HTTP:// or HTTPS://.
+    // Strangely, some Android browsers don't seem to register to handle HTTP:// or
+    // HTTPS://.
     // Lower-case these as it should always be OK to lower-case these schemes.
     if (url.startsWith("HTTP://")) {
       url = "http" + url.substring(4);
@@ -430,7 +440,8 @@ public abstract class ResultHandler {
   }
 
   /**
-   * Like {@link #rawLaunchIntent(Intent)} but will show a user dialog if nothing is available to handle.
+   * Like {@link #rawLaunchIntent(Intent)} but will show a user dialog if nothing
+   * is available to handle.
    */
   final void launchIntent(Intent intent) {
     try {
@@ -467,7 +478,7 @@ public abstract class ResultHandler {
     try {
       text = URLEncoder.encode(text, "UTF-8");
     } catch (UnsupportedEncodingException e) {
-      // can't happen; UTF-8 is always supported. Continue, I guess, without encoding      
+      // can't happen; UTF-8 is always supported. Continue, I guess, without encoding
     }
     String url = customProductSearch.replace("%s", text);
     if (rawResult != null) {

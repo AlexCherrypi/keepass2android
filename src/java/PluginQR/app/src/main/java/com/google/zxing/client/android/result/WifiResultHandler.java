@@ -48,7 +48,8 @@ public final class WifiResultHandler extends ResultHandler {
 
   @Override
   public int getButtonCount() {
-    // We just need one button, and that is to configure the wireless.  This could change in the future.
+    // We just need one button, and that is to configure the wireless. This could
+    // change in the future.
     return 1;
   }
 
@@ -61,7 +62,8 @@ public final class WifiResultHandler extends ResultHandler {
   public void handleButtonPress(int index) {
     if (index == 0) {
       WifiParsedResult wifiResult = (WifiParsedResult) getResult();
-      WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+      WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext()
+          .getSystemService(Context.WIFI_SERVICE);
       if (wifiManager == null) {
         Log.w(TAG, "No WifiManager available from device");
         return;

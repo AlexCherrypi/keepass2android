@@ -114,7 +114,7 @@ namespace keepass2android
                     edit.PutString(_pref.Key, _pref.IconSets[p].PackageName);
                     edit.Commit();
                     _pref.selectedEntry = p;
-					
+
                 };
 
                 return row;
@@ -179,7 +179,7 @@ namespace keepass2android
                 SetEntries(IconSets.Select(s => s.DisplayName).ToArray());
                 SetEntryValues(IconSets.Select(s => s.PackageName).ToArray());
             });
-			
+
         }
 
 

@@ -31,14 +31,14 @@ public class SftpStorage extends JavaFileStorageBase {
 	public static final int DEFAULT_SFTP_PORT = 22;
 	JSch jsch;
 
-	public class ConnectionInfo
-	{
+	public class ConnectionInfo {
 		public String host;
 		public String username;
 		public String password;
 		public String localPath;
 		public int port;
 	}
+
 	Context _appContext;
 
 	public SftpStorage(Context appContext) {
@@ -109,28 +109,22 @@ public class SftpStorage extends JavaFileStorageBase {
 		try {
 			InputStream in = new ByteArrayInputStream(data);
 			String targetPath = extractSessionPath(path);
-			if (writeTransactional)
-			{
-				//upload to temporary location:
-				String tmpPath = targetPath+".tmp";
+			if (writeTransactional) {
+				// upload to temporary location:
+				String tmpPath = targetPath + ".tmp";
 				c.put(in, tmpPath);
-				//remove previous file:
-				try
-				{
+				// remove previous file:
+				try {
 					c.rm(targetPath);
+				} catch (SftpException e) {
+					// ignore. Can happen if file didn't exist before
 				}
-				catch (SftpException e)
-				{
-					//ignore. Can happen if file didn't exist before
-				}
-				//rename tmp to target path:
+				// rename tmp to target path:
 				c.rename(tmpPath, targetPath);
+			} else {
+				c.put(in, targetPath);
 			}
-			else
-			{
-				c.put(in, targetPath);				
-			}
-			
+
 			tryDisconnect(c);
 		} catch (Exception e) {
 			tryDisconnect(c);
@@ -160,11 +154,11 @@ public class SftpStorage extends JavaFileStorageBase {
 				.substring(getProtocolPrefix().length());
 		return withoutProtocol.substring(withoutProtocol.indexOf("/"));
 	}
-	
+
 	private String extractUserPwdHost(String path) {
 		String withoutProtocol = path
 				.substring(getProtocolPrefix().length());
-		return withoutProtocol.substring(0,withoutProtocol.indexOf("/"));
+		return withoutProtocol.substring(0, withoutProtocol.indexOf("/"));
 	}
 
 	private String concatPaths(String parentPath, String newDirName) {
@@ -206,13 +200,12 @@ public class SftpStorage extends JavaFileStorageBase {
 
 	private Exception convertException(Exception e) {
 
-		if (SftpException.class.isAssignableFrom(e.getClass()) )
-		{
-			SftpException sftpEx = (SftpException)e;
+		if (SftpException.class.isAssignableFrom(e.getClass())) {
+			SftpException sftpEx = (SftpException) e;
 			if (sftpEx.id == ChannelSftp.SSH_FX_NO_SUCH_FILE)
 				return new FileNotFoundException(sftpEx.getMessage());
 		}
-		
+
 		return e;
 
 	}
@@ -247,24 +240,20 @@ public class SftpStorage extends JavaFileStorageBase {
 	private void delete(String path, ChannelSftp c) throws Exception {
 		String sessionLocalPath = extractSessionPath(path);
 		try {
-			if (c.stat(sessionLocalPath).isDir())
-			{
+			if (c.stat(sessionLocalPath).isDir()) {
 				List<FileEntry> contents = listFiles(path, c);
-				for (FileEntry fe: contents)
-				{
+				for (FileEntry fe : contents) {
 					delete(fe.path, c);
 				}
 				c.rmdir(sessionLocalPath);
-			}
-			else
-			{
+			} else {
 				c.rm(sessionLocalPath);
 			}
 		} catch (Exception e) {
 			tryDisconnect(c);
 			throw convertException(e);
 		}
-		
+
 	}
 
 	private List<FileEntry> listFiles(String path, ChannelSftp c) throws Exception {
@@ -280,10 +269,9 @@ public class SftpStorage extends JavaFileStorageBase {
 						LsEntry lsEntry = (com.jcraft.jsch.ChannelSftp.LsEntry) obj;
 
 						if ((lsEntry.getFilename().equals("."))
-								||(lsEntry.getFilename().equals(".."))
-								)
+								|| (lsEntry.getFilename().equals("..")))
 							continue;
-						
+
 						FileEntry fileEntry = new FileEntry();
 						fileEntry.displayName = lsEntry.getFilename();
 						fileEntry.path = createFilePath(path, fileEntry.displayName);
@@ -313,13 +301,13 @@ public class SftpStorage extends JavaFileStorageBase {
 			throws UnsupportedEncodingException {
 		return java.net.URLDecoder.decode(encodedString, UTF_8);
 	}
-	
+
 	@Override
 	protected String encode(final String unencoded)
 			throws UnsupportedEncodingException {
 		return java.net.URLEncoder.encode(unencoded, UTF_8);
 	}
-	
+
 	ChannelSftp init(String filename) throws JSchException, UnsupportedEncodingException {
 		jsch = new JSch();
 		ConnectionInfo ci = splitStringToConnectionInfo(filename);
@@ -330,7 +318,7 @@ public class SftpStorage extends JavaFileStorageBase {
 		jsch.setKnownHosts(base_dir + "/known_hosts");
 
 		String key_filename = getKeyFileName();
-		try{
+		try {
 			createKeyPair(key_filename);
 		} catch (Exception ex) {
 			System.out.println(ex);
@@ -338,15 +326,14 @@ public class SftpStorage extends JavaFileStorageBase {
 
 		try {
 			jsch.addIdentity(key_filename);
-		} catch (java.lang.Exception e)
-		{
+		} catch (java.lang.Exception e) {
 
 		}
 
 		Log.e("KP2AJFS[thread]", "getting session...");
 		Session session = jsch.getSession(ci.username, ci.host, ci.port);
 		Log.e("KP2AJFS", "creating SftpUserInfo");
-		UserInfo ui = new SftpUserInfo(ci.password,_appContext);
+		UserInfo ui = new SftpUserInfo(ci.password, _appContext);
 		session.setUserInfo(ui);
 
 		session.setConfig("PreferredAuthentications", "publickey,password");
@@ -385,7 +372,7 @@ public class SftpStorage extends JavaFileStorageBase {
 		kpair.writePrivateKey(key_filename);
 
 		kpair.writePublicKey(public_key_filename, "generated by Keepass2Android");
-		//ret = "Fingerprint: " + kpair.getFingerPrint();
+		// ret = "Fingerprint: " + kpair.getFingerPrint();
 		kpair.dispose();
 		return public_key_filename;
 
@@ -397,13 +384,12 @@ public class SftpStorage extends JavaFileStorageBase {
 		ci.host = extractUserPwdHost(filename);
 		String userPwd = ci.host.substring(0, ci.host.indexOf('@'));
 		ci.username = decode(userPwd.substring(0, userPwd.indexOf(":")));
-		ci.password = decode(userPwd.substring(userPwd.indexOf(":")+1));
+		ci.password = decode(userPwd.substring(userPwd.indexOf(":") + 1));
 		ci.host = ci.host.substring(ci.host.indexOf('@') + 1);
 		ci.port = DEFAULT_SFTP_PORT;
 		int portSeparatorIndex = ci.host.indexOf(":");
-		if (portSeparatorIndex >= 0)
-		{
-			ci.port = Integer.parseInt(ci.host.substring(portSeparatorIndex+1));
+		if (portSeparatorIndex >= 0) {
+			ci.port = Integer.parseInt(ci.host.substring(portSeparatorIndex + 1));
 			ci.host = ci.host.substring(0, portSeparatorIndex);
 		}
 		ci.localPath = extractSessionPath(filename);
@@ -411,7 +397,8 @@ public class SftpStorage extends JavaFileStorageBase {
 	}
 
 	@Override
-	public void prepareFileUsage(JavaFileStorage.FileStorageSetupInitiatorActivity activity, String path, int requestCode, boolean alwaysReturnSuccess) {
+	public void prepareFileUsage(JavaFileStorage.FileStorageSetupInitiatorActivity activity, String path,
+			int requestCode, boolean alwaysReturnSuccess) {
 		Intent intent = new Intent();
 		intent.putExtra(EXTRA_PATH, path);
 		activity.onImmediateResult(requestCode, RESULT_FILEUSAGE_PREPARED, intent);
@@ -440,21 +427,18 @@ public class SftpStorage extends JavaFileStorageBase {
 
 	@Override
 	public String getDisplayName(String path) {
-		try
-		{
+		try {
 			ConnectionInfo ci = splitStringToConnectionInfo(path);
-			return getProtocolPrefix()+ci.username+"@"+ci.host+ci.localPath;
-		}
-		catch (Exception e)
-		{
+			return getProtocolPrefix() + ci.username + "@" + ci.host + ci.localPath;
+		} catch (Exception e) {
 			return extractSessionPath(path);
-		}		
+		}
 	}
 
 	@Override
 	public String getFilename(String path) throws Exception {
 		if (path.endsWith("/"))
-			path = path.substring(0, path.length()-1);
+			path = path.substring(0, path.length() - 1);
 		int lastIndex = path.lastIndexOf("/");
 		if (lastIndex >= 0)
 			return path.substring(lastIndex + 1);
@@ -470,22 +454,20 @@ public class SftpStorage extends JavaFileStorageBase {
 	@Override
 	public void onActivityResult(FileStorageSetupActivity activity,
 			int requestCode, int resultCode, Intent data) {
-		
 
 	}
 
-	public String buildFullPath( String host, int port, String localPath, String username, String password) throws UnsupportedEncodingException
-	{
+	public String buildFullPath(String host, int port, String localPath, String username, String password)
+			throws UnsupportedEncodingException {
 		if (port != DEFAULT_SFTP_PORT)
-			host += ":"+String.valueOf(port);
-		return getProtocolPrefix()+encode(username)+":"+encode(password)+"@"+host+localPath;
-		
-	}
+			host += ":" + String.valueOf(port);
+		return getProtocolPrefix() + encode(username) + ":" + encode(password) + "@" + host + localPath;
 
+	}
 
 	@Override
 	public void prepareFileUsage(Context appContext, String path) {
-		//nothing to do
-		
+		// nothing to do
+
 	}
 }

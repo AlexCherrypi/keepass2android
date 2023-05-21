@@ -30,175 +30,179 @@ using KeePass.Util.Spr;
 
 namespace keepass2android.view
 {
-	public sealed class PwEntryView : GroupListItemView
-	{
-		private readonly GroupBaseActivity _groupActivity;
-		private PwEntry _entry;
-		private readonly TextView _textView;
-		private readonly TextView _textviewDetails;
-		private readonly TextView _textgroupFullPath;
+    public sealed class PwEntryView : GroupListItemView
+    {
+        private readonly GroupBaseActivity _groupActivity;
+        private PwEntry _entry;
+        private readonly TextView _textView;
+        private readonly TextView _textviewDetails;
+        private readonly TextView _textgroupFullPath;
 
-		private int _pos;
+        private int _pos;
 
-		private int? _defaultTextColor;
+        private int? _defaultTextColor;
 
-		readonly bool _showDetail;
-		readonly bool _showGroupFullPath;
-		readonly bool _isSearchResult;
+        readonly bool _showDetail;
+        readonly bool _showGroupFullPath;
+        readonly bool _isSearchResult;
 
 
-		private const int MenuOpen = Menu.First;
-		private const int MenuDelete = MenuOpen + 1;
-		private const int MenuMove = MenuDelete + 1;
-		private const int MenuNavigate = MenuMove + 1;
-		
-		public static PwEntryView GetInstance(GroupBaseActivity act, PwEntry pw, int pos)
-		{
-			return new PwEntryView(act, pw, pos);
+        private const int MenuOpen = Menu.First;
+        private const int MenuDelete = MenuOpen + 1;
+        private const int MenuMove = MenuDelete + 1;
+        private const int MenuNavigate = MenuMove + 1;
 
-		}
+        public static PwEntryView GetInstance(GroupBaseActivity act, PwEntry pw, int pos)
+        {
+            return new PwEntryView(act, pw, pos);
 
-		public PwEntryView(IntPtr javaReference, JniHandleOwnership transfer)
-			: base(javaReference, transfer)
-		{
-			
-		}
+        }
 
-		private PwEntryView(GroupBaseActivity groupActivity, PwEntry pw, int pos):base(groupActivity)
-		{
-			_groupActivity = groupActivity;
+        public PwEntryView(IntPtr javaReference, JniHandleOwnership transfer)
+            : base(javaReference, transfer)
+        {
+
+        }
+
+        private PwEntryView(GroupBaseActivity groupActivity, PwEntry pw, int pos) : base(groupActivity)
+        {
+            _groupActivity = groupActivity;
 
             View ev = Inflate(groupActivity, Resource.Layout.entry_list_entry, null);
-			_textView = (TextView)ev.FindViewById(Resource.Id.entry_text);
-			_textView.TextSize = PrefsUtil.GetListTextSize(groupActivity);
+            _textView = (TextView)ev.FindViewById(Resource.Id.entry_text);
+            _textView.TextSize = PrefsUtil.GetListTextSize(groupActivity);
 
-		    Database db = App.Kp2a.FindDatabaseForElement(pw);
-			
-			ev.FindViewById(Resource.Id.entry_icon_bkg).Visibility = db.DrawableFactory.IsWhiteIconSet ?  ViewStates.Visible : ViewStates.Gone;
+            Database db = App.Kp2a.FindDatabaseForElement(pw);
 
-			_textviewDetails = (TextView)ev.FindViewById(Resource.Id.entry_text_detail);
-			_textviewDetails.TextSize = PrefsUtil.GetListDetailTextSize(groupActivity);
+            ev.FindViewById(Resource.Id.entry_icon_bkg).Visibility = db.DrawableFactory.IsWhiteIconSet ? ViewStates.Visible : ViewStates.Gone;
 
-			_textgroupFullPath = (TextView)ev.FindViewById(Resource.Id.group_detail);
-			_textgroupFullPath.TextSize = PrefsUtil.GetListDetailTextSize(groupActivity);
+            _textviewDetails = (TextView)ev.FindViewById(Resource.Id.entry_text_detail);
+            _textviewDetails.TextSize = PrefsUtil.GetListDetailTextSize(groupActivity);
 
-			_showDetail = PreferenceManager.GetDefaultSharedPreferences(groupActivity).GetBoolean(
-				groupActivity.GetString(Resource.String.ShowUsernameInList_key), 
-				Resources.GetBoolean(Resource.Boolean.ShowUsernameInList_default));
+            _textgroupFullPath = (TextView)ev.FindViewById(Resource.Id.group_detail);
+            _textgroupFullPath.TextSize = PrefsUtil.GetListDetailTextSize(groupActivity);
 
-			_showGroupFullPath = PreferenceManager.GetDefaultSharedPreferences(groupActivity).GetBoolean(
-				groupActivity.GetString(Resource.String.ShowGroupnameInSearchResult_key), 
-				Resources.GetBoolean(Resource.Boolean.ShowGroupnameInSearchResult_default));
+            _showDetail = PreferenceManager.GetDefaultSharedPreferences(groupActivity).GetBoolean(
+                groupActivity.GetString(Resource.String.ShowUsernameInList_key),
+                Resources.GetBoolean(Resource.Boolean.ShowUsernameInList_default));
 
-			_isSearchResult = _groupActivity is keepass2android.search.SearchResults;
+            _showGroupFullPath = PreferenceManager.GetDefaultSharedPreferences(groupActivity).GetBoolean(
+                groupActivity.GetString(Resource.String.ShowGroupnameInSearchResult_key),
+                Resources.GetBoolean(Resource.Boolean.ShowGroupnameInSearchResult_default));
+
+            _isSearchResult = _groupActivity is keepass2android.search.SearchResults;
 
 
-			PopulateView(ev, pw, pos);
-			
-			LayoutParams lp = new LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
-			
-			AddView(ev, lp);
-			
-		}
-		
-		private void PopulateView(View ev, PwEntry pw, int pos)
-		{
+            PopulateView(ev, pw, pos);
+
+            LayoutParams lp = new LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
+
+            AddView(ev, lp);
+
+        }
+
+        private void PopulateView(View ev, PwEntry pw, int pos)
+        {
 
             if (_groupBaseActivity.IsFinishing)
                 return;
 
             _entry = pw;
-			_pos = pos;
-		    ev.FindViewById(Resource.Id.icon).Visibility = ViewStates.Visible;
-		    ev.FindViewById(Resource.Id.check_mark).Visibility = ViewStates.Invisible;
+            _pos = pos;
+            ev.FindViewById(Resource.Id.icon).Visibility = ViewStates.Visible;
+            ev.FindViewById(Resource.Id.check_mark).Visibility = ViewStates.Invisible;
 
-		    Database db = App.Kp2a.FindDatabaseForElement(_entry);
+            Database db = App.Kp2a.FindDatabaseForElement(_entry);
 
             ImageView iv = (ImageView)ev.FindViewById(Resource.Id.icon);
-			bool isExpired = pw.Expires && pw.ExpiryTime < DateTime.Now;
-			if (isExpired)
-			{
-				db.DrawableFactory.AssignDrawableTo(iv, Context, db.KpDatabase, PwIcon.Expired, PwUuid.Zero, false);
-			} else
-			{
-				db.DrawableFactory.AssignDrawableTo(iv, Context, db.KpDatabase, pw.IconId, pw.CustomIconUuid, false);
-			}
+            bool isExpired = pw.Expires && pw.ExpiryTime < DateTime.Now;
+            if (isExpired)
+            {
+                db.DrawableFactory.AssignDrawableTo(iv, Context, db.KpDatabase, PwIcon.Expired, PwUuid.Zero, false);
+            }
+            else
+            {
+                db.DrawableFactory.AssignDrawableTo(iv, Context, db.KpDatabase, pw.IconId, pw.CustomIconUuid, false);
+            }
 
-			String title = pw.Strings.ReadSafe(PwDefs.TitleField);
-			var str = new SpannableString(title);
+            String title = pw.Strings.ReadSafe(PwDefs.TitleField);
+            var str = new SpannableString(title);
 
-			if (isExpired)
-			{
-				str.SetSpan(new StrikethroughSpan(), 0, title.Length, SpanTypes.ExclusiveExclusive);
-			}
-			_textView.TextFormatted = str;
+            if (isExpired)
+            {
+                str.SetSpan(new StrikethroughSpan(), 0, title.Length, SpanTypes.ExclusiveExclusive);
+            }
+            _textView.TextFormatted = str;
 
-			if (_defaultTextColor == null)
-				_defaultTextColor = _textView.TextColors.DefaultColor;
+            if (_defaultTextColor == null)
+                _defaultTextColor = _textView.TextColors.DefaultColor;
 
-			if (_groupActivity.IsBeingMoved(_entry.Uuid))
-			{
-				int elementBeingMoved = Context.Resources.GetColor(Resource.Color.element_being_moved);
-				_textView.SetTextColor(new Color(elementBeingMoved));
-			}
-			else
-				_textView.SetTextColor(new Color((int)_defaultTextColor));
+            if (_groupActivity.IsBeingMoved(_entry.Uuid))
+            {
+                int elementBeingMoved = Context.Resources.GetColor(Resource.Color.element_being_moved);
+                _textView.SetTextColor(new Color(elementBeingMoved));
+            }
+            else
+                _textView.SetTextColor(new Color((int)_defaultTextColor));
 
-			String detail = pw.Strings.ReadSafe(PwDefs.UserNameField);
-			detail = SprEngine.Compile(detail, new SprContext(_entry, db.KpDatabase, SprCompileFlags.All));
+            String detail = pw.Strings.ReadSafe(PwDefs.UserNameField);
+            detail = SprEngine.Compile(detail, new SprContext(_entry, db.KpDatabase, SprCompileFlags.All));
 
-			if ((_showDetail == false) || (String.IsNullOrEmpty(detail)))
-			{
-				_textviewDetails.Visibility = ViewStates.Gone;
-			}
-			else
-			{
-				var strDetail = new SpannableString(detail);
-				
-				if (isExpired)
-				{
-					strDetail.SetSpan(new StrikethroughSpan(), 0, detail.Length, SpanTypes.ExclusiveExclusive);
-				}
-				_textviewDetails.TextFormatted = strDetail;
+            if ((_showDetail == false) || (String.IsNullOrEmpty(detail)))
+            {
+                _textviewDetails.Visibility = ViewStates.Gone;
+            }
+            else
+            {
+                var strDetail = new SpannableString(detail);
 
-				_textviewDetails.Visibility = ViewStates.Visible;
-			}
-				
-			if ( (!_showGroupFullPath) || (!_isSearchResult) ) {
-				_textgroupFullPath.Visibility = ViewStates.Gone;
-			}
+                if (isExpired)
+                {
+                    strDetail.SetSpan(new StrikethroughSpan(), 0, detail.Length, SpanTypes.ExclusiveExclusive);
+                }
+                _textviewDetails.TextFormatted = strDetail;
 
-			else {
-				String groupDetail = pw.ParentGroup.GetFullPath();
-			    if (App.Kp2a.OpenDatabases.Count() > 1)
-			    {
-			        groupDetail += "(" + App.Kp2a.GetFileStorage(db.Ioc).GetDisplayName(db.Ioc) + ")";
-			    }
+                _textviewDetails.Visibility = ViewStates.Visible;
+            }
 
-				var strGroupDetail = new SpannableString (groupDetail);
+            if ((!_showGroupFullPath) || (!_isSearchResult))
+            {
+                _textgroupFullPath.Visibility = ViewStates.Gone;
+            }
 
-				if (isExpired) {
-					strGroupDetail.SetSpan (new StrikethroughSpan (), 0, groupDetail.Length, SpanTypes.ExclusiveExclusive);
-				}
-				_textgroupFullPath.TextFormatted = strGroupDetail;
+            else
+            {
+                String groupDetail = pw.ParentGroup.GetFullPath();
+                if (App.Kp2a.OpenDatabases.Count() > 1)
+                {
+                    groupDetail += "(" + App.Kp2a.GetFileStorage(db.Ioc).GetDisplayName(db.Ioc) + ")";
+                }
 
-				_textgroupFullPath.Visibility = ViewStates.Visible;
-			}
+                var strGroupDetail = new SpannableString(groupDetail);
 
-		}
-		
-		public void ConvertView(PwEntry pw, int pos)
-		{
-			PopulateView(this, pw, pos);
-		}
+                if (isExpired)
+                {
+                    strGroupDetail.SetSpan(new StrikethroughSpan(), 0, groupDetail.Length, SpanTypes.ExclusiveExclusive);
+                }
+                _textgroupFullPath.TextFormatted = strGroupDetail;
 
-		
-		private void LaunchEntry()
-		{
-			_groupActivity.LaunchActivityForEntry(_entry, _pos);
-			//_groupActivity.OverridePendingTransition(Resource.Animation.anim_enter, Resource.Animation.anim_leave);
-		}
-		/*
+                _textgroupFullPath.Visibility = ViewStates.Visible;
+            }
+
+        }
+
+        public void ConvertView(PwEntry pw, int pos)
+        {
+            PopulateView(this, pw, pos);
+        }
+
+
+        private void LaunchEntry()
+        {
+            _groupActivity.LaunchActivityForEntry(_entry, _pos);
+            //_groupActivity.OverridePendingTransition(Resource.Animation.anim_enter, Resource.Animation.anim_leave);
+        }
+        /*
 		public override void OnCreateMenu(IContextMenu menu, IContextMenuContextMenuInfo menuInfo)
 		{
 			menu.Add(0, MenuOpen, 0, Resource.String.menu_open);
@@ -243,10 +247,10 @@ namespace keepass2android.view
 		}
 
 		*/
-	    public override void OnClick()
-	    {
-	        LaunchEntry();
-	    }
-	}
+        public override void OnClick()
+        {
+            LaunchEntry();
+        }
+    }
 }
 

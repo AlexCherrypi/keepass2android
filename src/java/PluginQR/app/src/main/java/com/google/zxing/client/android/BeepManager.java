@@ -105,7 +105,7 @@ final class BeepManager implements MediaPlayer.OnCompletionListener, MediaPlayer
 
   @Override
   public void onCompletion(MediaPlayer mp) {
-    // When the beep has finished playing, rewind to queue up another one.      
+    // When the beep has finished playing, rewind to queue up another one.
     mp.seekTo(0);
   }
 

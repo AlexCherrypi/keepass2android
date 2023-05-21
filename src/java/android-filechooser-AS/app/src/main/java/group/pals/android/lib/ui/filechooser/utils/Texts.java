@@ -26,7 +26,7 @@ public class Texts {
      * Quotes a text in double quotation mark.
      * 
      * @param s
-     *            the text, if {@code null}, empty string will be used
+     *          the text, if {@code null}, empty string will be used
      * @return the quoted text
      */
     public static String quote(String s) {
@@ -37,7 +37,7 @@ public class Texts {
      * Compiles {@code regex}.
      * 
      * @param regex
-     *            the regex.
+     *              the regex.
      * @return a compiled {@link Pattern}, or {@code null} if there is an error
      *         while compiling.
      */

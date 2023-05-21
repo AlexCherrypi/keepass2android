@@ -18,11 +18,11 @@ using AutofillServiceBase = keepass2android.services.AutofillBase.AutofillServic
 
 namespace keepass2android.services
 {
-[Service(Label = AppNames.AppName, Permission=Manifest.Permission.BindAutofillService, Exported = true)]
-    [IntentFilter(new [] {"android.service.autofill.AutofillService"})]
+    [Service(Label = AppNames.AppName, Permission = Manifest.Permission.BindAutofillService, Exported = true)]
+    [IntentFilter(new[] { "android.service.autofill.AutofillService" })]
     [MetaData("android.autofill", Resource = "@xml/autofillservice")]
     [Register("keepass2android.services.Kp2aAutofillService")]
-    public class Kp2aAutofillService: AutofillServiceBase
+    public class Kp2aAutofillService : AutofillServiceBase
     {
         public Kp2aAutofillService()
         {
@@ -75,7 +75,7 @@ namespace keepass2android.services
             intent.PutExtra(Strings.ExtraEntryOutputData, jsonOutputStr);
 
             JSONArray jsonProtectedFields = new JSONArray(
-                (System.Collections.ICollection)new string[]{});
+                (System.Collections.ICollection)new string[] { });
             intent.PutExtra(Strings.ExtraProtectedFieldsList, jsonProtectedFields.ToString());
 
             intent.PutExtra(AppTask.AppTaskKey, "CreateEntryThenCloseTask");

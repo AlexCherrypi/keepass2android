@@ -44,6 +44,6 @@ using keepass2android;
 //[assembly: AssemblyDelaySign(false)]
 //[assembly: AssemblyKeyFile("")]
 
-[assembly: Permission(Name = "keepass2android."+AppNames.PackagePart+".permission.CopyToClipboard", Label = "CopyToClipboard", ProtectionLevel=Protection.Signature)]
+[assembly: Permission(Name = "keepass2android." + AppNames.PackagePart + ".permission.CopyToClipboard", Label = "CopyToClipboard", ProtectionLevel = Protection.Signature)]
 [assembly: UsesPermission(Name = "keepass2android." + AppNames.PackagePart + ".permission.CopyToClipboard")]
 [assembly: UsesPermission(Android.Manifest.Permission.ForegroundService)]

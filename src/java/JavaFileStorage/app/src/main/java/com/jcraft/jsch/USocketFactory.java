@@ -35,6 +35,7 @@ import java.nio.channels.SocketChannel;
 import java.nio.file.Path;
 
 public interface USocketFactory {
-  SocketChannel connect(Path path) throws IOException;
-  ServerSocketChannel bind(Path path) throws IOException;
+   SocketChannel connect(Path path) throws IOException;
+
+   ServerSocketChannel bind(Path path) throws IOException;
 }

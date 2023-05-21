@@ -16,9 +16,9 @@ public class StorageFileProvider extends Kp2aFileProvider {
 	@Override
 	protected FileEntry getFileEntry(String path, StringBuilder errorMessageBuilder) throws Exception {
 
-			keepass2android.javafilestorage.JavaFileStorage.FileEntry entry = MainActivity.storageToTest.getFileEntry(path);
-			keepass2android.kp2afilechooser.FileEntry chooserEntry = convertEntry(entry);
-			return chooserEntry;
+		keepass2android.javafilestorage.JavaFileStorage.FileEntry entry = MainActivity.storageToTest.getFileEntry(path);
+		keepass2android.kp2afilechooser.FileEntry chooserEntry = convertEntry(entry);
+		return chooserEntry;
 
 	}
 
@@ -40,32 +40,26 @@ public class StorageFileProvider extends Kp2aFileProvider {
 			boolean showHiddenFiles, int filterMode, int limit,
 			String positiveRegex, String negativeRegex,
 			List<keepass2android.kp2afilechooser.FileEntry> results, boolean[] hasMoreFiles) {
-		
+
 		List<keepass2android.javafilestorage.JavaFileStorage.FileEntry> entries;
 		try {
 			entries = MainActivity.storageToTest.listFiles(dirName);
-			for (keepass2android.javafilestorage.JavaFileStorage.FileEntry e: entries)
-			{
+			for (keepass2android.javafilestorage.JavaFileStorage.FileEntry e : entries) {
 				keepass2android.kp2afilechooser.FileEntry chooserEntry = convertEntry(e);
 				results.add(chooserEntry);
 			}
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-		
-		
 
 	}
 
 	@Override
 	protected boolean deletePath(String filename, boolean isRecursive) {
-		try
-		{
+		try {
 			MainActivity.storageToTest.delete(filename);
 			return true;
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
@@ -73,13 +67,10 @@ public class StorageFileProvider extends Kp2aFileProvider {
 
 	@Override
 	protected boolean createDirectory(String dirname, String newDirName) {
-		try
-		{
+		try {
 			MainActivity.storageToTest.createFolder(dirname, newDirName);
 			return true;
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}

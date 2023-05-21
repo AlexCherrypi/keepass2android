@@ -33,17 +33,17 @@ namespace keepass2android
                     var fileStorage = _app.GetFileStorage(_targetIoc);
                     if (fileStorage is IOfflineSwitchable)
                     {
-                        ((IOfflineSwitchable) fileStorage).IsOffline = false;
+                        ((IOfflineSwitchable)fileStorage).IsOffline = false;
                     }
 
                     CompositeKey masterKey = App.Kp2a.CurrentDb.KpDatabase.MasterKey;
-                    var sourceIoc = ((KcpKeyFile) masterKey.GetUserKey(typeof(KcpKeyFile))).Ioc;
+                    var sourceIoc = ((KcpKeyFile)masterKey.GetUserKey(typeof(KcpKeyFile))).Ioc;
 
                     IoUtil.Copy(_targetIoc, sourceIoc, App.Kp2a);
 
                     if (fileStorage is IOfflineSwitchable)
                     {
-                        ((IOfflineSwitchable) fileStorage).IsOffline = App.Kp2a.OfflineMode;
+                        ((IOfflineSwitchable)fileStorage).IsOffline = App.Kp2a.OfflineMode;
                     }
 
                     Finish(true);

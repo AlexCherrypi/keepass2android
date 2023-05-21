@@ -59,9 +59,9 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
          * Will be called after the user touched on the icon of the item.
          * 
          * @param view
-         *            the view displaying the item.
+         *               the view displaying the item.
          * @param cursor
-         *            the item which its icon has been touched.
+         *               the item which its icon has been touched.
          */
         void onBuildOptionsMenu(View view, Cursor cursor);
 
@@ -70,9 +70,9 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
          * icon of the item.
          * 
          * @param view
-         *            the view displaying the item.
+         *               the view displaying the item.
          * @param cursor
-         *            the item which its icon has been touched.
+         *               the item which its icon has been touched.
          */
         void onBuildAdvancedOptionsMenu(View view, Cursor cursor);
     }// OnBuildOptionsMenuListener
@@ -90,20 +90,20 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
         mMultiSelection = multiSelection;
 
         switch (mFilterMode) {
-        case BaseFile.FILTER_FILES_AND_DIRECTORIES:
-            mAdvancedSelectionOptions = new Integer[] {
-                    R.string.afc_cmd_advanced_selection_all,
-                    R.string.afc_cmd_advanced_selection_none,
-                    R.string.afc_cmd_advanced_selection_invert,
-                    R.string.afc_cmd_select_all_files,
-                    R.string.afc_cmd_select_all_folders };
-            break;// FILTER_FILES_AND_DIRECTORIES
-        default:
-            mAdvancedSelectionOptions = new Integer[] {
-                    R.string.afc_cmd_advanced_selection_all,
-                    R.string.afc_cmd_advanced_selection_none,
-                    R.string.afc_cmd_advanced_selection_invert };
-            break;// FILTER_DIRECTORIES_ONLY and FILTER_FILES_ONLY
+            case BaseFile.FILTER_FILES_AND_DIRECTORIES:
+                mAdvancedSelectionOptions = new Integer[] {
+                        R.string.afc_cmd_advanced_selection_all,
+                        R.string.afc_cmd_advanced_selection_none,
+                        R.string.afc_cmd_advanced_selection_invert,
+                        R.string.afc_cmd_select_all_files,
+                        R.string.afc_cmd_select_all_folders };
+                break;// FILTER_FILES_AND_DIRECTORIES
+            default:
+                mAdvancedSelectionOptions = new Integer[] {
+                        R.string.afc_cmd_advanced_selection_all,
+                        R.string.afc_cmd_advanced_selection_none,
+                        R.string.afc_cmd_advanced_selection_invert };
+                break;// FILTER_DIRECTORIES_ONLY and FILTER_FILES_ONLY
         }
 
         mFileTimeDisplay = new FileTimeDisplay(
@@ -192,13 +192,15 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
          */
         bag.mImageLockedSymbol.setVisibility(cursor.getInt(cursor
                 .getColumnIndex(BaseFile.COLUMN_CAN_READ)) > 0 ? View.GONE
-                : View.VISIBLE);
+                        : View.VISIBLE);
         bag.mImageIcon.setImageResource(cursor.getInt(cursor
                 .getColumnIndex(BaseFile.COLUMN_ICON_ID)));
         bag.mImageIcon.setOnTouchListener(mImageIconOnTouchListener);
         bag.mImageIcon.setOnClickListener(BaseFileProviderUtils
-                .isDirectory(cursor) ? newImageIconOnClickListener(cursor
-                .getPosition()) : null);
+                .isDirectory(cursor)
+                        ? newImageIconOnClickListener(cursor
+                                .getPosition())
+                        : null);
 
         /*
          * Filename.
@@ -215,7 +217,8 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
         if (BaseFileProviderUtils.isFile(cursor))
             bag.mTxtFileInfo.setText(String.format("%s, %s", Converter
                     .sizeToStr(cursor.getLong(cursor
-                            .getColumnIndex(BaseFile.COLUMN_SIZE))), time));
+                            .getColumnIndex(BaseFile.COLUMN_SIZE))),
+                    time));
         else
             bag.mTxtFileInfo.setText(time);
 
@@ -264,7 +267,7 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
      * Sets the listener {@link OnBuildOptionsMenuListener}.
      * 
      * @param listener
-     *            the listener.
+     *                 the listener.
      */
     public void setBuildOptionsMenuListener(OnBuildOptionsMenuListener listener) {
         mOnBuildOptionsMenuListener = listener;
@@ -297,11 +300,11 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
      * <b>Note:</b> This will <i>not</i> notify data set for changes after done.
      * 
      * @param fileType
-     *            can be {@code -1} for all file types; or one of
-     *            {@link BaseFile#FILE_TYPE_DIRECTORY},
-     *            {@link BaseFile#FILE_TYPE_FILE}.
+     *                 can be {@code -1} for all file types; or one of
+     *                 {@link BaseFile#FILE_TYPE_DIRECTORY},
+     *                 {@link BaseFile#FILE_TYPE_FILE}.
      * @param selected
-     *            {@code true} or {@code false}.
+     *                 {@code true} or {@code false}.
      */
     private void asyncSelectAll(int fileType, boolean selected) {
         int count = getCount();
@@ -326,7 +329,7 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
                 b.mChecked = false;
             else if (b.mChecked != selected)
                 b.mChecked = selected;
-        }// for i
+        } // for i
     }// asyncSelectAll()
 
     /**
@@ -335,7 +338,7 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
      * <b>Note:</b> This calls {@link #notifyDataSetChanged()} when done.
      * 
      * @param selected
-     *            {@code true} or {@code false}.
+     *                 {@code true} or {@code false}.
      */
     public synchronized void selectAll(boolean selected) {
         asyncSelectAll(-1, selected);
@@ -366,7 +369,7 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
                 mSelectedChildrenMap.put(id, b);
             }
             b.mChecked = !b.mChecked;
-        }// for i
+        } // for i
     }// asyncInvertSelection()
 
     /**
@@ -383,7 +386,7 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
      * Checks if item with {@code id} is selected or not.
      * 
      * @param id
-     *            the database ID.
+     *           the database ID.
      * @return {@code true} or {@code false}.
      */
     public boolean isSelected(int id) {
@@ -417,7 +420,7 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
      * <b>Note:</b> This calls {@link #notifyDataSetChanged()} after done.
      * 
      * @param deleted
-     *            {@code true} or {@code false}.
+     *                {@code true} or {@code false}.
      */
     public void markSelectedItemsAsDeleted(boolean deleted) {
         synchronized (mSelectedChildrenMap) {
@@ -435,9 +438,9 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
      * <b>Note:</b> This calls {@link #notifyDataSetChanged()} after done.
      * 
      * @param id
-     *            the ID of the item.
+     *                the ID of the item.
      * @param deleted
-     *            {@code true} or {@code false}.
+     *                {@code true} or {@code false}.
      */
     public void markItemAsDeleted(int id, boolean deleted) {
         synchronized (mSelectedChildrenMap) {
@@ -467,13 +470,13 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
                                 + event.getAction());
 
             switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                v.setBackgroundResource(R.drawable.afc_image_button_dark_pressed);
-                break;
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL:
-                v.setBackgroundResource(0);
-                break;
+                case MotionEvent.ACTION_DOWN:
+                    v.setBackgroundResource(R.drawable.afc_image_button_dark_pressed);
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    v.setBackgroundResource(0);
+                    break;
             }
             return false;
         }// onTouch()
@@ -483,7 +486,7 @@ public class BaseFileAdapter extends ResourceCursorAdapter {
      * Creates new listener to handle click event of image icon.
      * 
      * @param cursorPosition
-     *            the cursor position.
+     *                       the cursor position.
      * @return the listener.
      */
     private View.OnClickListener newImageIconOnClickListener(

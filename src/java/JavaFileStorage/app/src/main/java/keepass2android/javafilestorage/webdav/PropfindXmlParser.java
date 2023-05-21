@@ -15,14 +15,11 @@ import java.util.List;
 /**
  * Created by Philipp on 21.09.2016.
  */
-public class PropfindXmlParser
-{
+public class PropfindXmlParser {
     private final String ns = "DAV:";
 
-    public static class Response
-    {
-        public Response()
-        {
+    public static class Response {
+        public Response() {
             propstat = new ArrayList<PropStat>();
         }
 
@@ -32,19 +29,16 @@ public class PropfindXmlParser
             String serverUrl = requestUrl.getProtocol() + "://" + requestUrl.getHost();
             if (requestUrl.getPort() > 0)
                 serverUrl += ":" + requestUrl.getPort();
-            return new URL(new URL(serverUrl),href);
+            return new URL(new URL(serverUrl), href);
         }
 
         public static class PropStat {
 
-            public PropStat()
-            {
+            public PropStat() {
                 prop = new Prop();
             }
 
-
-            public boolean isOk()
-            {
+            public boolean isOk() {
                 if (status == null)
                     return false;
                 String[] parts = status.split(" ");
@@ -58,16 +52,15 @@ public class PropfindXmlParser
                 public String LastModified;
                 public String ContentLength;
             }
+
             public String status;
             public Prop prop;
         }
 
         ArrayList<PropStat> propstat;
 
-        public PropStat.Prop getOkProp()
-        {
-            for (PropStat p: propstat)
-            {
+        public PropStat.Prop getOkProp() {
+            for (PropStat p : propstat) {
                 if (p.isOk())
                     return p.prop;
             }
@@ -81,12 +74,11 @@ public class PropfindXmlParser
 
         XmlPullParser parser = Xml.newPullParser();
 
-        parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES,true);
+        parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
         parser.setInput(in);
         parser.nextTag();
 
         parser.require(XmlPullParser.START_TAG, ns, "multistatus");
-
 
         while (parser.next() != XmlPullParser.END_TAG) {
             android.util.Log.d("PARSE", "1eventtype=" + parser.getEventType());
@@ -106,7 +98,6 @@ public class PropfindXmlParser
             }
         }
 
-
         return responses;
     }
 
@@ -125,9 +116,7 @@ public class PropfindXmlParser
             }
             String name = parser.getName();
 
-
             android.util.Log.d("PARSE", "2name=" + name);
-
 
             if (name.equals("href")) {
                 response.href = readText(parser);
@@ -141,7 +130,6 @@ public class PropfindXmlParser
 
     }
 
-
     // For the tags title and summary, extracts their text values.
     private String readText(XmlPullParser parser) throws IOException, XmlPullParserException {
         String result = "";
@@ -152,7 +140,6 @@ public class PropfindXmlParser
         android.util.Log.d("PARSE", "read text " + result);
         return result;
     }
-
 
     private Response.PropStat readPropStat(XmlPullParser parser) throws IOException, XmlPullParserException {
         Response.PropStat propstat = new Response.PropStat();
@@ -167,11 +154,9 @@ public class PropfindXmlParser
             }
             String name = parser.getName();
             android.util.Log.d("PARSE", "3name=" + name);
-            if (name.equals("prop"))
-            {
+            if (name.equals("prop")) {
                 propstat.prop = readProp(parser);
-            } else if (name.equals("status"))
-            {
+            } else if (name.equals("status")) {
                 propstat.status = readText(parser);
             } else {
                 skip(parser);
@@ -193,8 +178,7 @@ public class PropfindXmlParser
             String name = parser.getName();
 
             android.util.Log.d("PARSE", "4name = " + name);
-            if (name.equals("getcontentlength"))
-            {
+            if (name.equals("getcontentlength")) {
                 prop.ContentLength = readText(parser);
             } else if (name.equals("getlastmodified")) {
                 prop.LastModified = readText(parser);
@@ -205,7 +189,7 @@ public class PropfindXmlParser
             }
         }
 
-        return  prop;
+        return prop;
     }
 
     private void skip(XmlPullParser parser) throws XmlPullParserException, IOException {
@@ -227,4 +211,3 @@ public class PropfindXmlParser
         }
     }
 }
-

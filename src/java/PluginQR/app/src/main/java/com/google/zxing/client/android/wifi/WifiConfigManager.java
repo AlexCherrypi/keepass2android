@@ -29,7 +29,7 @@ import com.google.zxing.client.result.WifiParsedResult;
  * @author Vikram Aggarwal
  * @author Sean Owen
  */
-public final class WifiConfigManager extends AsyncTask<WifiParsedResult,Object,Object> {
+public final class WifiConfigManager extends AsyncTask<WifiParsedResult, Object, Object> {
 
   private static final String TAG = WifiConfigManager.class.getSimpleName();
 
@@ -53,7 +53,8 @@ public final class WifiConfigManager extends AsyncTask<WifiParsedResult,Object,O
         Log.w(TAG, "Wi-fi could not be enabled!");
         return null;
       }
-      // This happens very quickly, but need to wait for it to enable. A little busy wait?
+      // This happens very quickly, but need to wait for it to enable. A little busy
+      // wait?
       int count = 0;
       while (!wifiManager.isWifiEnabled()) {
         if (count >= 10) {
@@ -94,6 +95,7 @@ public final class WifiConfigManager extends AsyncTask<WifiParsedResult,Object,O
 
   /**
    * Update the network: either create a new network or modify an existing network
+   * 
    * @param config the new network configuration
    */
   private static void updateNetwork(WifiManager wifiManager, WifiConfiguration config) {
@@ -124,7 +126,8 @@ public final class WifiConfigManager extends AsyncTask<WifiParsedResult,Object,O
     config.allowedKeyManagement.clear();
     config.allowedPairwiseCiphers.clear();
     config.allowedProtocols.clear();
-    // Android API insists that an ascii SSID must be quoted to be correctly handled.
+    // Android API insists that an ascii SSID must be quoted to be correctly
+    // handled.
     config.SSID = quoteNonHex(wifiResult.getSsid());
     config.hiddenSSID = wifiResult.isHidden();
     return config;
@@ -183,10 +186,13 @@ public final class WifiConfigManager extends AsyncTask<WifiParsedResult,Object,O
   }
 
   /**
-   * Encloses the incoming string inside double quotes, if it isn't already quoted.
+   * Encloses the incoming string inside double quotes, if it isn't already
+   * quoted.
+   * 
    * @param s the input string
-   * @return a quoted string, of the form "input".  If the input string is null, it returns null
-   * as well.
+   * @return a quoted string, of the form "input". If the input string is null, it
+   *         returns null
+   *         as well.
    */
   private static String convertToQuotedString(String s) {
     if (s == null || s.isEmpty()) {
@@ -200,10 +206,11 @@ public final class WifiConfigManager extends AsyncTask<WifiParsedResult,Object,O
   }
 
   /**
-   * @param value input to check
+   * @param value          input to check
    * @param allowedLengths allowed lengths, if any
-   * @return true if value is a non-null, non-empty string of hex digits, and if allowed lengths are given, has
-   *  an allowed length
+   * @return true if value is a non-null, non-empty string of hex digits, and if
+   *         allowed lengths are given, has
+   *         an allowed length
    */
   private static boolean isHexOfLength(CharSequence value, int... allowedLengths) {
     if (value == null || !HEX_DIGITS.matcher(value).matches()) {

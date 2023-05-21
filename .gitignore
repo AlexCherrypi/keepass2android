@@ -7,6 +7,9 @@ PCtest
 bin
 obj
 
+.env
+/.vscode
+
 # Makefile-related files
 /allow_git_clean
 /stamp.nuget_*

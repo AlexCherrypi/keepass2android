@@ -24,7 +24,8 @@ import android.app.Activity;
 import android.telephony.PhoneNumberUtils;
 
 /**
- * Handles SMS addresses, offering a choice of composing a new SMS or MMS message.
+ * Handles SMS addresses, offering a choice of composing a new SMS or MMS
+ * message.
  *
  * @author dswitkin@google.com (Daniel Switkin)
  */

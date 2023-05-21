@@ -29,8 +29,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
-class DHG15 extends DHG15N{
+class DHG15 extends DHG15N {
 
-  @Override
-  String sha_name(){ return "sha-512"; }
+   @Override
+   String sha_name() {
+      return "sha-512";
+   }
 }

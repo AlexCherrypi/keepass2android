@@ -20,7 +20,8 @@ import java.util.Collection;
 import java.util.HashSet;
 
 /**
- * Implementations encode according to some scheme for encoding contact information, like VCard or
+ * Implementations encode according to some scheme for encoding contact
+ * information, like VCard or
  * MECARD.
  *
  * @author Sean Owen
@@ -28,16 +29,17 @@ import java.util.HashSet;
 abstract class ContactEncoder {
 
   /**
-   * @return first, the best effort encoding of all data in the appropriate format; second, a
-   *   display-appropriate version of the contact information
+   * @return first, the best effort encoding of all data in the appropriate
+   *         format; second, a
+   *         display-appropriate version of the contact information
    */
   abstract String[] encode(Iterable<String> names,
-                           String organization,
-                           Iterable<String> addresses,
-                           Iterable<String> phones,
-                           Iterable<String> emails,
-                           Iterable<String> urls,
-                           String note);
+      String organization,
+      Iterable<String> addresses,
+      Iterable<String> phones,
+      Iterable<String> emails,
+      Iterable<String> urls,
+      String note);
 
   /**
    * @return null if s is null or empty, or result of s.trim() otherwise
@@ -51,11 +53,11 @@ abstract class ContactEncoder {
   }
 
   static void doAppend(StringBuilder newContents,
-                             StringBuilder newDisplayContents,
-                             String prefix,
-                             String value,
-                             Formatter fieldFormatter,
-                             char terminator) {
+      StringBuilder newDisplayContents,
+      String prefix,
+      String value,
+      Formatter fieldFormatter,
+      char terminator) {
     String trimmed = trim(value);
     if (trimmed != null) {
       newContents.append(prefix).append(':').append(fieldFormatter.format(trimmed)).append(terminator);
@@ -64,13 +66,13 @@ abstract class ContactEncoder {
   }
 
   static void doAppendUpToUnique(StringBuilder newContents,
-                                 StringBuilder newDisplayContents,
-                                 String prefix,
-                                 Iterable<String> values,
-                                 int max,
-                                 Formatter formatter,
-                                 Formatter fieldFormatter,
-                                 char terminator) {
+      StringBuilder newDisplayContents,
+      String prefix,
+      Iterable<String> values,
+      int max,
+      Formatter formatter,
+      Formatter fieldFormatter,
+      char terminator) {
     if (values == null) {
       return;
     }

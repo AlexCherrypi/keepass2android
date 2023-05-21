@@ -52,7 +52,7 @@ public class AfcSearchView extends LinearLayout {
          * </p>
          * 
          * @param query
-         *            the query text that is to be submitted.
+         *              the query text that is to be submitted.
          */
         void onQueryTextSubmit(String query);
     }// OnQueryTextListener
@@ -98,7 +98,7 @@ public class AfcSearchView extends LinearLayout {
      * Creates new instance.
      * 
      * @param context
-     *            {@link Context}.
+     *                {@link Context}.
      */
     public AfcSearchView(Context context) {
         this(context, null);
@@ -108,9 +108,9 @@ public class AfcSearchView extends LinearLayout {
      * Creates new instance.
      * 
      * @param context
-     *            {@link Context}.
+     *                {@link Context}.
      * @param attrs
-     *            {@link AttributeSet}.
+     *                {@link AttributeSet}.
      */
     public AfcSearchView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -183,8 +183,8 @@ public class AfcSearchView extends LinearLayout {
      * that search term.
      * 
      * @param millis
-     *            delay time, in milliseconds. If {@code <= 0}, auto-submission
-     *            will be disabled.
+     *               delay time, in milliseconds. If {@code <= 0}, auto-submission
+     *               will be disabled.
      * @see #getDelayTimeSubmission()
      */
     public void setDelayTimeSubmission(int millis) {
@@ -210,10 +210,11 @@ public class AfcSearchView extends LinearLayout {
      * Updates views visibility.
      * 
      * @param collapsed
-     *            {@code true} or {@code false}.
+     *                         {@code true} or {@code false}.
      * @param showSoftKeyboard
-     *            set to {@code true} if you want to force show the soft
-     *            keyboard in <i>expanded</i> state.
+     *                         set to {@code true} if you want to force show the
+     *                         soft
+     *                         keyboard in <i>expanded</i> state.
      * @see #isIconified()
      */
     protected void updateViewsVisibility(boolean collapsed,
@@ -299,7 +300,7 @@ public class AfcSearchView extends LinearLayout {
      * Sets closable.
      * 
      * @param closable
-     *            {@code true} or {@code false}.
+     *                 {@code true} or {@code false}.
      */
     public void setClosable(boolean closable) {
         mClosable = closable;
@@ -311,7 +312,7 @@ public class AfcSearchView extends LinearLayout {
      * Sets the query text listener.
      * 
      * @param listener
-     *            {@link OnQueryTextListener}.
+     *                 {@link OnQueryTextListener}.
      * @see #getOnQueryTextListener()
      */
     public void setOnQueryTextListener(OnQueryTextListener listener) {
@@ -332,7 +333,7 @@ public class AfcSearchView extends LinearLayout {
      * Sets on close listener.
      * 
      * @param listener
-     *            {@link OnClickListener}.
+     *                 {@link OnClickListener}.
      * @see #getOnStateChangeListener()
      */
     public void setOnStateChangeListener(OnStateChangeListener listener) {
@@ -435,12 +436,12 @@ public class AfcSearchView extends LinearLayout {
         public boolean onKey(View v, int keyCode, KeyEvent event) {
             if (event.getAction() == KeyEvent.ACTION_UP) {
                 switch (keyCode) {
-                case KeyEvent.KEYCODE_ENTER:
-                    mButtonSearch.performClick();
-                    return true;
-                case KeyEvent.KEYCODE_ESCAPE:
-                    mButtonClear.performClick();
-                    return true;
+                    case KeyEvent.KEYCODE_ENTER:
+                        mButtonSearch.performClick();
+                        return true;
+                    case KeyEvent.KEYCODE_ESCAPE:
+                        mButtonClear.performClick();
+                        return true;
                 }
             }
 

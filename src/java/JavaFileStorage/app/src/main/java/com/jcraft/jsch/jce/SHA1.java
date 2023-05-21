@@ -33,25 +33,35 @@ import com.jcraft.jsch.HASH;
 
 import java.security.*;
 
-public class SHA1 implements HASH{
+public class SHA1 implements HASH {
   MessageDigest md;
+
   @Override
-  public int getBlockSize(){return 20;}
+  public int getBlockSize() {
+    return 20;
+  }
+
   @Override
-  public void init() throws Exception{
-    try{ md=MessageDigest.getInstance("SHA-1"); }
-    catch(Exception e){
+  public void init() throws Exception {
+    try {
+      md = MessageDigest.getInstance("SHA-1");
+    } catch (Exception e) {
       System.err.println(e);
     }
   }
+
   @Override
-  public void update(byte[] foo, int start, int len) throws Exception{
+  public void update(byte[] foo, int start, int len) throws Exception {
     md.update(foo, start, len);
   }
+
   @Override
-  public byte[] digest() throws Exception{
+  public byte[] digest() throws Exception {
     return md.digest();
   }
+
   @Override
-  public String name(){return "SHA1";}
+  public String name() {
+    return "SHA1";
+  }
 }

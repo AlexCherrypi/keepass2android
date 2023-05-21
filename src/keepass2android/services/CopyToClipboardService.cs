@@ -49,7 +49,7 @@ namespace keepass2android
     [Service]
     public class CopyToClipboardService : Service
     {
-        
+
         protected override void AttachBaseContext(Context baseContext)
         {
             base.AttachBaseContext(LocaleManager.setLocale(baseContext));
@@ -254,11 +254,11 @@ namespace keepass2android
                 Intent intent = new Intent(_ctx, typeof(CopyToClipboardBroadcastReceiver));
                 intent.SetAction(intentText);
                 pending = PendingIntent.GetBroadcast(_ctx, descResId, intent, Util.AddMutabilityFlag(PendingIntentFlags.CancelCurrent, PendingIntentFlags.Immutable));
-                
+
                 return pending;
             }
 
-            
+
         }
 
         public const int NotifyUsername = 1;
@@ -545,7 +545,7 @@ namespace keepass2android
                 deletefilter.AddAction(ActionNotificationCancelled);
                 RegisterReceiver(_notificationDeletedBroadcastReceiver, deletefilter);
             }
-            
+
         }
 
         public void ActivateKeyboardIfAppropriate(bool closeAfterCreate, ISharedPreferences prefs)
@@ -836,7 +836,7 @@ namespace keepass2android
                     }
                     return;
                 }
-                
+
             }
             else
             {
@@ -888,7 +888,7 @@ namespace keepass2android
                             Toast.MakeText(this, "Failed to switch keyboard.", ToastLength.Long).Show();
 
                         }
-                        
+
                     }
                     else
                     {
@@ -954,7 +954,7 @@ namespace keepass2android
                 }
 
                 CloseNotificationDrawer(context);
-                
+
             }
             else if (action.Equals(Intents.CopyPassword))
             {

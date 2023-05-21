@@ -38,11 +38,11 @@ public class Dlg {
      * Shows a toast message.
      * 
      * @param context
-     *            {@link Context}
+     *                 {@link Context}
      * @param msg
-     *            the message.
+     *                 the message.
      * @param duration
-     *            can be {@link #LENGTH_LONG} or {@link #LENGTH_SHORT}.
+     *                 can be {@link #LENGTH_LONG} or {@link #LENGTH_SHORT}.
      */
     public static void toast(Context context, CharSequence msg, int duration) {
         if (mToast != null)
@@ -55,11 +55,11 @@ public class Dlg {
      * Shows a toast message.
      * 
      * @param context
-     *            {@link Context}
+     *                 {@link Context}
      * @param msgId
-     *            the resource ID of the message.
+     *                 the resource ID of the message.
      * @param duration
-     *            can be {@link #LENGTH_LONG} or {@link #LENGTH_SHORT}.
+     *                 can be {@link #LENGTH_LONG} or {@link #LENGTH_SHORT}.
      */
     public static void toast(Context context, int msgId, int duration) {
         toast(context, context.getString(msgId), duration);
@@ -69,11 +69,11 @@ public class Dlg {
      * Shows an info dialog.
      * 
      * @param context
-     *            {@link Context}
+     *                 {@link Context}
      * @param msg
-     *            the message.
+     *                 the message.
      * @param listener
-     *            the {@link DialogInterface.OnDismissListener}.
+     *                 the {@link DialogInterface.OnDismissListener}.
      */
     public static void showInfo(Context context, CharSequence msg,
             DialogInterface.OnDismissListener listener) {
@@ -89,11 +89,11 @@ public class Dlg {
      * Shows an info dialog.
      * 
      * @param context
-     *            the context.
+     *                 the context.
      * @param msgId
-     *            the resource ID of the message.
+     *                 the resource ID of the message.
      * @param listener
-     *            the {@link DialogInterface.OnDismissListener}.
+     *                 the {@link DialogInterface.OnDismissListener}.
      */
     public static void showInfo(Context context, int msgId,
             DialogInterface.OnDismissListener listener) {
@@ -104,9 +104,9 @@ public class Dlg {
      * Shows an info dialog.
      * 
      * @param context
-     *            {@link Context}
+     *                {@link Context}
      * @param msg
-     *            the message.
+     *                the message.
      */
     public static void showInfo(Context context, CharSequence msg) {
         showInfo(context, msg, null);
@@ -116,9 +116,9 @@ public class Dlg {
      * Shows an info dialog.
      * 
      * @param context
-     *            {@link Context}
+     *                {@link Context}
      * @param msgId
-     *            the resource ID of the message.
+     *                the resource ID of the message.
      */
     public static void showInfo(Context context, int msgId) {
         showInfo(context, context.getString(msgId));
@@ -128,11 +128,11 @@ public class Dlg {
      * Shows an error message.
      * 
      * @param context
-     *            {@link Context}
+     *                 {@link Context}
      * @param msg
-     *            the message.
+     *                 the message.
      * @param listener
-     *            will be called after the user cancelled the dialog.
+     *                 will be called after the user cancelled the dialog.
      */
     public static void showError(Context context, CharSequence msg,
             DialogInterface.OnCancelListener listener) {
@@ -148,11 +148,11 @@ public class Dlg {
      * Shows an error message.
      * 
      * @param context
-     *            {@link Context}
+     *                 {@link Context}
      * @param msgId
-     *            the resource ID of the message.
+     *                 the resource ID of the message.
      * @param listener
-     *            will be called after the user cancelled the dialog.
+     *                 will be called after the user cancelled the dialog.
      */
     public static void showError(Context context, int msgId,
             DialogInterface.OnCancelListener listener) {
@@ -163,11 +163,11 @@ public class Dlg {
      * Shows an unknown error.
      * 
      * @param context
-     *            {@link Context}
+     *                 {@link Context}
      * @param t
-     *            the {@link Throwable}
+     *                 the {@link Throwable}
      * @param listener
-     *            will be called after the user cancelled the dialog.
+     *                 will be called after the user cancelled the dialog.
      */
     public static void showUnknownError(Context context, Throwable t,
             DialogInterface.OnCancelListener listener) {
@@ -182,14 +182,14 @@ public class Dlg {
      * Shows a confirmation dialog.
      * 
      * @param context
-     *            {@link Context}
+     *                {@link Context}
      * @param msg
-     *            the message.
+     *                the message.
      * @param onYes
-     *            will be called if the user selects positive answer (a
-     *            <i>Yes</i> or <i>OK</i>).
+     *                will be called if the user selects positive answer (a
+     *                <i>Yes</i> or <i>OK</i>).
      * @param onNo
-     *            will be called after the user cancelled the dialog.
+     *                will be called after the user cancelled the dialog.
      */
     public static void confirmYesno(Context context, CharSequence msg,
             DialogInterface.OnClickListener onYes,
@@ -208,12 +208,12 @@ public class Dlg {
      * Shows a confirmation dialog.
      * 
      * @param context
-     *            {@link Context}
+     *                {@link Context}
      * @param msg
-     *            the message.
+     *                the message.
      * @param onYes
-     *            will be called if the user selects positive answer (a
-     *            <i>Yes</i> or <i>OK</i>).
+     *                will be called if the user selects positive answer (a
+     *                <i>Yes</i> or <i>OK</i>).
      */
     public static void confirmYesno(Context context, CharSequence msg,
             DialogInterface.OnClickListener onYes) {
@@ -225,7 +225,7 @@ public class Dlg {
      * .
      * 
      * @param context
-     *            the context which uses this library's theme.
+     *                the context which uses this library's theme.
      * @return the {@link Dialog}.
      * @since v4.3 beta
      */
@@ -241,7 +241,7 @@ public class Dlg {
      * {@code true}.
      * 
      * @param context
-     *            the context which uses this library's theme.
+     *                the context which uses this library's theme.
      * @return {@link AlertDialog}
      * @since v4.3 beta
      */
@@ -255,7 +255,7 @@ public class Dlg {
      * Creates new {@link AlertDialog.Builder}.
      * 
      * @param context
-     *            the context which uses this library's theme.
+     *                the context which uses this library's theme.
      * @return {@link AlertDialog}
      * @since v4.3 beta
      */

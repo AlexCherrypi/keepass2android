@@ -5,7 +5,8 @@ import com.jcraft.jsch.jbcrypt.BCrypt;
 import java.util.Arrays;
 
 /**
- * A {@link KeyPair} which can only reveal its type and content after it was decrypted using {@link com.jcraft.jsch.KeyPairDeferred#decrypt(byte[])}.
+ * A {@link KeyPair} which can only reveal its type and content after it was
+ * decrypted using {@link com.jcraft.jsch.KeyPairDeferred#decrypt(byte[])}.
  * This is needed for openssh-v1-private-key format.
  */
 class KeyPairDeferred extends KeyPair {
@@ -40,10 +41,10 @@ class KeyPairDeferred extends KeyPair {
             // now we have decrypted key and can determine type
             int type = readOpenSSHKeyv1(plain);
 
-            delegate = getKeyPair(jsch, null, null, null, false, plain, getPublicKeyBlob(), type, VENDOR_OPENSSH_V1, publicKeyComment, cipher, null, null);
+            delegate = getKeyPair(jsch, null, null, null, false, plain, getPublicKeyBlob(), type, VENDOR_OPENSSH_V1,
+                    publicKeyComment, cipher, null, null);
 
             return delegate != null;
-
 
         } catch (Exception e) {
             throw new IllegalArgumentException("Could not sucessfully decrypt openssh v1 key", e);

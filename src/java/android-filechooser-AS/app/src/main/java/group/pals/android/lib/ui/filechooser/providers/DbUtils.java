@@ -40,7 +40,7 @@ public class DbUtils {
      * Joins all columns into one statement.
      * 
      * @param cols
-     *            array of columns.
+     *             array of columns.
      * @return E.g: "col1,col2,col3"
      */
     public static String joinColumns(String[] cols) {
@@ -62,7 +62,7 @@ public class DbUtils {
      * different values as text.
      * 
      * @param n
-     *            a long value.
+     *          a long value.
      * @return the formatted string.
      */
     public static String formatNumber(long n) {
@@ -74,13 +74,14 @@ public class DbUtils {
      * quotes at the begin and the end of the returned string.
      * 
      * @param value
-     *            the string to escape. If {@code null}, empty string will
-     *            return;
+     *              the string to escape. If {@code null}, empty string will
+     *              return;
      * @return the "raw" escaped-string.
      */
     public static String rawSqlEscapeString(String value) {
-        return value == null ? "" : DatabaseUtils.sqlEscapeString(value)
-                .replaceFirst("(?msi)^'", "").replaceFirst("(?msi)'$", "");
+        return value == null ? ""
+                : DatabaseUtils.sqlEscapeString(value)
+                        .replaceFirst("(?msi)^'", "").replaceFirst("(?msi)'$", "");
     }// rawSqlEscapeString()
 
 }

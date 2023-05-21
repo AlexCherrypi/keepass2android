@@ -23,75 +23,81 @@ using KeePassLib;
 namespace keepass2android
 {
 
-	public class EditGroup : RunnableOnFinish {
-		internal Database Db
-		{
-			get { return _app.FindDatabaseForElement(Group); }
-		}
+    public class EditGroup : RunnableOnFinish
+    {
+        internal Database Db
+        {
+            get { return _app.FindDatabaseForElement(Group); }
+        }
 
         public IKp2aApp App { get => _app; }
 
         private IKp2aApp _app;
-		private readonly String _name;
-		private readonly PwIcon _iconId;
-		private readonly PwUuid _customIconId;
-		internal PwGroup Group;
-		readonly Activity _ctx;
+        private readonly String _name;
+        private readonly PwIcon _iconId;
+        private readonly PwUuid _customIconId;
+        internal PwGroup Group;
+        readonly Activity _ctx;
 
-		public EditGroup(Activity ctx, IKp2aApp app, String name, PwIcon iconid, PwUuid customIconId, PwGroup group, OnFinish finish)
-			: base(ctx, finish)
-		{
-			_ctx = ctx;
-			_name = name;
-			_iconId = iconid;
-			Group = group;
-			_customIconId = customIconId;
-			_app = app;
+        public EditGroup(Activity ctx, IKp2aApp app, String name, PwIcon iconid, PwUuid customIconId, PwGroup group, OnFinish finish)
+            : base(ctx, finish)
+        {
+            _ctx = ctx;
+            _name = name;
+            _iconId = iconid;
+            Group = group;
+            _customIconId = customIconId;
+            _app = app;
 
-			_onFinishToRun = new AfterEdit(ctx, this, OnFinishToRun);
-		}
-		
-		
-		public override void Run() {
-			// modify group:
-			Group.Name = _name;
-			Group.IconId = _iconId;
-			Group.CustomIconUuid = _customIconId;
-			Group.Touch(true);
+            _onFinishToRun = new AfterEdit(ctx, this, OnFinishToRun);
+        }
 
-			// Commit to disk
-			SaveDb save = new SaveDb(_ctx, _app, Db, OnFinishToRun);
-			save.SetStatusLogger(StatusLogger);
-			save.Run();
-		}
-		
-		private class AfterEdit : OnFinish {
-			readonly EditGroup _editGroup;
 
-			public AfterEdit(Activity ctx, EditGroup editGroup, OnFinish finish)
-				: base(ctx, finish)
-			{
-				_editGroup = editGroup;
-			}
-				
+        public override void Run()
+        {
+            // modify group:
+            Group.Name = _name;
+            Group.IconId = _iconId;
+            Group.CustomIconUuid = _customIconId;
+            Group.Touch(true);
 
-			public override void Run() {
-				
-				if ( Success ) {
-					// Mark parent group dirty
-					_editGroup.App.DirtyGroups.Add(_editGroup.Group.ParentGroup);
-				} else
-				{
-					_editGroup._app.Lock(false, false);
-				}
-				
-				base.Run();
-			}
-			
-		}
-		
-		
-	}
+            // Commit to disk
+            SaveDb save = new SaveDb(_ctx, _app, Db, OnFinishToRun);
+            save.SetStatusLogger(StatusLogger);
+            save.Run();
+        }
+
+        private class AfterEdit : OnFinish
+        {
+            readonly EditGroup _editGroup;
+
+            public AfterEdit(Activity ctx, EditGroup editGroup, OnFinish finish)
+                : base(ctx, finish)
+            {
+                _editGroup = editGroup;
+            }
+
+
+            public override void Run()
+            {
+
+                if (Success)
+                {
+                    // Mark parent group dirty
+                    _editGroup.App.DirtyGroups.Add(_editGroup.Group.ParentGroup);
+                }
+                else
+                {
+                    _editGroup._app.Lock(false, false);
+                }
+
+                base.Run();
+            }
+
+        }
+
+
+    }
 
 }
 

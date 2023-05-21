@@ -34,6 +34,7 @@ import java.util.Vector;
 public class AgentIdentityRepository implements IdentityRepository {
 
   private AgentProxy agent;
+
   public AgentIdentityRepository(AgentConnector connector) {
     this.agent = new AgentProxy(connector);
   }
@@ -65,10 +66,9 @@ public class AgentIdentityRepository implements IdentityRepository {
 
   @Override
   public int getStatus() {
-    if(agent.getConnector().isAvailable()){
+    if (agent.getConnector().isAvailable()) {
       return RUNNING;
-    }
-    else {
+    } else {
       return NOTRUNNING;
     }
   }

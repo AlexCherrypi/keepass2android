@@ -151,7 +151,9 @@
       "InputType": 225,
       "HtmlInfoTag": "input",
       "HtmlInfoTypeAttribute": "password",
-      "ExpectedAssignedHints": [ "password" ]
+      "ExpectedAssignedHints": [
+        "password"
+      ]
     },
     {
       "IdEntry": null,
@@ -164,7 +166,9 @@
       "InputType": 33,
       "HtmlInfoTag": "input",
       "HtmlInfoTypeAttribute": "email",
-      "ExpectedAssignedHints": [ "emailAddress" ]
+      "ExpectedAssignedHints": [
+        "emailAddress"
+      ]
     },
     {
       "IdEntry": null,
@@ -207,7 +211,9 @@
       "InputType": 225,
       "HtmlInfoTag": "input",
       "HtmlInfoTypeAttribute": "password",
-      "ExpectedAssignedHints": [ "password" ]
+      "ExpectedAssignedHints": [
+        "password"
+      ]
     },
     {
       "IdEntry": null,
@@ -220,8 +226,9 @@
       "InputType": 33,
       "HtmlInfoTag": "input",
       "HtmlInfoTypeAttribute": "email",
-
-      "ExpectedAssignedHints": [ "emailAddress" ]
+      "ExpectedAssignedHints": [
+        "emailAddress"
+      ]
     },
     {
       "IdEntry": null,

@@ -23,9 +23,8 @@ import java.io.IOException;
 
 import com.keepassdroid.crypto.NativeLib;
 
-
 public class NativeFinalKey extends FinalKey {
-	
+
 	public static boolean availble() {
 		return NativeLib.init();
 	}
@@ -33,23 +32,22 @@ public class NativeFinalKey extends FinalKey {
 	@Override
 	public byte[] transformMasterKey(byte[] seed, byte[] key, int rounds) throws IOException {
 		NativeLib.init();
-		
+
 		return nTransformMasterKey(seed, key, rounds);
 
 	}
-	
+
 	private static native byte[] nTransformMasterKey(byte[] seed, byte[] key, int rounds);
 
 	// For testing
 	/*
-	public static byte[] reflect(byte[] key) {
-		NativeLib.init();
-		
-		return nativeReflect(key);
-	}
-	
-	private static native byte[] nativeReflect(byte[] key);
-	*/
-	
+	 * public static byte[] reflect(byte[] key) {
+	 * NativeLib.init();
+	 * 
+	 * return nativeReflect(key);
+	 * }
+	 * 
+	 * private static native byte[] nativeReflect(byte[] key);
+	 */
 
 }

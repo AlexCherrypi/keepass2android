@@ -38,67 +38,67 @@ namespace keepass2android
 {
 
 
-	/// <summary>
-	/// Activity to select the file to use
-	/// </summary>
-	[Activity (Label = "@string/app_name", 
-	           ConfigurationChanges=ConfigChanges.Orientation|
-	           ConfigChanges.KeyboardHidden,
+    /// <summary>
+    /// Activity to select the file to use
+    /// </summary>
+    [Activity(Label = "@string/app_name",
+               ConfigurationChanges = ConfigChanges.Orientation |
+               ConfigChanges.KeyboardHidden,
                Theme = "@style/MyTheme_Blue")]
-	public class FileSelectActivity : AndroidX.AppCompat.App.AppCompatActivity
-	{
-		private readonly ActivityDesign _design;
-		public FileSelectActivity (IntPtr javaReference, JniHandleOwnership transfer)
-			: base(javaReference, transfer)
-		{
-			_design = new ActivityDesign(this);
-		}
+    public class FileSelectActivity : AndroidX.AppCompat.App.AppCompatActivity
+    {
+        private readonly ActivityDesign _design;
+        public FileSelectActivity(IntPtr javaReference, JniHandleOwnership transfer)
+            : base(javaReference, transfer)
+        {
+            _design = new ActivityDesign(this);
+        }
 
-		public FileSelectActivity()
-		{
-			_design = new ActivityDesign(this);
-		}
+        public FileSelectActivity()
+        {
+            _design = new ActivityDesign(this);
+        }
 
-		private const int CmenuClear = Menu.First;
+        private const int CmenuClear = Menu.First;
 
-		const string BundleKeyRecentMode = "RecentMode";
+        const string BundleKeyRecentMode = "RecentMode";
 
-		private FileDbHelper _dbHelper;
+        private FileDbHelper _dbHelper;
 
-		private bool _recentMode;
-		
-		
-		private const int RequestCodeSelectIoc = 456;
-	    private const int RequestCodeEditIoc = 457;
+        private bool _recentMode;
+
+
+        private const int RequestCodeSelectIoc = 456;
+        private const int RequestCodeEditIoc = 457;
 
         public const string NoForwardToPasswordActivity = "NoForwardToPasswordActivity";
 
-		protected override void OnCreate(Bundle savedInstanceState)
-		{
-			_design.ApplyTheme(); 
-			base.OnCreate(savedInstanceState);
-			
-
-			Kp2aLog.Log("FileSelect.OnCreate");
-			
+        protected override void OnCreate(Bundle savedInstanceState)
+        {
+            _design.ApplyTheme();
+            base.OnCreate(savedInstanceState);
 
 
-			_dbHelper = App.Kp2a.FileDbHelper;
+            Kp2aLog.Log("FileSelect.OnCreate");
+
+
+
+            _dbHelper = App.Kp2a.FileDbHelper;
             SetContentView(Resource.Layout.file_selection);
-				
 
-			if (ShowRecentFiles())
-			{
-				_recentMode = true;
 
-				
+            if (ShowRecentFiles())
+            {
+                _recentMode = true;
+
+
                 FindViewById(Resource.Id.recent_files).Visibility = ViewStates.Visible;
-			    Android.Util.Log.Debug("KP2A", "Recent files visible");
+                Android.Util.Log.Debug("KP2A", "Recent files visible");
 
-			}
+            }
             else
-			{
-				FindViewById(Resource.Id.recent_files).Visibility = ViewStates.Invisible;
+            {
+                FindViewById(Resource.Id.recent_files).Visibility = ViewStates.Invisible;
                 Android.Util.Log.Debug("KP2A", "Recent files invisible");
 #if NoNet
 				ImageView imgView = FindViewById(Resource.Id.splashlogo) as ImageView;
@@ -107,34 +107,34 @@ namespace keepass2android
 					imgView.SetImageDrawable(Resources.GetDrawable(Resource.Drawable.splashlogo_offline));
 				}
 #endif
-			}
+            }
 
-			Button openFileButton = (Button)FindViewById(Resource.Id.start_open_file);
+            Button openFileButton = (Button)FindViewById(Resource.Id.start_open_file);
 
-			EventHandler openFileButtonClick = (sender, e) => 
-			{
-				Intent intent = new Intent(this, typeof(SelectStorageLocationActivity));
-				intent.PutExtra(FileStorageSelectionActivity.AllowThirdPartyAppGet, true);
-				intent.PutExtra(FileStorageSelectionActivity.AllowThirdPartyAppSend, false);
-				intent.PutExtra(SelectStorageLocationActivity.ExtraKeyWritableRequirements, (int) SelectStorageLocationActivity.WritableRequirements.WriteDesired);
-				intent.PutExtra(FileStorageSetupDefs.ExtraIsForSave, false);
-				StartActivityForResult(intent, RequestCodeSelectIoc);
-			};
-			openFileButton.Click += openFileButtonClick;
-			
-			//CREATE NEW
-			Button createNewButton = (Button)FindViewById(Resource.Id.start_create);
-			EventHandler createNewButtonClick = (sender, e) =>
-				{
-					//ShowFilenameDialog(false, true, true, Android.OS.Environment.ExternalStorageDirectory + GetString(Resource.String.default_file_path), "", Intents.RequestCodeFileBrowseForCreate)
-					Intent i = new Intent(this, typeof (CreateDatabaseActivity));
-				    i.PutExtra("MakeCurrent", Intent.GetBooleanExtra("MakeCurrent", true));
-					
-				    i.SetFlags(ActivityFlags.ForwardResult);
-					StartActivity(i);
-				    Finish();
-				};
-			createNewButton.Click += createNewButtonClick;
+            EventHandler openFileButtonClick = (sender, e) =>
+            {
+                Intent intent = new Intent(this, typeof(SelectStorageLocationActivity));
+                intent.PutExtra(FileStorageSelectionActivity.AllowThirdPartyAppGet, true);
+                intent.PutExtra(FileStorageSelectionActivity.AllowThirdPartyAppSend, false);
+                intent.PutExtra(SelectStorageLocationActivity.ExtraKeyWritableRequirements, (int)SelectStorageLocationActivity.WritableRequirements.WriteDesired);
+                intent.PutExtra(FileStorageSetupDefs.ExtraIsForSave, false);
+                StartActivityForResult(intent, RequestCodeSelectIoc);
+            };
+            openFileButton.Click += openFileButtonClick;
+
+            //CREATE NEW
+            Button createNewButton = (Button)FindViewById(Resource.Id.start_create);
+            EventHandler createNewButtonClick = (sender, e) =>
+                {
+                    //ShowFilenameDialog(false, true, true, Android.OS.Environment.ExternalStorageDirectory + GetString(Resource.String.default_file_path), "", Intents.RequestCodeFileBrowseForCreate)
+                    Intent i = new Intent(this, typeof(CreateDatabaseActivity));
+                    i.PutExtra("MakeCurrent", Intent.GetBooleanExtra("MakeCurrent", true));
+
+                    i.SetFlags(ActivityFlags.ForwardResult);
+                    StartActivity(i);
+                    Finish();
+                };
+            createNewButton.Click += createNewButtonClick;
 
             /*//CREATE + IMPORT
 			Button createImportButton = (Button)FindViewById(Resource.Id.start_create_import);
@@ -150,159 +150,159 @@ namespace keepass2android
 
 			};*/
 
-            FindViewById<Switch>(Resource.Id.local_backups_switch).CheckedChange += (sender, args) => {FillData();};
+            FindViewById<Switch>(Resource.Id.local_backups_switch).CheckedChange += (sender, args) => { FillData(); };
 
             FillData();
-			
-			if (savedInstanceState != null)
-			{
-				_recentMode = savedInstanceState.GetBoolean(BundleKeyRecentMode, _recentMode);
-			}
 
-		}
-
-        private bool ShowRecentFiles()
-		{
-			if (!RememberRecentFiles())
-			{
-				_dbHelper.DeleteAll();
-			}
-
-			return _dbHelper.HasRecentFiles();
-		}
-
-		private bool RememberRecentFiles()
-		{
-			return PreferenceManager.GetDefaultSharedPreferences(this).GetBoolean(GetString(Resource.String.RememberRecentFiles_key), Resources.GetBoolean(Resource.Boolean.RememberRecentFiles_default));
-		}
-
-
-		protected override void OnSaveInstanceState(Bundle outState)
-		{
-			base.OnSaveInstanceState(outState);
-		
-			outState.PutBoolean(BundleKeyRecentMode, _recentMode);
-			
-		}
-
-	    class MyCursorAdapter: CursorAdapter
-	    {
-	        private LayoutInflater cursorInflater;
-	        private readonly FileSelectActivity _activity;
-	        private IKp2aApp _app;
-
-	        public MyCursorAdapter(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
-	        {
-	        }
-
-	        public MyCursorAdapter(FileSelectActivity activity, ICursor c, IKp2aApp app) : base(activity, c)
-	        {
-	            _activity = activity;
-	            _app = app;
-	        }
-
-	        public MyCursorAdapter(Context context, ICursor c, bool autoRequery) : base(context, c, autoRequery)
-	        {
-	        }
-
-	        public MyCursorAdapter(Context context, ICursor c, CursorAdapterFlags flags) : base(context, c, flags)
-	        {
-	            
+            if (savedInstanceState != null)
+            {
+                _recentMode = savedInstanceState.GetBoolean(BundleKeyRecentMode, _recentMode);
             }
 
-	        public override void BindView(View view, Context context, ICursor cursor)
-	        {
-	            
-	            String path = cursor.GetString(1);
+        }
 
-	            TextView textView = view.FindViewById<TextView>(Resource.Id.file_filename);
-	            IOConnectionInfo ioc = new IOConnectionInfo { Path = path };
-	            var fileStorage = _app.GetFileStorage(ioc);
+        private bool ShowRecentFiles()
+        {
+            if (!RememberRecentFiles())
+            {
+                _dbHelper.DeleteAll();
+            }
 
-	            String displayName = cursor.GetString(6);
-	            if (string.IsNullOrEmpty(displayName))
-	            {
-	                displayName = fileStorage.GetDisplayName(ioc);
+            return _dbHelper.HasRecentFiles();
+        }
 
-	            }
+        private bool RememberRecentFiles()
+        {
+            return PreferenceManager.GetDefaultSharedPreferences(this).GetBoolean(GetString(Resource.String.RememberRecentFiles_key), Resources.GetBoolean(Resource.Boolean.RememberRecentFiles_default));
+        }
+
+
+        protected override void OnSaveInstanceState(Bundle outState)
+        {
+            base.OnSaveInstanceState(outState);
+
+            outState.PutBoolean(BundleKeyRecentMode, _recentMode);
+
+        }
+
+        class MyCursorAdapter : CursorAdapter
+        {
+            private LayoutInflater cursorInflater;
+            private readonly FileSelectActivity _activity;
+            private IKp2aApp _app;
+
+            public MyCursorAdapter(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
+            {
+            }
+
+            public MyCursorAdapter(FileSelectActivity activity, ICursor c, IKp2aApp app) : base(activity, c)
+            {
+                _activity = activity;
+                _app = app;
+            }
+
+            public MyCursorAdapter(Context context, ICursor c, bool autoRequery) : base(context, c, autoRequery)
+            {
+            }
+
+            public MyCursorAdapter(Context context, ICursor c, CursorAdapterFlags flags) : base(context, c, flags)
+            {
+
+            }
+
+            public override void BindView(View view, Context context, ICursor cursor)
+            {
+
+                String path = cursor.GetString(1);
+
+                TextView textView = view.FindViewById<TextView>(Resource.Id.file_filename);
+                IOConnectionInfo ioc = new IOConnectionInfo { Path = path };
+                var fileStorage = _app.GetFileStorage(ioc);
+
+                String displayName = cursor.GetString(6);
+                if (string.IsNullOrEmpty(displayName))
+                {
+                    displayName = fileStorage.GetDisplayName(ioc);
+
+                }
 
                 textView.Text = displayName;
-	            textView.Tag = ioc.Path;
-                
-	        }
+                textView.Tag = ioc.Path;
 
-	        public override View NewView(Context context, ICursor cursor, ViewGroup parent)
-	        {
+            }
+
+            public override View NewView(Context context, ICursor cursor, ViewGroup parent)
+            {
                 if (cursorInflater == null)
-                    cursorInflater = (LayoutInflater)context.GetSystemService( Context.LayoutInflaterService);
+                    cursorInflater = (LayoutInflater)context.GetSystemService(Context.LayoutInflaterService);
                 View view = cursorInflater.Inflate(Resource.Layout.file_row, parent, false);
 
-	            view.FindViewById(Resource.Id.group_name_vdots).Click += (sender, args) =>
-	            {
-	                Handler handler = new Handler(Looper.MainLooper);
-	                handler.Post(() =>
-	                {
-	                    PopupMenu popupMenu = new PopupMenu(context, view.FindViewById(Resource.Id.group_name_vdots));
+                view.FindViewById(Resource.Id.group_name_vdots).Click += (sender, args) =>
+                {
+                    Handler handler = new Handler(Looper.MainLooper);
+                    handler.Post(() =>
+                    {
+                        PopupMenu popupMenu = new PopupMenu(context, view.FindViewById(Resource.Id.group_name_vdots));
 
-	                    AccessManager.PreparePopup(popupMenu);
-	                    int remove = 0;
-	                    int edit = 1;
-	                    popupMenu.Menu.Add(0, remove, 0, context.GetString(Resource.String.remove_from_filelist)).SetIcon(Resource.Drawable.ic_menu_delete_grey);
+                        AccessManager.PreparePopup(popupMenu);
+                        int remove = 0;
+                        int edit = 1;
+                        popupMenu.Menu.Add(0, remove, 0, context.GetString(Resource.String.remove_from_filelist)).SetIcon(Resource.Drawable.ic_menu_delete_grey);
 
-	                    TextView textView = view.FindViewById<TextView>(Resource.Id.file_filename);
-                        
-	                    String filename = (string)textView.Tag;
+                        TextView textView = view.FindViewById<TextView>(Resource.Id.file_filename);
+
+                        String filename = (string)textView.Tag;
                         IOConnectionInfo ioc = new IOConnectionInfo { Path = filename };
-	                    if (FileSelectHelper.CanEditIoc(ioc))
-	                    {
-	                        popupMenu.Menu.Add(0, edit, 0, context.GetString(Resource.String.edit)).SetIcon(Resource.Drawable.ic_menu_edit_grey);
+                        if (FileSelectHelper.CanEditIoc(ioc))
+                        {
+                            popupMenu.Menu.Add(0, edit, 0, context.GetString(Resource.String.edit)).SetIcon(Resource.Drawable.ic_menu_edit_grey);
                         }
 
 
-	                    popupMenu.MenuItemClick += delegate(object sender2, PopupMenu.MenuItemClickEventArgs args2)
-	                    {
-	                        if (args2.Item.ItemId == remove)
-	                        {
-	                            if (new LocalFileStorage(App.Kp2a).IsLocalBackup(IOConnectionInfo.FromPath(filename)))
-	                            {
-	                                try
-	                                {
-	                                    Java.IO.File file = new File(filename);
-	                                    file.Delete();
-	                                }
-	                                catch (Exception exception)
-	                                {
-	                                    Kp2aLog.LogUnexpectedError(exception);
-	                                }
-	                            }
+                        popupMenu.MenuItemClick += delegate (object sender2, PopupMenu.MenuItemClickEventArgs args2)
+                        {
+                            if (args2.Item.ItemId == remove)
+                            {
+                                if (new LocalFileStorage(App.Kp2a).IsLocalBackup(IOConnectionInfo.FromPath(filename)))
+                                {
+                                    try
+                                    {
+                                        Java.IO.File file = new File(filename);
+                                        file.Delete();
+                                    }
+                                    catch (Exception exception)
+                                    {
+                                        Kp2aLog.LogUnexpectedError(exception);
+                                    }
+                                }
 
-	                            App.Kp2a.FileDbHelper.DeleteFile(filename);
+                                App.Kp2a.FileDbHelper.DeleteFile(filename);
 
-	                            cursor.Requery();
-	                        }
-	                        if (args2.Item.ItemId == edit)
-	                        {
-	                            var fsh = new FileSelectHelper(_activity, false, false, RequestCodeEditIoc);
-	                            fsh.OnOpen += (o, newConnectionInfo) =>
-	                            {
-	                                _activity.EditFileEntry(filename, newConnectionInfo);
-	                            };
+                                cursor.Requery();
+                            }
+                            if (args2.Item.ItemId == edit)
+                            {
+                                var fsh = new FileSelectHelper(_activity, false, false, RequestCodeEditIoc);
+                                fsh.OnOpen += (o, newConnectionInfo) =>
+                                {
+                                    _activity.EditFileEntry(filename, newConnectionInfo);
+                                };
                                 fsh.PerformManualFileSelect(filename);
 
-	                        }
-	                    };
-	                    popupMenu.Show();
-	                });
-	            };
+                            }
+                        };
+                        popupMenu.Show();
+                    });
+                };
 
                 return view;
-	        }
+            }
 
-	        
-	    }
 
-	    private void EditFileEntry(string filename, IOConnectionInfo newConnectionInfo)
-	    {
+        }
+
+        private void EditFileEntry(string filename, IOConnectionInfo newConnectionInfo)
+        {
             try
             {
                 App.Kp2a.GetFileStorage(newConnectionInfo);
@@ -314,210 +314,214 @@ namespace keepass2android
             }
 
             _dbHelper.CreateFile(newConnectionInfo, _dbHelper.GetKeyFileForFile(filename), false);
-	        _dbHelper.DeleteFile(filename);
+            _dbHelper.DeleteFile(filename);
 
             LaunchPasswordActivityForIoc(newConnectionInfo);
-	        
+
         }
 
 
-	    private void FillData()
-		{
-			// Get all of the rows from the database and create the item list
-			ICursor filesCursor = _dbHelper.FetchAllFiles();
-			
-			
-
-		    if (FindViewById<Switch>(Resource.Id.local_backups_switch).Checked == false)
-		    {
-		        var fileStorage = new LocalFileStorage(App.Kp2a);
-		        filesCursor = new FilteredCursor(filesCursor, cursor => !fileStorage.IsLocalBackup(IOConnectionInfo.FromPath(cursor.GetString(1))));
-		    }
-
-		    StartManagingCursor(filesCursor);
-
-            FragmentManager.FindFragmentById<RecentFilesFragment>(Resource.Id.recent_files).SetAdapter(new MyCursorAdapter(this, filesCursor,App.Kp2a));
-
-		    
-		}
+        private void FillData()
+        {
+            // Get all of the rows from the database and create the item list
+            ICursor filesCursor = _dbHelper.FetchAllFiles();
 
 
-		void LaunchPasswordActivityForIoc(IOConnectionInfo ioc)
-		{
-			IFileStorage fileStorage = App.Kp2a.GetFileStorage(ioc);
 
-			if (fileStorage.RequiresCredentials(ioc))
-			{
-				Util.QueryCredentials(ioc, AfterQueryCredentials, this);
-			}
-			else
-			{
-				try
-				{
-					PasswordActivity.Launch(this, ioc, new ActivityLaunchModeForward(), Intent.GetBooleanExtra("MakeCurrent",true));
-					Finish();
-				} catch (Java.IO.FileNotFoundException)
-				{
-					Toast.MakeText(this, Resource.String.FileNotFound, ToastLength.Long).Show();
-				} 
-			}
-		}
+            if (FindViewById<Switch>(Resource.Id.local_backups_switch).Checked == false)
+            {
+                var fileStorage = new LocalFileStorage(App.Kp2a);
+                filesCursor = new FilteredCursor(filesCursor, cursor => !fileStorage.IsLocalBackup(IOConnectionInfo.FromPath(cursor.GetString(1))));
+            }
 
-		
+            StartManagingCursor(filesCursor);
 
-		private void AfterQueryCredentials(IOConnectionInfo ioc)
-		{
-			PasswordActivity.Launch(this, ioc, new ActivityLaunchModeForward(), Intent.GetBooleanExtra("MakeCurrent", true));
-			Finish();
-		}
+            FragmentManager.FindFragmentById<RecentFilesFragment>(Resource.Id.recent_files).SetAdapter(new MyCursorAdapter(this, filesCursor, App.Kp2a));
 
-		public void OnListItemClick(ListView l, View v, int position, long id)
+
+        }
+
+
+        void LaunchPasswordActivityForIoc(IOConnectionInfo ioc)
+        {
+            IFileStorage fileStorage = App.Kp2a.GetFileStorage(ioc);
+
+            if (fileStorage.RequiresCredentials(ioc))
+            {
+                Util.QueryCredentials(ioc, AfterQueryCredentials, this);
+            }
+            else
+            {
+                try
+                {
+                    PasswordActivity.Launch(this, ioc, new ActivityLaunchModeForward(), Intent.GetBooleanExtra("MakeCurrent", true));
+                    Finish();
+                }
+                catch (Java.IO.FileNotFoundException)
+                {
+                    Toast.MakeText(this, Resource.String.FileNotFound, ToastLength.Long).Show();
+                }
+            }
+        }
+
+
+
+        private void AfterQueryCredentials(IOConnectionInfo ioc)
+        {
+            PasswordActivity.Launch(this, ioc, new ActivityLaunchModeForward(), Intent.GetBooleanExtra("MakeCurrent", true));
+            Finish();
+        }
+
+        public void OnListItemClick(ListView l, View v, int position, long id)
         {
             ICursor cursor = _dbHelper.FetchFile(id);
-			StartManagingCursor(cursor);
-			
-			IOConnectionInfo ioc = _dbHelper.CursorToIoc(cursor);
-			
-			App.Kp2a.GetFileStorage(ioc)
-					   .PrepareFileUsage(new FileStorageSetupInitiatorActivity(this, OnActivityResult, null), ioc, 0, false);
-		}
-		
-        
-		protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
-		{
-			base.OnActivityResult(requestCode, resultCode, data);
+            StartManagingCursor(cursor);
 
-			if (resultCode == KeePass.ExitCloseAfterTaskComplete)
-			{
-				//no need to set the result ExitCloseAfterTaskComplete here, there's no parent Activity on the stack
-				Finish();
-				return;
-			}
-			
-			FillData();
+            IOConnectionInfo ioc = _dbHelper.CursorToIoc(cursor);
+
+            App.Kp2a.GetFileStorage(ioc)
+                       .PrepareFileUsage(new FileStorageSetupInitiatorActivity(this, OnActivityResult, null), ioc, 0, false);
+        }
 
 
-			if (resultCode == (Result)FileStorageResults.FileUsagePrepared)
-			{
-				IOConnectionInfo ioc = new IOConnectionInfo();
-				Util.SetIoConnectionFromIntent(ioc, data);
-				LaunchPasswordActivityForIoc(ioc);
-			}
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
 
-			if ((resultCode == Result.Ok) && (requestCode == RequestCodeSelectIoc))
-			{
-				IOConnectionInfo ioc = new IOConnectionInfo();
-				Util.SetIoConnectionFromIntent(ioc, data);
-				LaunchPasswordActivityForIoc(ioc);
-			}
-		    
-		    if ((resultCode == Result.Ok) && (requestCode == RequestCodeEditIoc))
-		    {
-		        string filename = Util.IntentToFilename(data, this);
-		        
-		        LaunchPasswordActivityForIoc(IOConnectionInfo.FromPath(filename));
-		    }
+            if (resultCode == KeePass.ExitCloseAfterTaskComplete)
+            {
+                //no need to set the result ExitCloseAfterTaskComplete here, there's no parent Activity on the stack
+                Finish();
+                return;
+            }
+
+            FillData();
+
+
+            if (resultCode == (Result)FileStorageResults.FileUsagePrepared)
+            {
+                IOConnectionInfo ioc = new IOConnectionInfo();
+                Util.SetIoConnectionFromIntent(ioc, data);
+                LaunchPasswordActivityForIoc(ioc);
+            }
+
+            if ((resultCode == Result.Ok) && (requestCode == RequestCodeSelectIoc))
+            {
+                IOConnectionInfo ioc = new IOConnectionInfo();
+                Util.SetIoConnectionFromIntent(ioc, data);
+                LaunchPasswordActivityForIoc(ioc);
+            }
+
+            if ((resultCode == Result.Ok) && (requestCode == RequestCodeEditIoc))
+            {
+                string filename = Util.IntentToFilename(data, this);
+
+                LaunchPasswordActivityForIoc(IOConnectionInfo.FromPath(filename));
+            }
 
         }
 
-		protected override void OnResume()
-		{
-			base.OnResume();
-			App.Kp2a.OfflineMode = false; //no matter what the preferences are, file selection or db creation is performed offline. PasswordActivity might set this to true.
-			Kp2aLog.Log("FileSelect.OnResume");
+        protected override void OnResume()
+        {
+            base.OnResume();
+            App.Kp2a.OfflineMode = false; //no matter what the preferences are, file selection or db creation is performed offline. PasswordActivity might set this to true.
+            Kp2aLog.Log("FileSelect.OnResume");
 
-			_design.ReapplyTheme();
+            _design.ReapplyTheme();
 
-			// Check to see if we need to change modes
-			if (ShowRecentFiles() != _recentMode)
-			{
-				// Restart the activity
-				Recreate();
-				return;
-			}
+            // Check to see if we need to change modes
+            if (ShowRecentFiles() != _recentMode)
+            {
+                // Restart the activity
+                Recreate();
+                return;
+            }
 
 
 
-		}
+        }
 
-		protected override void OnStart()
-		{
-			base.OnStart();
-			Kp2aLog.Log("FileSelect.OnStart");
+        protected override void OnStart()
+        {
+            base.OnStart();
+            Kp2aLog.Log("FileSelect.OnStart");
 
-			
-			//if no database is loaded: load the most recent database
-			if ( (Intent.GetBooleanExtra(NoForwardToPasswordActivity, false)==false) &&  _dbHelper.HasRecentFiles() && !App.Kp2a.OpenDatabases.Any())
-			{
-			    var fileStorage = new LocalFileStorage(App.Kp2a);
+
+            //if no database is loaded: load the most recent database
+            if ((Intent.GetBooleanExtra(NoForwardToPasswordActivity, false) == false) && _dbHelper.HasRecentFiles() && !App.Kp2a.OpenDatabases.Any())
+            {
+                var fileStorage = new LocalFileStorage(App.Kp2a);
                 ICursor filesCursor = _dbHelper.FetchAllFiles();
                 filesCursor = new FilteredCursor(filesCursor, cursor => !fileStorage.IsLocalBackup(IOConnectionInfo.FromPath(cursor.GetString(1))));
-		        StartManagingCursor(filesCursor);
-			    if (filesCursor.Count > 0)
-			    {
+                StartManagingCursor(filesCursor);
+                if (filesCursor.Count > 0)
+                {
                     filesCursor.MoveToFirst();
-			        IOConnectionInfo ioc = _dbHelper.CursorToIoc(filesCursor);
-			        if (App.Kp2a.GetFileStorage(ioc).RequiresSetup(ioc) == false)
-			        {
-			            LaunchPasswordActivityForIoc(ioc);
-			        }
-			        else
-			        {
-			            App.Kp2a.GetFileStorage(ioc)
-			                .PrepareFileUsage(new FileStorageSetupInitiatorActivity(this, OnActivityResult, null), ioc, 0, false);
+                    IOConnectionInfo ioc = _dbHelper.CursorToIoc(filesCursor);
+                    if (App.Kp2a.GetFileStorage(ioc).RequiresSetup(ioc) == false)
+                    {
+                        LaunchPasswordActivityForIoc(ioc);
                     }
-			    }
-			}
-			
+                    else
+                    {
+                        App.Kp2a.GetFileStorage(ioc)
+                            .PrepareFileUsage(new FileStorageSetupInitiatorActivity(this, OnActivityResult, null), ioc, 0, false);
+                    }
+                }
+            }
 
-			
-		}
-		public override bool OnCreateOptionsMenu(IMenu menu) {
-			base.OnCreateOptionsMenu(menu);
-			
-			MenuInflater inflater = MenuInflater;
-			inflater.Inflate(Resource.Menu.fileselect, menu);
-			
-			return true;
-		}
 
-		protected override void OnPause()
-		{
-			base.OnPause();
-			Kp2aLog.Log("FileSelect.OnPause");
-		}
 
-		protected override void OnDestroy()
-		{
-			base.OnDestroy();
-			GC.Collect();
-			Kp2aLog.Log("FileSelect.OnDestroy"+IsFinishing.ToString());
-		}
+        }
+        public override bool OnCreateOptionsMenu(IMenu menu)
+        {
+            base.OnCreateOptionsMenu(menu);
 
-		protected override void OnStop()
-		{
-			base.OnStop();
-			Kp2aLog.Log("FileSelect.OnStop");
-		}
+            MenuInflater inflater = MenuInflater;
+            inflater.Inflate(Resource.Menu.fileselect, menu);
 
-		public override bool OnOptionsItemSelected(IMenuItem item) {
-			switch (item.ItemId) {
-			case Resource.Id.menu_donate:
-				return Util.GotoDonateUrl(this);
-			case Resource.Id.menu_about:
-				AboutDialog dialog = new AboutDialog(this);
-				dialog.Show();
-				return true;
-				
-			case Resource.Id.menu_app_settings:
-				AppSettingsActivity.Launch(this);
-				return true;
-			}
-			
-			return base.OnOptionsItemSelected(item);
-		}
-		
-	}
+            return true;
+        }
+
+        protected override void OnPause()
+        {
+            base.OnPause();
+            Kp2aLog.Log("FileSelect.OnPause");
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            GC.Collect();
+            Kp2aLog.Log("FileSelect.OnDestroy" + IsFinishing.ToString());
+        }
+
+        protected override void OnStop()
+        {
+            base.OnStop();
+            Kp2aLog.Log("FileSelect.OnStop");
+        }
+
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
+            switch (item.ItemId)
+            {
+                case Resource.Id.menu_donate:
+                    return Util.GotoDonateUrl(this);
+                case Resource.Id.menu_about:
+                    AboutDialog dialog = new AboutDialog(this);
+                    dialog.Show();
+                    return true;
+
+                case Resource.Id.menu_app_settings:
+                    AppSettingsActivity.Launch(this);
+                    return true;
+            }
+
+            return base.OnOptionsItemSelected(item);
+        }
+
+    }
 
     public class RecentFilesFragment : ListFragment
     {
@@ -536,15 +540,15 @@ namespace keepass2android
 
         public override void OnActivityCreated(Bundle savedInstanceState)
         {
-			base.OnActivityCreated(savedInstanceState); 
-			Android.Util.Log.Debug("KP2A", "OnActCreated");
+            base.OnActivityCreated(savedInstanceState);
+            Android.Util.Log.Debug("KP2A", "OnActCreated");
             ListView.ItemClick += (sender, args) =>
             {
-                ((FileSelectActivity) Activity).OnListItemClick((ListView) sender, args.View, args.Position, args.Id);
+                ((FileSelectActivity)Activity).OnListItemClick((ListView)sender, args.View, args.Position, args.Id);
             };
             RefreshList();
-	        RegisterForContextMenu(ListView);
-            
+            RegisterForContextMenu(ListView);
+
         }
 
         public void RefreshList()
@@ -555,8 +559,8 @@ namespace keepass2android
             cursor.Requery();
         }
 
-	    
-		
+
+
     }
 }
 

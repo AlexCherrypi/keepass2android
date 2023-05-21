@@ -40,13 +40,13 @@ public class GestureUtils {
      * velocity.
      * 
      * @param e1
-     *            {@link MotionEvent}
+     *                  {@link MotionEvent}
      * @param e2
-     *            {@link MotionEvent}
+     *                  {@link MotionEvent}
      * @param velocityX
-     *            the X velocity.
+     *                  the X velocity.
      * @param velocityY
-     *            the Y velocity.
+     *                  the Y velocity.
      * @return {@link FlingDirection}
      */
     public static FlingDirection calcFlingDirection(MotionEvent e1,
@@ -79,9 +79,9 @@ public class GestureUtils {
          * Will be called after the user did a single tap.
          * 
          * @param view
-         *            the selected view.
+         *             the selected view.
          * @param data
-         *            the data.
+         *             the data.
          * @return {@code true} if you want to handle the event, otherwise
          *         {@code false}.
          */
@@ -91,11 +91,11 @@ public class GestureUtils {
          * Will be notified after the user flung the view.
          * 
          * @param view
-         *            the selected view.
+         *                       the selected view.
          * @param data
-         *            the data.
+         *                       the data.
          * @param flingDirection
-         *            {@link FlingDirection}.
+         *                       {@link FlingDirection}.
          * @return {@code true} if you handled this event, {@code false} if you
          *         want to let default handler handle it.
          */
@@ -126,9 +126,9 @@ public class GestureUtils {
      * Adds a gesture listener to {@code listView}.
      * 
      * @param listView
-     *            {@link AbsListView}.
+     *                 {@link AbsListView}.
      * @param listener
-     *            {@link OnGestureListener}.
+     *                 {@link OnGestureListener}.
      */
     public static void setupGestureDetector(final AbsListView listView,
             final OnGestureListener listener) {
@@ -176,10 +176,11 @@ public class GestureUtils {
                                     String.format(
                                             "onSingleTapConfirmed() -- x = %.2f -- y = %.2f",
                                             e.getX(), e.getY()));
-                        return listener == null ? false : listener
-                                .onSingleTapConfirmed(
-                                        getSubView(e.getX(), e.getY()),
-                                        getData(e.getX(), e.getY()));
+                        return listener == null ? false
+                                : listener
+                                        .onSingleTapConfirmed(
+                                                getSubView(e.getX(), e.getY()),
+                                                getData(e.getX(), e.getY()));
                     }// onSingleTapConfirmed()
 
                     @Override

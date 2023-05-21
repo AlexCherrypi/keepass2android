@@ -30,19 +30,17 @@ public class NotifSlave extends Activity {
     private Dialog dialog = null;
 
     @Override
-    protected Dialog onCreateDialog(int id)
-    {
-        Log.e("KP2AJ.NotifSlave", "Create for dialog "+(Integer.toString(id)));
+    protected Dialog onCreateDialog(int id) {
+        Log.e("KP2AJ.NotifSlave", "Create for dialog " + (Integer.toString(id)));
         if (id != _nextdialog)
             return null;
         return dialog;
     }
 
-    private void showDialog(Dialog d)
-    {
+    private void showDialog(Dialog d) {
         _nextdialog++;
         dialog = d;
-        Log.e("KP2AJ.NotifSlave", "Attempting to show dialog "+(Integer.toString(_nextdialog)));
+        Log.e("KP2AJ.NotifSlave", "Attempting to show dialog " + (Integer.toString(_nextdialog)));
         showDialog(_nextdialog);
     }
 
@@ -52,11 +50,11 @@ public class NotifSlave extends Activity {
         Intent i = getIntent(); /* i *am* not an intent! */
         final Activity thisact = this;
 
-        final Messenger m = (Messenger)i.getParcelableExtra("keepass2android.sftp.returnmessenger");
+        final Messenger m = (Messenger) i.getParcelableExtra("keepass2android.sftp.returnmessenger");
         String reqtype = i.getStringExtra("keepass2android.sftp.reqtype");
         String prompt = i.getStringExtra("keepass2android.sftp.prompt");
 
-        if (prompt == null || reqtype == null || m == null)	/* i.e., we got called by a dummy notification */
+        if (prompt == null || reqtype == null || m == null) /* i.e., we got called by a dummy notification */
         {
             this.finish();
             return;
@@ -116,54 +114,56 @@ public class NotifSlave extends Activity {
             });
             AlertDialog alert = builder.create();
             showDialog(alert);
-        } /*else if (reqtype.equals("password")) {
-            final Dialog d = new Dialog(this);
-
-            d.setContentView(R.layout.notfif_slave);
-            d.setTitle("Keepass2Android");
-            d.setCancelable(false);
-
-            TextView text = (TextView) d.findViewById(R.id.prompt);
-            text.setText(prompt);
-
-            Button ok = (Button) d.findViewById(R.id.ok);
-            ok.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    try {
-                        Message me = Message.obtain();
-                        me.arg1 = 1;
-                        TextView entry = (TextView) d.findViewById(R.id.entry);
-                        Bundle b = new Bundle(1);
-                        b.putString("response", entry.getText().toString());
-                        me.setData(b);
-                        m.send(me);
-                    } catch (Exception e) {
-                        Log.e("KP2AJ.NotifSlave", "Failed to send a message back to my buddy.");
-                    }
-                    d.cancel();
-                    thisact.finish();
-                }
-            });
-
-            Button cancel = (Button) d.findViewById(R.id.cancel);
-            cancel.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    try {
-                        Message me = Message.obtain();
-                        me.arg1 = 0;
-                        m.send(me);
-                    } catch (Exception e) {
-                        Log.e("KP2AJ.NotifSlave", "Failed to send a message back to my buddy.");
-                    }
-                    d.cancel();
-                    thisact.finish();
-                }
-            });
-
-
-            showDialog(d);
-        } */else {
-            Log.e("KP2AJ.NotifSlave", "What's a "+reqtype+"?");
+        } /*
+           * else if (reqtype.equals("password")) {
+           * final Dialog d = new Dialog(this);
+           * 
+           * d.setContentView(R.layout.notfif_slave);
+           * d.setTitle("Keepass2Android");
+           * d.setCancelable(false);
+           * 
+           * TextView text = (TextView) d.findViewById(R.id.prompt);
+           * text.setText(prompt);
+           * 
+           * Button ok = (Button) d.findViewById(R.id.ok);
+           * ok.setOnClickListener(new View.OnClickListener() {
+           * public void onClick(View v) {
+           * try {
+           * Message me = Message.obtain();
+           * me.arg1 = 1;
+           * TextView entry = (TextView) d.findViewById(R.id.entry);
+           * Bundle b = new Bundle(1);
+           * b.putString("response", entry.getText().toString());
+           * me.setData(b);
+           * m.send(me);
+           * } catch (Exception e) {
+           * Log.e("KP2AJ.NotifSlave", "Failed to send a message back to my buddy.");
+           * }
+           * d.cancel();
+           * thisact.finish();
+           * }
+           * });
+           * 
+           * Button cancel = (Button) d.findViewById(R.id.cancel);
+           * cancel.setOnClickListener(new View.OnClickListener() {
+           * public void onClick(View v) {
+           * try {
+           * Message me = Message.obtain();
+           * me.arg1 = 0;
+           * m.send(me);
+           * } catch (Exception e) {
+           * Log.e("KP2AJ.NotifSlave", "Failed to send a message back to my buddy.");
+           * }
+           * d.cancel();
+           * thisact.finish();
+           * }
+           * });
+           * 
+           * 
+           * showDialog(d);
+           * }
+           */else {
+            Log.e("KP2AJ.NotifSlave", "What's a " + reqtype + "?");
         }
     }
 }

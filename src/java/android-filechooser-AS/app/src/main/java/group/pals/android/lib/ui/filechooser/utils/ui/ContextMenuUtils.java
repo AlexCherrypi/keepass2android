@@ -30,15 +30,15 @@ public class ContextMenuUtils {
      * Shows context menu.
      * 
      * @param context
-     *            {@link Context}
+     *                 {@link Context}
      * @param iconId
-     *            resource icon ID of the dialog.
+     *                 resource icon ID of the dialog.
      * @param title
-     *            title of the dialog.
+     *                 title of the dialog.
      * @param itemIds
-     *            array of resource IDs of strings.
+     *                 array of resource IDs of strings.
      * @param listener
-     *            {@link OnMenuItemClickListener}
+     *                 {@link OnMenuItemClickListener}
      */
     public static void showContextMenu(Context context, int iconId,
             String title, final Integer[] itemIds,
@@ -76,7 +76,7 @@ public class ContextMenuUtils {
                     listener.onClick(itemIds[position]);
                 }// onItemClick()
             });
-        }// if listener != null
+        } // if listener != null
 
         dialog.show();
 
@@ -94,16 +94,16 @@ public class ContextMenuUtils {
      * Shows context menu.
      * 
      * @param context
-     *            {@link Context}
+     *                 {@link Context}
      * @param iconId
-     *            resource icon ID of the dialog.
+     *                 resource icon ID of the dialog.
      * @param titleId
-     *            resource ID of the title of the dialog. {@code 0} will be
-     *            ignored.
+     *                 resource ID of the title of the dialog. {@code 0} will be
+     *                 ignored.
      * @param itemIds
-     *            array of resource IDs of strings.
+     *                 array of resource IDs of strings.
      * @param listener
-     *            {@link OnMenuItemClickListener}
+     *                 {@link OnMenuItemClickListener}
      */
     public static void showContextMenu(Context context, int iconId,
             int titleId, Integer[] itemIds, OnMenuItemClickListener listener) {
@@ -125,7 +125,7 @@ public class ContextMenuUtils {
          * This method will be called after the menu dismissed.
          * 
          * @param resId
-         *            the resource ID of the title of the menu item.
+         *              the resource ID of the title of the menu item.
          */
         void onClick(int resId);
     }// OnMenuItemClickListener

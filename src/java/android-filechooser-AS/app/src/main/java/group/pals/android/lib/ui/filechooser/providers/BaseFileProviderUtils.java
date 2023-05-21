@@ -48,9 +48,9 @@ public class BaseFileProviderUtils {
      * Registers a file provider.
      * 
      * @param id
-     *            the provider ID. It should be a UUID.
+     *                  the provider ID. It should be a UUID.
      * @param authority
-     *            the autority.
+     *                  the autority.
      */
     public static void registerProviderInfo(String id, String authority) {
         Bundle bundle = new Bundle();
@@ -62,7 +62,7 @@ public class BaseFileProviderUtils {
      * Gets provider authority from its ID.
      * 
      * @param providerId
-     *            the provider ID.
+     *                   the provider ID.
      * @return the provider authority, or {@code null} if not available.
      */
     public static String getProviderAuthority(String providerId) {
@@ -73,7 +73,7 @@ public class BaseFileProviderUtils {
      * Gets provider ID from its authority.
      * 
      * @param authority
-     *            the provider authority.
+     *                  the provider authority.
      * @return the provider ID, or {@code null} if not available.
      */
     public static String getProviderId(String authority) {
@@ -91,7 +91,7 @@ public class BaseFileProviderUtils {
      * possible. Because this method does not guarantee the result.
      * 
      * @param providerId
-     *            the provider ID.
+     *                   the provider ID.
      * @return the provider name, or {@code null} if not available.
      */
     private static String getProviderName(String providerId) {
@@ -103,9 +103,9 @@ public class BaseFileProviderUtils {
      * Gets provider name from its ID.
      * 
      * @param context
-     *            {@link Context}.
+     *                   {@link Context}.
      * @param providerId
-     *            the provider ID.
+     *                   the provider ID.
      * @return the provider name, can be {@code null} if not provided.
      */
     public static String getProviderName(Context context, String providerId) {
@@ -142,9 +142,9 @@ public class BaseFileProviderUtils {
      * Sets provider name.
      * 
      * @param providerId
-     *            the provider ID.
+     *                     the provider ID.
      * @param providerName
-     *            the provider name.
+     *                     the provider name.
      */
     private static void setProviderName(String providerId, String providerName) {
         MAP_PROVIDER_INFO.get(providerId).putString(
@@ -155,10 +155,11 @@ public class BaseFileProviderUtils {
      * Gets the provider icon (badge) resource ID.
      * 
      * @param context
-     *            the context. The resource ID will be retrieved based on this
-     *            context's theme (for example light or dark).
+     *                   the context. The resource ID will be retrieved based on
+     *                   this
+     *                   context's theme (for example light or dark).
      * @param providerId
-     *            the provider ID.
+     *                   the provider ID.
      * @return the resource ID of the icon (badge).
      */
     public static int getProviderIconId(Context context, String providerId) {
@@ -216,8 +217,7 @@ public class BaseFileProviderUtils {
             BaseFile.COLUMN_TYPE, BaseFile.COLUMN_MODIFICATION_TIME,
             BaseFile.COLUMN_ICON_ID };
 
-    public static final String[] CONNECTION_CHECK_CURSOR_COLUMNS = {"error"};
-
+    public static final String[] CONNECTION_CHECK_CURSOR_COLUMNS = { "error" };
 
     /**
      * Creates new cursor which holds default properties of a base file for
@@ -245,9 +245,9 @@ public class BaseFileProviderUtils {
      * Checks if {@code uri} is a directory.
      * 
      * @param context
-     *            {@link Context}.
+     *                {@link Context}.
      * @param uri
-     *            the URI you want to check.
+     *                the URI you want to check.
      * @return {@code true} if {@code uri} is a directory, {@code false}
      *         otherwise.
      */
@@ -270,7 +270,7 @@ public class BaseFileProviderUtils {
      * Checks if {@code cursor} is a directory.
      * 
      * @param cursor
-     *            the cursor points to a file.
+     *               the cursor points to a file.
      * @return {@code true} if {@code cursor} is a directory, {@code false}
      *         otherwise.
      */
@@ -282,9 +282,9 @@ public class BaseFileProviderUtils {
      * Checks if {@code uri} is a file.
      * 
      * @param context
-     *            {@link Context}.
+     *                {@link Context}.
      * @param uri
-     *            the URI you want to check.
+     *                the URI you want to check.
      * @return {@code true} if {@code uri} is a file, {@code false} otherwise.
      */
     public static boolean isFile(Context context, Uri uri) {
@@ -306,7 +306,7 @@ public class BaseFileProviderUtils {
      * Checks if {@code cursor} is a file.
      * 
      * @param cursor
-     *            the cursor points to a file.
+     *               the cursor points to a file.
      * @return {@code true} if {@code uri} is a file, {@code false} otherwise.
      */
     public static boolean isFile(Cursor cursor) {
@@ -317,9 +317,9 @@ public class BaseFileProviderUtils {
      * Gets file name of {@code uri}.
      * 
      * @param context
-     *            {@link Context}.
+     *                {@link Context}.
      * @param uri
-     *            the URI you want to get.
+     *                the URI you want to get.
      * @return the file name if {@code uri} is a file, {@code null} otherwise.
      */
     public static String getFileName(Context context, Uri uri) {
@@ -341,7 +341,7 @@ public class BaseFileProviderUtils {
      * Gets filename of {@code cursor}.
      * 
      * @param cursor
-     *            the cursor points to a file.
+     *               the cursor points to a file.
      * @return the filename.
      */
     public static String getFileName(Cursor cursor) {
@@ -355,9 +355,9 @@ public class BaseFileProviderUtils {
      * directly from it.
      * 
      * @param context
-     *            {@link Context}.
+     *                {@link Context}.
      * @param uri
-     *            the content provider URI which you want to get real URI from.
+     *                the content provider URI which you want to get real URI from.
      * @return the real URI of {@code uri}.
      */
     public static Uri getRealUri(Context context, Uri uri) {
@@ -382,7 +382,7 @@ public class BaseFileProviderUtils {
      * new {@link File} object directly from it.
      * 
      * @param cursor
-     *            the cursor points to a file.
+     *               the cursor points to a file.
      * @return the real URI.
      */
     public static Uri getRealUri(Cursor cursor) {
@@ -394,9 +394,9 @@ public class BaseFileProviderUtils {
      * Gets file type of the file pointed by {@code uri}.
      * 
      * @param context
-     *            {@link Context}.
+     *                {@link Context}.
      * @param uri
-     *            the URI you want to get.
+     *                the URI you want to get.
      * @return the file type of {@code uri}, can be one of
      *         {@link #FILE_TYPE_DIRECTORY}, {@link #FILE_TYPE_FILE},
      *         {@link #FILE_TYPE_UNKNOWN}, {@link #FILE_TYPE_NOT_EXISTED}.
@@ -420,7 +420,7 @@ public class BaseFileProviderUtils {
      * Gets file type of the file pointed by {@code cursor}.
      * 
      * @param cursor
-     *            the cursor points to a file.
+     *               the cursor points to a file.
      * @return the file type, can be one of {@link #FILE_TYPE_DIRECTORY},
      *         {@link #FILE_TYPE_FILE}, {@link #FILE_TYPE_UNKNOWN},
      *         {@link #FILE_TYPE_NOT_EXISTED}.
@@ -433,7 +433,7 @@ public class BaseFileProviderUtils {
      * Gets URI of {@code cursor}.
      * 
      * @param cursor
-     *            the cursor points to a file.
+     *               the cursor points to a file.
      * @return the URI.
      */
     public static Uri getUri(Cursor cursor) {
@@ -445,9 +445,9 @@ public class BaseFileProviderUtils {
      * Checks if the file pointed by {@code uri} is existed or not.
      * 
      * @param context
-     *            {@link Context}.
+     *                {@link Context}.
      * @param uri
-     *            the URI you want to check.
+     *                the URI you want to check.
      * @return {@code true} or {@code false}.
      */
     public static boolean fileExists(Context context, Uri uri) {
@@ -470,9 +470,9 @@ public class BaseFileProviderUtils {
      * Checks if the file pointed by {@code uri} is readable or not.
      * 
      * @param context
-     *            {@link Context}.
+     *                {@link Context}.
      * @param uri
-     *            the URI you want to check.
+     *                the URI you want to check.
      * @return {@code true} or {@code false}.
      */
     public static boolean fileCanRead(Context context, Uri uri) {
@@ -494,15 +494,15 @@ public class BaseFileProviderUtils {
      * Checks if the file pointed be {@code cursor} is readable or not.
      * 
      * @param cursor
-     *            the cursor points to a file.
+     *               the cursor points to a file.
      * @return {@code true} or {@code false}.
      */
     public static boolean fileCanRead(Cursor cursor) {
         if (cursor.getInt(cursor.getColumnIndex(BaseFile.COLUMN_CAN_READ)) != 0) {
             switch (cursor.getInt(cursor.getColumnIndex(BaseFile.COLUMN_TYPE))) {
-            case BaseFile.FILE_TYPE_DIRECTORY:
-            case BaseFile.FILE_TYPE_FILE:
-                return true;
+                case BaseFile.FILE_TYPE_DIRECTORY:
+                case BaseFile.FILE_TYPE_FILE:
+                    return true;
             }
         }
 
@@ -513,9 +513,9 @@ public class BaseFileProviderUtils {
      * Checks if the file pointed by {@code uri} is writable or not.
      * 
      * @param context
-     *            {@link Context}.
+     *                {@link Context}.
      * @param uri
-     *            the URI you want to check.
+     *                the URI you want to check.
      * @return {@code true} or {@code false}.
      */
     public static boolean fileCanWrite(Context context, Uri uri) {
@@ -537,15 +537,15 @@ public class BaseFileProviderUtils {
      * Checks if the file pointed by {@code cursor} is writable or not.
      * 
      * @param cursor
-     *            the cursor points to a file.
+     *               the cursor points to a file.
      * @return {@code true} or {@code false}.
      */
     public static boolean fileCanWrite(Cursor cursor) {
         if (cursor.getInt(cursor.getColumnIndex(BaseFile.COLUMN_CAN_WRITE)) != 0) {
             switch (cursor.getInt(cursor.getColumnIndex(BaseFile.COLUMN_TYPE))) {
-            case BaseFile.FILE_TYPE_DIRECTORY:
-            case BaseFile.FILE_TYPE_FILE:
-                return true;
+                case BaseFile.FILE_TYPE_DIRECTORY:
+                case BaseFile.FILE_TYPE_FILE:
+                    return true;
             }
         }
 
@@ -556,9 +556,9 @@ public class BaseFileProviderUtils {
      * Gets default path of a provider.
      * 
      * @param context
-     *            {@link Context}.
+     *                  {@link Context}.
      * @param authority
-     *            the provider's authority.
+     *                  the provider's authority.
      * @return the default path, can be {@code null}.
      */
     public static Uri getDefaultPath(Context context, String authority) {
@@ -583,9 +583,9 @@ public class BaseFileProviderUtils {
      * Gets parent directory of {@code uri}.
      * 
      * @param context
-     *            {@link Context}.
+     *                {@link Context}.
      * @param uri
-     *            the URI of an existing file.
+     *                the URI of an existing file.
      * @return the parent file if it exists, {@code null} otherwise.
      */
     public static Uri getParentFile(Context context, Uri uri) {
@@ -594,7 +594,9 @@ public class BaseFileProviderUtils {
                         .buildUpon()
                         .appendPath(BaseFile.CMD_GET_PARENT)
                         .appendQueryParameter(BaseFile.PARAM_SOURCE,
-                                uri.getLastPathSegment()).build(), null, null,
+                                uri.getLastPathSegment())
+                        .build(),
+                null, null,
                 null, null);
         if (cursor == null)
             return null;
@@ -613,11 +615,11 @@ public class BaseFileProviderUtils {
      * Checks if {@code uri1} is ancestor of {@code uri2}.
      * 
      * @param context
-     *            {@link Context}.
+     *                {@link Context}.
      * @param uri1
-     *            the first URI.
+     *                the first URI.
      * @param uri2
-     *            the second URI.
+     *                the second URI.
      * @return {@code true} if {@code uri1} is ancestor of {@code uri2},
      *         {@code false} otherwise.
      */
@@ -629,7 +631,9 @@ public class BaseFileProviderUtils {
                         .appendQueryParameter(BaseFile.PARAM_SOURCE,
                                 uri1.getLastPathSegment())
                         .appendQueryParameter(BaseFile.PARAM_TARGET,
-                                uri2.getLastPathSegment()).build(), null, null,
+                                uri2.getLastPathSegment())
+                        .build(),
+                null, null,
                 null, null) != null;
     }// isAncestorOf()
 
@@ -637,11 +641,11 @@ public class BaseFileProviderUtils {
      * Cancels a task with its ID.
      * 
      * @param context
-     *            the context.
+     *                  the context.
      * @param authority
-     *            the file provider authority.
+     *                  the file provider authority.
      * @param taskId
-     *            the task ID.
+     *                  the task ID.
      */
     public static void cancelTask(Context context, String authority, int taskId) {
         context.getContentResolver().query(
@@ -649,7 +653,9 @@ public class BaseFileProviderUtils {
                         .buildUpon()
                         .appendPath(BaseFile.CMD_CANCEL)
                         .appendQueryParameter(BaseFile.PARAM_TASK_ID,
-                                Integer.toString(taskId)).build(), null, null,
+                                Integer.toString(taskId))
+                        .build(),
+                null, null,
                 null, null);
     }// cancelTask()
 

@@ -31,28 +31,39 @@ package com.jcraft.jsch;
 
 import java.util.Arrays;
 
-class KeyPairEd25519 extends KeyPairEdDSA{
+class KeyPairEd25519 extends KeyPairEdDSA {
 
   private static int keySize = 32;
 
-  KeyPairEd25519(JSch jsch){
+  KeyPairEd25519(JSch jsch) {
     this(jsch, null, null);
   }
 
   KeyPairEd25519(JSch jsch,
-                    byte[] pub_array,
-                    byte[] prv_array){
+      byte[] pub_array,
+      byte[] prv_array) {
     super(jsch, pub_array, prv_array);
   }
 
   @Override
-  public int getKeyType(){ return ED25519; }
+  public int getKeyType() {
+    return ED25519;
+  }
+
   @Override
-  public int getKeySize(){ return keySize; }
+  public int getKeySize() {
+    return keySize;
+  }
+
   @Override
-  String getSshName(){ return "ssh-ed25519"; }
+  String getSshName() {
+    return "ssh-ed25519";
+  }
+
   @Override
-  String getJceName(){ return "Ed25519"; }
+  String getJceName() {
+    return "Ed25519";
+  }
 
   static KeyPair fromSSHAgent(JSch jsch, Buffer buf) throws JSchException {
 
@@ -62,7 +73,7 @@ class KeyPairEd25519 extends KeyPairEdDSA{
     byte[] prv_array = Arrays.copyOf(tmp[2], keySize);
     KeyPairEd25519 kpair = new KeyPairEd25519(jsch, pub_array, prv_array);
     kpair.publicKeyComment = Util.byte2str(tmp[3]);
-    kpair.vendor=VENDOR_OPENSSH;
+    kpair.vendor = VENDOR_OPENSSH;
     return kpair;
   }
 }

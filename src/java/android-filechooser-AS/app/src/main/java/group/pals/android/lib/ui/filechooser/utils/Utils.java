@@ -20,9 +20,9 @@ public class Utils {
      * Checks if the app has <b>all</b> {@code permissions} granted.
      * 
      * @param context
-     *            {@link Context}
+     *                    {@link Context}
      * @param permissions
-     *            list of permission names.
+     *                    list of permission names.
      * @return {@code true} if the app has all {@code permissions} asked.
      */
     public static boolean hasPermissions(Context context, String... permissions) {
@@ -31,12 +31,10 @@ public class Utils {
                 return false;
         return true;
     }// hasPermissions()
-    
-    
-    public static boolean doLog()
-    {
-    	return false;
-    	//return BuildConfig.DEBUG; //not working with Mono for Android
-    	
+
+    public static boolean doLog() {
+        return false;
+        // return BuildConfig.DEBUG; //not working with Mono for Android
+
     }
 }

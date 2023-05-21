@@ -3,8 +3,7 @@ package keepass2android.javafilestorage;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.Scope;
 
-public class GoogleDriveFullFileStorage extends GoogleDriveBaseFileStorage
-{
+public class GoogleDriveFullFileStorage extends GoogleDriveBaseFileStorage {
     private static final String GDRIVE_PROTOCOL_ID = "gdrive";
 
     @Override
@@ -17,4 +16,3 @@ public class GoogleDriveFullFileStorage extends GoogleDriveBaseFileStorage
         return GDRIVE_PROTOCOL_ID;
     }
 }
-

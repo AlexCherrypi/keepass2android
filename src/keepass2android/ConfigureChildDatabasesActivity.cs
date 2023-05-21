@@ -57,7 +57,7 @@ namespace keepass2android
                 return position;
             }
 
-            
+
 
             private LayoutInflater cursorInflater;
 
@@ -77,7 +77,7 @@ namespace keepass2android
 
                     view.FindViewById<Button>(Resource.Id.child_db_enable_on_this_device).Click += (sender, args) =>
                     {
-                        View sending_view = (View) sender;
+                        View sending_view = (View)sender;
                         _context.OnEnable(_displayedChildDatabases[GetClickedPos(sending_view)]);
                     };
 
@@ -113,7 +113,7 @@ namespace keepass2android
                     view = convertView;
                 }
 
-                
+
                 var iv = view.FindViewById<ImageView>(Resource.Id.child_db_icon);
                 var autoExecItem = _displayedChildDatabases[position];
                 var pw = autoExecItem.Entry;
@@ -126,7 +126,7 @@ namespace keepass2android
                     SprEngine.Compile(pw.Strings.GetSafe(PwDefs.TitleField).ReadString(), ctx);
 
                 view.FindViewById<TextView>(Resource.Id.child_db_url).Text =
-                    _context.GetString(Resource.String.entry_url) + ": " + SprEngine.Compile(pw.Strings.GetSafe(PwDefs.UrlField).ReadString(),ctx);
+                    _context.GetString(Resource.String.entry_url) + ": " + SprEngine.Compile(pw.Strings.GetSafe(PwDefs.UrlField).ReadString(), ctx);
 
                 bool deviceEnabledExplict;
                 bool deviceEnabled = KeeAutoExecExt.IsDeviceEnabled(autoExecItem, deviceId, out deviceEnabledExplict);
@@ -142,9 +142,9 @@ namespace keepass2android
                 {
                     view.FindViewById<TextView>(Resource.Id.child_db_enabled_here).Text =
                         _context.GetString(Resource.String.child_db_enabled_on_this_device) + ": " +
-                        (!deviceEnabledExplict ? 
+                        (!deviceEnabledExplict ?
                             _context.GetString(Resource.String.unspecified)
-                            : 
+                            :
                             ((autoExecItem.Enabled && deviceEnabled)
                                 ? _context.GetString(Resource.String.yes)
                                 : _context.GetString(Resource.String.no)));
@@ -153,7 +153,7 @@ namespace keepass2android
                 view.FindViewById(Resource.Id.child_db_enable_on_this_device).Visibility = !deviceEnabled && autoExecItem.Enabled ? ViewStates.Visible : ViewStates.Gone;
                 view.FindViewById(Resource.Id.child_db_disable_on_this_device).Visibility = (deviceEnabled || !deviceEnabledExplict) && autoExecItem.Enabled ? ViewStates.Visible : ViewStates.Gone;
                 view.FindViewById(Resource.Id.child_db_enable_a_copy_for_this_device_container).Visibility = !deviceEnabled && autoExecItem.Enabled ? ViewStates.Visible : ViewStates.Gone;
-                view.FindViewById(Resource.Id.child_db_edit).Visibility = deviceEnabledExplict || !autoExecItem.Enabled  ? ViewStates.Visible : ViewStates.Gone;
+                view.FindViewById(Resource.Id.child_db_edit).Visibility = deviceEnabledExplict || !autoExecItem.Enabled ? ViewStates.Visible : ViewStates.Gone;
                 IOConnectionInfo ioc;
                 if ((KeeAutoExecExt.TryGetDatabaseIoc(autoExecItem, out ioc)) && App.Kp2a.TryGetDatabase(ioc) == null)
                 {
@@ -177,7 +177,7 @@ namespace keepass2android
 
 
                 view.Tag = position.ToString();
-                
+
                 return view;
             }
 
@@ -185,8 +185,8 @@ namespace keepass2android
             {
                 View viewWithTag = sending_view;
                 while (viewWithTag.Tag == null)
-                    viewWithTag = (View) viewWithTag.Parent;
-                int clicked_pos = int.Parse((string) viewWithTag.Tag);
+                    viewWithTag = (View)viewWithTag.Parent;
+                int clicked_pos = int.Parse((string)viewWithTag.Tag);
                 return clicked_pos;
             }
 
@@ -200,7 +200,7 @@ namespace keepass2android
 
                 _displayedChildDatabases = KeeAutoExecExt.GetAutoExecItems(App.Kp2a.CurrentDb.KpDatabase)
                     .Where(e => App.Kp2a.TryFindDatabaseForElement(e.Entry) != null) //Update() can be called while we're adding entries to the database. They may be part of the group but without saving complete
-                    .OrderBy(e => SprEngine.Compile(e.Entry.Strings.ReadSafe(PwDefs.TitleField),new SprContext(e.Entry, App.Kp2a.FindDatabaseForElement(e.Entry).KpDatabase, SprCompileFlags.All)))
+                    .OrderBy(e => SprEngine.Compile(e.Entry.Strings.ReadSafe(PwDefs.TitleField), new SprContext(e.Entry, App.Kp2a.FindDatabaseForElement(e.Entry).KpDatabase, SprCompileFlags.All)))
                     .ThenByDescending(e => e.Entry.LastModificationTime)
                   .ToList();
             }
@@ -218,8 +218,8 @@ namespace keepass2android
             //remember the original device settings
             ProtectedString ifDeviceOrig = item.Entry.Strings.GetSafe(KeeAutoExecExt._ifDevice);
             //reset device settings so only the current device is enabled 
-            item.Entry.Strings.Set(KeeAutoExecExt._ifDevice,new ProtectedString(false,""));
-            KeeAutoExecExt.SetDeviceEnabled(item, KeeAutoExecExt.ThisDeviceId, true); 
+            item.Entry.Strings.Set(KeeAutoExecExt._ifDevice, new ProtectedString(false, ""));
+            KeeAutoExecExt.SetDeviceEnabled(item, KeeAutoExecExt.ThisDeviceId, true);
             //now clone
             var newEntry = item.Entry.CloneDeep();
             //reset device settings
@@ -227,7 +227,7 @@ namespace keepass2android
             newEntry.SetUuid(new PwUuid(true), true); // Create new UUID
             string strTitle = newEntry.Strings.ReadSafe(PwDefs.TitleField);
             newEntry.Strings.Set(PwDefs.TitleField, new ProtectedString(false, strTitle + " (" + Android.OS.Build.Model + ")"));
-            var addTask = new AddEntry(this, App.Kp2a.CurrentDb, App.Kp2a, newEntry,item.Entry.ParentGroup,new ActionOnFinish(this, (success, message, activity) => ((ConfigureChildDatabasesActivity)activity).Update()));
+            var addTask = new AddEntry(this, App.Kp2a.CurrentDb, App.Kp2a, newEntry, item.Entry.ParentGroup, new ActionOnFinish(this, (success, message, activity) => ((ConfigureChildDatabasesActivity)activity).Update()));
 
             ProgressTask pt = new ProgressTask(App.Kp2a, this, addTask);
             pt.Run();
@@ -242,12 +242,12 @@ namespace keepass2android
 
         private void OnEdit(AutoExecItem item)
         {
-            EntryEditActivity.Launch(this,item.Entry,new NullTask());
+            EntryEditActivity.Launch(this, item.Entry, new NullTask());
         }
 
         private void OnDisable(AutoExecItem item)
         {
-            KeeAutoExecExt.SetDeviceEnabled(item,KeeAutoExecExt.ThisDeviceId, false);
+            KeeAutoExecExt.SetDeviceEnabled(item, KeeAutoExecExt.ThisDeviceId, false);
             Save(item);
         }
 
@@ -318,9 +318,9 @@ namespace keepass2android
                     }
 
                 });
-                
 
-                
+
+
                 AlertDialog dialog = builder.Create();
                 dialog.Show();
             };
@@ -338,7 +338,7 @@ namespace keepass2android
                     break;
 
                 }
-                    
+
             }
             if (autoOpenGroup == null)
             {

@@ -6,105 +6,105 @@ using KeePassLib.Collections;
 
 namespace PluginTOTP
 {
-	/// <summary>
-	/// Adapter to read the TOTP data from a KeeOTP entry.
-	/// </summary>
-	/// /// This class uses some methods from the KeeOTP plugin (licensed under MIT license)
-	class KeeOtpPluginAdapter : ITotpPluginAdapter
-	{
-		public const string StringDictionaryKey = "otp";
+    /// <summary>
+    /// Adapter to read the TOTP data from a KeeOTP entry.
+    /// </summary>
+    /// /// This class uses some methods from the KeeOTP plugin (licensed under MIT license)
+    class KeeOtpPluginAdapter : ITotpPluginAdapter
+    {
+        public const string StringDictionaryKey = "otp";
 
-		const string KeyParameter = "key";
-		const string StepParameter = "step";
-		const string SizeParameter = "size";
-        
+        const string KeyParameter = "key";
+        const string StepParameter = "step";
+        const string SizeParameter = "size";
 
-		public TotpData GetTotpData(IDictionary<string, string> entryFields, Context ctx, bool muteWarnings)
-		{
-			return new KeeOtpHandler(entryFields, ctx).GetData();
-		}
 
-		internal class KeeOtpHandler
-		{
-			private readonly Context _ctx;
-			private readonly IDictionary<string, string> _entryFields;
+        public TotpData GetTotpData(IDictionary<string, string> entryFields, Context ctx, bool muteWarnings)
+        {
+            return new KeeOtpHandler(entryFields, ctx).GetData();
+        }
 
-			public KeeOtpHandler(IDictionary<string, string> entryFields, Context ctx)
-			{
-				_entryFields = entryFields;
-				_ctx = ctx;
-			}
+        internal class KeeOtpHandler
+        {
+            private readonly Context _ctx;
+            private readonly IDictionary<string, string> _entryFields;
 
-			public TotpData GetData()
-			{
-				TotpData res = new TotpData();
-				string data;
-				if (!_entryFields.TryGetValue("otp", out data))
-				{
-					return res;
-				}
-				NameValueCollection parameters = ParseQueryString(data);
+            public KeeOtpHandler(IDictionary<string, string> entryFields, Context ctx)
+            {
+                _entryFields = entryFields;
+                _ctx = ctx;
+            }
 
-				if (parameters[KeyParameter] == null)
-				{
-					return res;
-				}
-				res.TotpSeed = parameters[KeyParameter];
+            public TotpData GetData()
+            {
+                TotpData res = new TotpData();
+                string data;
+                if (!_entryFields.TryGetValue("otp", out data))
+                {
+                    return res;
+                }
+                NameValueCollection parameters = ParseQueryString(data);
 
-				
-				res.Duration = GetIntOrDefault(parameters, StepParameter, 30).ToString();
-				res.Length = GetIntOrDefault(parameters, SizeParameter, 6).ToString();
+                if (parameters[KeyParameter] == null)
+                {
+                    return res;
+                }
+                res.TotpSeed = parameters[KeyParameter];
 
-				res.IsTotpEntry = true;
-				return res;
 
-			}
+                res.Duration = GetIntOrDefault(parameters, StepParameter, 30).ToString();
+                res.Length = GetIntOrDefault(parameters, SizeParameter, 6).ToString();
 
-			private static int GetIntOrDefault(NameValueCollection parameters, string parameterKey, int defaultValue)
-			{
-				if (parameters[parameterKey] != null)
-				{
-					int step;
-					if (int.TryParse(parameters[parameterKey], out step))
-						return step;
-					else
-						return defaultValue;
-				}
-				else
-					return defaultValue;
-			}
+                res.IsTotpEntry = true;
+                return res;
 
-        
+            }
 
-			/// <remarks>
-			/// Hacky query string parsing.  This was done due to reports
-			/// of people with just a 3.5 or 4.0 client profile getting errors
-			/// as the System.Web assembly where .net's implementation of
-			/// Url encoding and query string parsing is locate.
-			/// 
-			/// This should be fine since the only thing stored in the string
-			/// that needs to be encoded or decoded is the '=' sign.
-			/// </remarks>
-			private static NameValueCollection ParseQueryString(string data)
-			{
-				var collection = new NameValueCollection();
+            private static int GetIntOrDefault(NameValueCollection parameters, string parameterKey, int defaultValue)
+            {
+                if (parameters[parameterKey] != null)
+                {
+                    int step;
+                    if (int.TryParse(parameters[parameterKey], out step))
+                        return step;
+                    else
+                        return defaultValue;
+                }
+                else
+                    return defaultValue;
+            }
 
-				var parameters = data.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
-				foreach (var parameter in parameters)
-				{
-					if (parameter.Contains("="))
-					{
-						var pieces = parameter.Split('=');
-						if (pieces.Length != 2)
-							continue;
 
-						collection.Add(pieces[0], pieces[1].Replace("%3d", "="));
-					}
-				}
 
-				return collection;
-			}
+            /// <remarks>
+            /// Hacky query string parsing.  This was done due to reports
+            /// of people with just a 3.5 or 4.0 client profile getting errors
+            /// as the System.Web assembly where .net's implementation of
+            /// Url encoding and query string parsing is locate.
+            /// 
+            /// This should be fine since the only thing stored in the string
+            /// that needs to be encoded or decoded is the '=' sign.
+            /// </remarks>
+            private static NameValueCollection ParseQueryString(string data)
+            {
+                var collection = new NameValueCollection();
 
-		}
-	}
+                var parameters = data.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var parameter in parameters)
+                {
+                    if (parameter.Contains("="))
+                    {
+                        var pieces = parameter.Split('=');
+                        if (pieces.Length != 2)
+                            continue;
+
+                        collection.Add(pieces[0], pieces[1].Replace("%3d", "="));
+                    }
+                }
+
+                return collection;
+            }
+
+        }
+    }
 }

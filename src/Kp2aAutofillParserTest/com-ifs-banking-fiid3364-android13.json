@@ -101,7 +101,9 @@
       "InputType": 145,
       "HtmlInfoTag": null,
       "HtmlInfoTypeAttribute": null,
-      "ExpectedAssignedHints": [ "username" ]
+      "ExpectedAssignedHints": [
+        "username"
+      ]
     },
     {
       "IdEntry": "login_save_userid_switch",
@@ -134,7 +136,9 @@
       "InputType": 129,
       "HtmlInfoTag": null,
       "HtmlInfoTypeAttribute": null,
-      "ExpectedAssignedHints": [ "password" ]
+      "ExpectedAssignedHints": [
+        "password"
+      ]
     },
     {
       "IdEntry": null,

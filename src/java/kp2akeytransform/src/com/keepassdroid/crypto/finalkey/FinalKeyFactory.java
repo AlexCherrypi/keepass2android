@@ -23,10 +23,10 @@ public class FinalKeyFactory {
 	public static FinalKey createFinalKey() {
 		return createFinalKey(false);
 	}
-	
+
 	public static FinalKey createFinalKey(boolean androidOverride) {
 		// Prefer the native final key implementation
-		if ( ! androidOverride && NativeFinalKey.availble() ) {
+		if (!androidOverride && NativeFinalKey.availble()) {
 			return new NativeFinalKey();
 		} else {
 			// Fall back on the android crypto implementation

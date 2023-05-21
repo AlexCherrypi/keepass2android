@@ -30,6 +30,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.jcraft.jsch;
 
 public interface SignatureEdDSA extends Signature {
-  void setPubKey(byte[] y_arr) throws Exception;
-  void setPrvKey(byte[] bytes) throws Exception;
+   void setPubKey(byte[] y_arr) throws Exception;
+
+   void setPrvKey(byte[] bytes) throws Exception;
 }

@@ -68,7 +68,7 @@ class AgentProxy {
 
   private static final byte SSH_COM_AGENT2_FAILURE = 102;
 
-  //private static final byte SSH_AGENT_OLD_SIGNATURE = 0x1;
+  // private static final byte SSH_AGENT_OLD_SIGNATURE = 0x1;
   private static final int SSH_AGENT_RSA_SHA2_256 = 0x2;
   private static final int SSH_AGENT_RSA_SHA2_512 = 0x4;
 
@@ -79,7 +79,7 @@ class AgentProxy {
 
   private AgentConnector connector;
 
-  AgentProxy(AgentConnector connector){
+  AgentProxy(AgentConnector connector) {
     this.connector = connector;
   }
 
@@ -94,8 +94,7 @@ class AgentProxy {
 
     try {
       connector.query(buffer);
-    }
-    catch(AgentProxyException e){
+    } catch (AgentProxyException e) {
       buffer.rewind();
       buffer.putByte(SSH_AGENT_FAILURE);
       return identities;
@@ -103,19 +102,19 @@ class AgentProxy {
 
     int rcode = buffer.getByte();
 
-    //System.out.println(rcode == SSH2_AGENT_IDENTITIES_ANSWER);
+    // System.out.println(rcode == SSH2_AGENT_IDENTITIES_ANSWER);
 
-    if(rcode != SSH2_AGENT_IDENTITIES_ANSWER) {
+    if (rcode != SSH2_AGENT_IDENTITIES_ANSWER) {
       return identities;
     }
 
     int count = buffer.getInt();
-    //System.out.println(count);
-    if(count <= 0 || count > MAX_AGENT_IDENTITIES) {
+    // System.out.println(count);
+    if (count <= 0 || count > MAX_AGENT_IDENTITIES) {
       return identities;
     }
 
-    for(int i=0; i<count; i++){
+    for (int i = 0; i < count; i++) {
       byte[] blob = buffer.getString();
       String comment = Util.byte2str(buffer.getString());
       identities.add(new AgentIdentity(this, blob, comment));
@@ -126,16 +125,15 @@ class AgentProxy {
 
   synchronized byte[] sign(byte[] blob, byte[] data, String alg) {
     int flags = 0x0;
-    if(alg != null) {
-      if(alg.equals("rsa-sha2-256")) {
+    if (alg != null) {
+      if (alg.equals("rsa-sha2-256")) {
         flags = SSH_AGENT_RSA_SHA2_256;
-      }
-      else if(alg.equals("rsa-sha2-512")) {
+      } else if (alg.equals("rsa-sha2-512")) {
         flags = SSH_AGENT_RSA_SHA2_512;
       }
     }
 
-    int required_size = 1 + 4*4 + blob.length + data.length;
+    int required_size = 1 + 4 * 4 + blob.length + data.length;
     buffer.reset();
     buffer.checkFreeSize(required_size);
     buffer.putInt(required_size - 4);
@@ -146,17 +144,16 @@ class AgentProxy {
 
     try {
       connector.query(buffer);
-    }
-    catch(AgentProxyException e){
+    } catch (AgentProxyException e) {
       buffer.rewind();
       buffer.putByte(SSH_AGENT_FAILURE);
     }
 
     int rcode = buffer.getByte();
 
-    //System.out.println(rcode == SSH2_AGENT_SIGN_RESPONSE);
+    // System.out.println(rcode == SSH2_AGENT_SIGN_RESPONSE);
 
-    if(rcode != SSH2_AGENT_SIGN_RESPONSE) {
+    if (rcode != SSH2_AGENT_SIGN_RESPONSE) {
       return null;
     }
 
@@ -164,7 +161,7 @@ class AgentProxy {
   }
 
   synchronized boolean removeIdentity(byte[] blob) {
-    int required_size = 1 + 4*2 + blob.length;
+    int required_size = 1 + 4 * 2 + blob.length;
     buffer.reset();
     buffer.checkFreeSize(required_size);
     buffer.putInt(required_size - 4);
@@ -173,15 +170,14 @@ class AgentProxy {
 
     try {
       connector.query(buffer);
-    }
-    catch(AgentProxyException e){
+    } catch (AgentProxyException e) {
       buffer.rewind();
       buffer.putByte(SSH_AGENT_FAILURE);
     }
 
     int rcode = buffer.getByte();
 
-    //System.out.println(rcode == SSH_AGENT_SUCCESS);
+    // System.out.println(rcode == SSH_AGENT_SUCCESS);
 
     return rcode == SSH_AGENT_SUCCESS;
   }
@@ -195,15 +191,14 @@ class AgentProxy {
 
     try {
       connector.query(buffer);
-    }
-    catch(AgentProxyException e){
+    } catch (AgentProxyException e) {
       buffer.rewind();
       buffer.putByte(SSH_AGENT_FAILURE);
     }
 
-    //int rcode = buffer.getByte();
+    // int rcode = buffer.getByte();
 
-    //System.out.println(rcode == SSH_AGENT_SUCCESS);
+    // System.out.println(rcode == SSH_AGENT_SUCCESS);
   }
 
   synchronized boolean addIdentity(byte[] identity) {
@@ -216,20 +211,19 @@ class AgentProxy {
 
     try {
       connector.query(buffer);
-    }
-    catch(AgentProxyException e){
+    } catch (AgentProxyException e) {
       buffer.rewind();
       buffer.putByte(SSH_AGENT_FAILURE);
     }
 
     int rcode = buffer.getByte();
 
-    //System.out.println(rcode == SSH_AGENT_SUCCESS);
+    // System.out.println(rcode == SSH_AGENT_SUCCESS);
 
     return rcode == SSH_AGENT_SUCCESS;
   }
 
-  synchronized boolean isRunning(){
+  synchronized boolean isRunning() {
     int required_size = 1 + 4;
     buffer.reset();
     buffer.checkFreeSize(required_size);
@@ -238,14 +232,13 @@ class AgentProxy {
 
     try {
       connector.query(buffer);
-    }
-    catch(AgentProxyException e){
+    } catch (AgentProxyException e) {
       return false;
     }
 
     int rcode = buffer.getByte();
 
-    //System.out.println(rcode == SSH2_AGENT_IDENTITIES_ANSWER);
+    // System.out.println(rcode == SSH2_AGENT_IDENTITIES_ANSWER);
 
     return rcode == SSH2_AGENT_IDENTITIES_ANSWER;
   }

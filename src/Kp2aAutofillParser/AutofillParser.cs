@@ -132,7 +132,7 @@ namespace Kp2aAutofillParser
     /// FilledAutofillFieldCollection is the model that holds all of the data on a client app's page,
     /// plus the dataset name associated with it.
     /// </summary>
-    public class FilledAutofillFieldCollection<FieldT> where FieldT:InputField
+    public class FilledAutofillFieldCollection<FieldT> where FieldT : InputField
     {
         public Dictionary<string, FilledAutofillField> HintMap { get; }
         public string DatasetName { get; set; }
@@ -172,7 +172,7 @@ namespace Kp2aAutofillParser
         }
 
 
-        
+
 
         /// <summary>
         /// Takes in a list of autofill hints (`autofillHints`), usually associated with a View or set of
@@ -419,7 +419,7 @@ namespace Kp2aAutofillParser
                 {
                     filteredHints[i++] = hint;
                 }
-                
+
             }
             var finalFilteredHints = new string[i];
             Array.Copy(filteredHints, 0, finalFilteredHints, 0, i);
@@ -463,7 +463,7 @@ namespace Kp2aAutofillParser
             return -1;
         }
 
-        public static FilledAutofillFieldCollection<FieldT> FilterForPartition<FieldT>(FilledAutofillFieldCollection<FieldT> autofillFields, int partitionIndex) where FieldT: InputField
+        public static FilledAutofillFieldCollection<FieldT> FilterForPartition<FieldT>(FilledAutofillFieldCollection<FieldT> autofillFields, int partitionIndex) where FieldT : InputField
         {
             FilledAutofillFieldCollection<FieldT> filteredCollection =
                 new FilledAutofillFieldCollection<FieldT> { DatasetName = autofillFields.DatasetName };
@@ -486,7 +486,7 @@ namespace Kp2aAutofillParser
             return filteredCollection;
         }
 
-        public static FilledAutofillFieldCollection<FieldT> FilterForPartition<FieldT>(FilledAutofillFieldCollection<FieldT> filledAutofillFieldCollection, List<string> autofillFieldsFocusedAutofillCanonicalHints) where FieldT: InputField
+        public static FilledAutofillFieldCollection<FieldT> FilterForPartition<FieldT>(FilledAutofillFieldCollection<FieldT> filledAutofillFieldCollection, List<string> autofillFieldsFocusedAutofillCanonicalHints) where FieldT : InputField
         {
 
             //only apply partition data if we have FocusedAutofillCanonicalHints. This may be empty on buggy Firefox.
@@ -611,7 +611,7 @@ namespace Kp2aAutofillParser
         public FilledAutofillField()
         { }
 
-        public FilledAutofillField(InputField inputField) 
+        public FilledAutofillField(InputField inputField)
             : this(inputField, inputField.AutofillHints)
         {
 
@@ -635,7 +635,7 @@ namespace Kp2aAutofillParser
                 if (W3cHints.isW3cSectionPrefix(hint) && i < rawHints.Length - 1)
                 {
                     hint = rawHints[++i];
-                    
+
                     if (i < rawHints.Length - 1)
                     {
                         nextHint = rawHints[i + 1];
@@ -645,13 +645,13 @@ namespace Kp2aAutofillParser
                 {
                     hint = nextHint;
                     i++;
-                    
+
                 }
                 if (W3cHints.isW3cAddressType(hint) && nextHint != null)
                 {
                     hint = nextHint;
                     i++;
-                    
+
                 }
 
                 // Then check if the "actual" hint is supported.
@@ -661,7 +661,7 @@ namespace Kp2aAutofillParser
                 }
                 else
                 {
-                    
+
                 }
             }
             AutofillHints = AutofillHintsHelper.ConvertToCanonicalLowerCaseHints(hintList.ToArray()).ToArray();
@@ -739,7 +739,7 @@ namespace Kp2aAutofillParser
         void Log(string x);
     }
 
-    public class StructureParserBase<FieldT> where FieldT: InputField
+    public class StructureParserBase<FieldT> where FieldT : InputField
     {
         private readonly ILogger _log;
         private readonly IKp2aDigitalAssetLinksDataSource _digitalAssetLinksDataSource;
@@ -813,7 +813,7 @@ namespace Kp2aAutofillParser
                 PackageName = autofillView.PackageId,
                 WebDomain = autofillView.WebDomain
             };
-            
+
             _log.Log("parsing autofillStructure...");
 
             if (LogAutofillView)
@@ -862,14 +862,14 @@ namespace Kp2aAutofillParser
                 {
                     foreach (var passwordField in passwordFields)
                     {
-                        
+
                         var lastInputBeforePassword = autofillView.InputFields.Where(IsEditText)
-                            .TakeWhile(f =>  f != passwordField && !passwordFields.Contains(f)).LastOrDefault();
-                        
+                            .TakeWhile(f => f != passwordField && !passwordFields.Contains(f)).LastOrDefault();
+
                         if (lastInputBeforePassword != null)
                             usernameFields.Add(lastInputBeforePassword);
                     }
-                    
+
                 }
 
                 //for "heuristic determination" we demand that one of the filled fields is focused:
@@ -881,7 +881,7 @@ namespace Kp2aAutofillParser
                         AddFieldToHintMap(pf, new string[] { AutofillHintsHelper.AutofillHintPassword });
                 }
             }
-            
+
 
             if (!string.IsNullOrEmpty(autofillView.WebDomain) && _digitalAssetLinksDataSource.IsEnabled())
             {
@@ -978,8 +978,8 @@ namespace Kp2aAutofillParser
                 );
         }
 
-        
-        
+
+
 
 
 

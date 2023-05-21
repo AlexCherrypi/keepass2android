@@ -5,7 +5,7 @@ public class UserInteractionRequiredException extends Exception {
 	public UserInteractionRequiredException(Throwable e) {
 		super(e);
 	}
-	
+
 	public UserInteractionRequiredException() {
 
 	}
@@ -18,7 +18,5 @@ public class UserInteractionRequiredException extends Exception {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	
 
 }

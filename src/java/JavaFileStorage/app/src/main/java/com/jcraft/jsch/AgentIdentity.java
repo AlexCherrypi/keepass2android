@@ -35,6 +35,7 @@ class AgentIdentity implements Identity {
   private byte[] blob;
   private String comment;
   private String algname;
+
   AgentIdentity(AgentProxy agent, byte[] blob, String comment) {
     this.agent = agent;
     this.blob = blob;
@@ -43,20 +44,22 @@ class AgentIdentity implements Identity {
   }
 
   @Override
-  public boolean setPassphrase(byte[] passphrase) throws JSchException{
+  public boolean setPassphrase(byte[] passphrase) throws JSchException {
     return true;
   }
 
   @Override
-  public byte[] getPublicKeyBlob() { return blob; }
+  public byte[] getPublicKeyBlob() {
+    return blob;
+  }
 
   @Override
-  public byte[] getSignature(byte[] data){
+  public byte[] getSignature(byte[] data) {
     return agent.sign(blob, data, null);
   }
 
   @Override
-  public byte[] getSignature(byte[] data, String alg){
+  public byte[] getSignature(byte[] data, String alg) {
     return agent.sign(blob, data, alg);
   }
 
@@ -67,14 +70,21 @@ class AgentIdentity implements Identity {
   }
 
   @Override
-  public String getAlgName() { return algname; }
+  public String getAlgName() {
+    return algname;
+  }
 
   @Override
-  public String getName() { return comment; }
+  public String getName() {
+    return comment;
+  }
 
   @Override
-  public boolean isEncrypted() { return false; }
+  public boolean isEncrypted() {
+    return false;
+  }
 
   @Override
-  public void clear() { }
+  public void clear() {
+  }
 }

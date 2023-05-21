@@ -31,23 +31,23 @@ package com.jcraft.jsch;
 
 import java.io.*;
 
-class IdentityFile implements Identity{
+class IdentityFile implements Identity {
   private JSch jsch;
   private KeyPair kpair;
   private String identity;
 
-  static IdentityFile newInstance(String prvfile, String pubfile, JSch jsch) throws JSchException{
+  static IdentityFile newInstance(String prvfile, String pubfile, JSch jsch) throws JSchException {
     KeyPair kpair = KeyPair.load(jsch, prvfile, pubfile);
     return new IdentityFile(jsch, prvfile, kpair);
   }
 
-  static IdentityFile newInstance(String name, byte[] prvkey, byte[] pubkey, JSch jsch) throws JSchException{
+  static IdentityFile newInstance(String name, byte[] prvkey, byte[] pubkey, JSch jsch) throws JSchException {
 
     KeyPair kpair = KeyPair.load(jsch, prvkey, pubkey);
     return new IdentityFile(jsch, name, kpair);
   }
 
-  private IdentityFile(JSch jsch, String name, KeyPair kpair) throws JSchException{
+  private IdentityFile(JSch jsch, String name, KeyPair kpair) throws JSchException {
     this.jsch = jsch;
     this.identity = name;
     this.kpair = kpair;
@@ -55,42 +55,46 @@ class IdentityFile implements Identity{
 
   /**
    * Decrypts this identity with the specified pass-phrase.
+   * 
    * @param passphrase the pass-phrase for this identity.
    * @return <code>true</code> if the decryption is succeeded
-   * or this identity is not cyphered.
+   *         or this identity is not cyphered.
    */
   @Override
-  public boolean setPassphrase(byte[] passphrase) throws JSchException{
+  public boolean setPassphrase(byte[] passphrase) throws JSchException {
     return kpair.decrypt(passphrase);
   }
 
   /**
    * Returns the public-key blob.
+   * 
    * @return the public-key blob
    */
   @Override
-  public byte[] getPublicKeyBlob(){
+  public byte[] getPublicKeyBlob() {
     return kpair.getPublicKeyBlob();
   }
 
   /**
    * Signs on data with this identity, and returns the result.
+   * 
    * @param data data to be signed
    * @return the signature
    */
   @Override
-  public byte[] getSignature(byte[] data){
+  public byte[] getSignature(byte[] data) {
     return kpair.getSignature(data);
   }
 
   /**
    * Signs on data with this identity, and returns the result.
+   * 
    * @param data data to be signed
-   * @param alg signature algorithm to use
+   * @param alg  signature algorithm to use
    * @return the signature
    */
   @Override
-  public byte[] getSignature(byte[] data, String alg){
+  public byte[] getSignature(byte[] data, String alg) {
     return kpair.getSignature(data, alg);
   }
 
@@ -100,35 +104,37 @@ class IdentityFile implements Identity{
    */
   @Override
   @Deprecated
-  public boolean decrypt(){
+  public boolean decrypt() {
     throw new RuntimeException("not implemented");
   }
 
   /**
    * Returns the name of the key algorithm.
+   * 
    * @return "ssh-rsa" or "ssh-dss"
    */
   @Override
-  public String getAlgName(){
+  public String getAlgName() {
     byte[] name = kpair.getKeyTypeName();
     return Util.byte2str(name);
   }
 
   /**
-   * Returns the name of this identity. 
+   * Returns the name of this identity.
    * It will be useful to identify this object in the {@link IdentityRepository}.
    */
   @Override
-  public String getName(){
+  public String getName() {
     return identity;
   }
 
   /**
    * Returns <code>true</code> if this identity is cyphered.
+   * 
    * @return <code>true</code> if this identity is cyphered.
    */
   @Override
-  public boolean isEncrypted(){
+  public boolean isEncrypted() {
     return kpair.isEncrypted();
   }
 
@@ -136,16 +142,17 @@ class IdentityFile implements Identity{
    * Disposes internally allocated data, like byte array for the private key.
    */
   @Override
-  public void clear(){
+  public void clear() {
     kpair.dispose();
     kpair = null;
   }
 
   /**
    * Returns an instance of {@link KeyPair} used in this {@link Identity}.
+   * 
    * @return an instance of {@link KeyPair} used in this {@link Identity}.
    */
-  public KeyPair getKeyPair(){
+  public KeyPair getKeyPair() {
     return kpair;
   }
 }

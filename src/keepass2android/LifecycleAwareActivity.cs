@@ -25,33 +25,34 @@ using Android.Support.V7.App;
 
 namespace keepass2android
 {
-				
-	public abstract class LifecycleAwareActivity : AndroidX.AppCompat.App.AppCompatActivity
+
+    public abstract class LifecycleAwareActivity : AndroidX.AppCompat.App.AppCompatActivity
     {
-		protected override void AttachBaseContext(Context baseContext)
-		{
-			base.AttachBaseContext(LocaleManager.setLocale(baseContext));
-		}
-		protected LifecycleAwareActivity (IntPtr javaReference, JniHandleOwnership transfer)
-			: base(javaReference, transfer)
-		{
-			
-		}
+        protected override void AttachBaseContext(Context baseContext)
+        {
+            base.AttachBaseContext(LocaleManager.setLocale(baseContext));
+        }
+        protected LifecycleAwareActivity(IntPtr javaReference, JniHandleOwnership transfer)
+            : base(javaReference, transfer)
+        {
 
-		protected LifecycleAwareActivity()
-		{
-		}
+        }
+
+        protected LifecycleAwareActivity()
+        {
+        }
 
 
-		string _className;
-		string ClassName
-		{
-			get {
-				if (_className == null)
-					_className = GetType().Name;
-				return _className;
-			}
-		}
+        string _className;
+        string ClassName
+        {
+            get
+            {
+                if (_className == null)
+                    _className = GetType().Name;
+                return _className;
+            }
+        }
 
         public string MyDebugName
         {
@@ -65,56 +66,56 @@ namespace keepass2android
         {
             base.OnNewIntent(intent);
             Kp2aLog.Log(ClassName + ".OnNewIntent " + ID);
-		}
+        }
 
         protected override void OnResume()
-		{
-			base.OnResume();
-			Kp2aLog.Log(ClassName+".OnResume " + ID);
-			if (App.Kp2a.CurrentDb== null)
-			{
-				Kp2aLog.Log(" DB null" + " " + ID);
-			}
-			else
-			{
-				Kp2aLog.Log(" DatabaseIsUnlocked=" + App.Kp2a.DatabaseIsUnlocked + " " + ID);
-			}
-		}
-
-		protected override void OnStart()
-		{
-		    ProgressTask.SetNewActiveActivity(this);
-			base.OnStart();
-			Kp2aLog.Log(ClassName+".OnStart" + " " + ID);
-		}
-
-		protected override void OnCreate(Bundle bundle)
-		{
-			
-			base.OnCreate(bundle);
-			
-			Kp2aLog.Log(ClassName+".OnCreate" + " " + ID);
-			Kp2aLog.Log(ClassName+":apptask="+Intent.GetStringExtra("KP2A_APP_TASK_TYPE") + " " + ID);
-		}
-
-		protected override void OnDestroy()
-		{
-			base.OnDestroy();
-			Kp2aLog.Log(ClassName+".OnDestroy"+IsFinishing.ToString() + " " + ID);
-		}
-
-		protected override void OnPause()
-		{
-			base.OnPause();
-			Kp2aLog.Log(ClassName+".OnPause" + " " + ID);
-		}
-
-		protected override void OnStop()
-		{
-			base.OnStop();
-			Kp2aLog.Log(ClassName+".OnStop" + " " + ID);
-		    ProgressTask.RemoveActiveActivity(this);
+        {
+            base.OnResume();
+            Kp2aLog.Log(ClassName + ".OnResume " + ID);
+            if (App.Kp2a.CurrentDb == null)
+            {
+                Kp2aLog.Log(" DB null" + " " + ID);
+            }
+            else
+            {
+                Kp2aLog.Log(" DatabaseIsUnlocked=" + App.Kp2a.DatabaseIsUnlocked + " " + ID);
+            }
         }
-	}
+
+        protected override void OnStart()
+        {
+            ProgressTask.SetNewActiveActivity(this);
+            base.OnStart();
+            Kp2aLog.Log(ClassName + ".OnStart" + " " + ID);
+        }
+
+        protected override void OnCreate(Bundle bundle)
+        {
+
+            base.OnCreate(bundle);
+
+            Kp2aLog.Log(ClassName + ".OnCreate" + " " + ID);
+            Kp2aLog.Log(ClassName + ":apptask=" + Intent.GetStringExtra("KP2A_APP_TASK_TYPE") + " " + ID);
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            Kp2aLog.Log(ClassName + ".OnDestroy" + IsFinishing.ToString() + " " + ID);
+        }
+
+        protected override void OnPause()
+        {
+            base.OnPause();
+            Kp2aLog.Log(ClassName + ".OnPause" + " " + ID);
+        }
+
+        protected override void OnStop()
+        {
+            base.OnStop();
+            Kp2aLog.Log(ClassName + ".OnStop" + " " + ID);
+            ProgressTask.RemoveActiveActivity(this);
+        }
+    }
 }
 

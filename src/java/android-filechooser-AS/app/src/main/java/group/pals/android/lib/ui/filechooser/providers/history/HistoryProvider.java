@@ -100,14 +100,14 @@ public class HistoryProvider extends ContentProvider {
          * Chooses the MIME type based on the incoming URI pattern.
          */
         switch (URI_MATCHER.match(uri)) {
-        case URI_HISTORY:
-            return HistoryContract.CONTENT_TYPE;
+            case URI_HISTORY:
+                return HistoryContract.CONTENT_TYPE;
 
-        case URI_HISTORY_ID:
-            return HistoryContract.CONTENT_ITEM_TYPE;
+            case URI_HISTORY_ID:
+                return HistoryContract.CONTENT_ITEM_TYPE;
 
-        default:
-            throw new IllegalArgumentException("UNKNOWN URI " + uri);
+            default:
+                throw new IllegalArgumentException("UNKNOWN URI " + uri);
         }
     }// getType()
 
@@ -122,44 +122,44 @@ public class HistoryProvider extends ContentProvider {
 
         // Does the delete based on the incoming URI pattern.
         switch (URI_MATCHER.match(uri)) {
-        /*
-         * If the incoming pattern matches the general pattern for history
-         * items, does a delete based on the incoming "where" columns and
-         * arguments.
-         */
-        case URI_HISTORY:
-            count = db.delete(HistoryContract.TABLE_NAME, selection,
-                    selectionArgs);
-            break;// URI_HISTORY
-
-        /*
-         * If the incoming URI matches a single note ID, does the delete based
-         * on the incoming data, but modifies the where clause to restrict it to
-         * the particular history item ID.
-         */
-        case URI_HISTORY_ID:
             /*
-             * Starts a final WHERE clause by restricting it to the desired
-             * history item ID.
+             * If the incoming pattern matches the general pattern for history
+             * items, does a delete based on the incoming "where" columns and
+             * arguments.
              */
-            finalWhere = DbUtils.SQLITE_FTS_COLUMN_ROW_ID + " = "
-                    + uri.getLastPathSegment();
+            case URI_HISTORY:
+                count = db.delete(HistoryContract.TABLE_NAME, selection,
+                        selectionArgs);
+                break;// URI_HISTORY
 
             /*
-             * If there were additional selection criteria, append them to the
-             * final WHERE clause
+             * If the incoming URI matches a single note ID, does the delete based
+             * on the incoming data, but modifies the where clause to restrict it to
+             * the particular history item ID.
              */
-            if (selection != null)
-                finalWhere = finalWhere + " AND " + selection;
+            case URI_HISTORY_ID:
+                /*
+                 * Starts a final WHERE clause by restricting it to the desired
+                 * history item ID.
+                 */
+                finalWhere = DbUtils.SQLITE_FTS_COLUMN_ROW_ID + " = "
+                        + uri.getLastPathSegment();
 
-            // Performs the delete.
-            count = db.delete(HistoryContract.TABLE_NAME, finalWhere,
-                    selectionArgs);
-            break;// URI_HISTORY_ID
+                /*
+                 * If there were additional selection criteria, append them to the
+                 * final WHERE clause
+                 */
+                if (selection != null)
+                    finalWhere = finalWhere + " AND " + selection;
 
-        // If the incoming pattern is invalid, throws an exception.
-        default:
-            throw new IllegalArgumentException("UNKNOWN URI " + uri);
+                // Performs the delete.
+                count = db.delete(HistoryContract.TABLE_NAME, finalWhere,
+                        selectionArgs);
+                break;// URI_HISTORY_ID
+
+            // If the incoming pattern is invalid, throws an exception.
+            default:
+                throw new IllegalArgumentException("UNKNOWN URI " + uri);
         }
 
         /*
@@ -245,37 +245,39 @@ public class HistoryProvider extends ContentProvider {
          * pattern-matching.
          */
         switch (URI_MATCHER.match(uri)) {
-        case URI_HISTORY: {
-            if (Arrays.equals(projection,
-                    new String[] { HistoryContract._COUNT })) {
-                db = mHistoryHelper.getReadableDatabase();
-                cursor = db.rawQuery(
-                        String.format(
-                                "SELECT COUNT(*) AS %s FROM %s %s",
-                                HistoryContract._COUNT,
-                                HistoryContract.TABLE_NAME,
-                                selection != null ? String.format("WHERE %s",
-                                        selection) : "").trim(), null);
-            }
+            case URI_HISTORY: {
+                if (Arrays.equals(projection,
+                        new String[] { HistoryContract._COUNT })) {
+                    db = mHistoryHelper.getReadableDatabase();
+                    cursor = db.rawQuery(
+                            String.format(
+                                    "SELECT COUNT(*) AS %s FROM %s %s",
+                                    HistoryContract._COUNT,
+                                    HistoryContract.TABLE_NAME,
+                                    selection != null ? String.format("WHERE %s",
+                                            selection) : "")
+                                    .trim(),
+                            null);
+                }
 
-            break;
-        }// URI_HISTORY
+                break;
+            } // URI_HISTORY
 
-        /*
-         * If the incoming URI is for a single history item identified by its
-         * ID, chooses the history item ID projection, and appends
-         * "_ID = <history-item-ID>" to the where clause, so that it selects
-         * that single history item.
-         */
-        case URI_HISTORY_ID: {
-            qb.appendWhere(DbUtils.SQLITE_FTS_COLUMN_ROW_ID + " = "
-                    + uri.getLastPathSegment());
+            /*
+             * If the incoming URI is for a single history item identified by its
+             * ID, chooses the history item ID projection, and appends
+             * "_ID = <history-item-ID>" to the where clause, so that it selects
+             * that single history item.
+             */
+            case URI_HISTORY_ID: {
+                qb.appendWhere(DbUtils.SQLITE_FTS_COLUMN_ROW_ID + " = "
+                        + uri.getLastPathSegment());
 
-            break;
-        }// URI_HISTORY_ID
+                break;
+            } // URI_HISTORY_ID
 
-        default:
-            throw new IllegalArgumentException("UNKNOWN URI " + uri);
+            default:
+                throw new IllegalArgumentException("UNKNOWN URI " + uri);
         }
 
         if (TextUtils.isEmpty(sortOrder))
@@ -316,44 +318,44 @@ public class HistoryProvider extends ContentProvider {
 
         // Does the update based on the incoming URI pattern
         switch (URI_MATCHER.match(uri)) {
-        /*
-         * If the incoming URI matches the general history items pattern, does
-         * the update based on the incoming data.
-         */
-        case URI_HISTORY:
-            // Does the update and returns the number of rows updated.
-            count = db.update(HistoryContract.TABLE_NAME, values, selection,
-                    selectionArgs);
-            break;
-
-        /*
-         * If the incoming URI matches a single history item ID, does the update
-         * based on the incoming data, but modifies the where clause to restrict
-         * it to the particular history item ID.
-         */
-        case URI_HISTORY_ID:
             /*
-             * Starts creating the final WHERE clause by restricting it to the
-             * incoming item ID.
+             * If the incoming URI matches the general history items pattern, does
+             * the update based on the incoming data.
              */
-            finalWhere = DbUtils.SQLITE_FTS_COLUMN_ROW_ID + " = "
-                    + uri.getLastPathSegment();
+            case URI_HISTORY:
+                // Does the update and returns the number of rows updated.
+                count = db.update(HistoryContract.TABLE_NAME, values, selection,
+                        selectionArgs);
+                break;
 
             /*
-             * If there were additional selection criteria, append them to the
-             * final WHERE clause
+             * If the incoming URI matches a single history item ID, does the update
+             * based on the incoming data, but modifies the where clause to restrict
+             * it to the particular history item ID.
              */
-            if (selection != null)
-                finalWhere = finalWhere + " AND " + selection;
+            case URI_HISTORY_ID:
+                /*
+                 * Starts creating the final WHERE clause by restricting it to the
+                 * incoming item ID.
+                 */
+                finalWhere = DbUtils.SQLITE_FTS_COLUMN_ROW_ID + " = "
+                        + uri.getLastPathSegment();
 
-            // Does the update and returns the number of rows updated.
-            count = db.update(HistoryContract.TABLE_NAME, values, finalWhere,
-                    selectionArgs);
-            break;
+                /*
+                 * If there were additional selection criteria, append them to the
+                 * final WHERE clause
+                 */
+                if (selection != null)
+                    finalWhere = finalWhere + " AND " + selection;
 
-        // If the incoming pattern is invalid, throws an exception.
-        default:
-            throw new IllegalArgumentException("UNKNOWN URI " + uri);
+                // Does the update and returns the number of rows updated.
+                count = db.update(HistoryContract.TABLE_NAME, values, finalWhere,
+                        selectionArgs);
+                break;
+
+            // If the incoming pattern is invalid, throws an exception.
+            default:
+                throw new IllegalArgumentException("UNKNOWN URI " + uri);
         }
 
         /*
@@ -375,7 +377,7 @@ public class HistoryProvider extends ContentProvider {
      * Appends file name and real URI into {@code cursor}.
      * 
      * @param cursor
-     *            the original cursor. It will be closed when done.
+     *               the original cursor. It will be closed when done.
      * @return the new cursor.
      */
     private Cursor appendNameAndRealUri(Cursor cursor) {
@@ -417,7 +419,7 @@ public class HistoryProvider extends ContentProvider {
                     fileInfo.close();
                 }
             } while (cursor.moveToNext());
-        }// if
+        } // if
 
         cursor.close();
 

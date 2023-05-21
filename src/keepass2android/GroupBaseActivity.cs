@@ -232,11 +232,13 @@ namespace keepass2android
         public AppTask AppTask
         {
             get { return _appTask; }
-            set { _appTask = value;
+            set
+            {
+                _appTask = value;
                 Kp2aLog.LogTask(value, MyDebugName);
             }
         }
-        
+
 
         private String strCachedGroupUuid = null;
         private IMenuItem _offlineItem;
@@ -388,7 +390,7 @@ namespace keepass2android
         private void UpdateAndroid8NotificationInfo(bool hideForever = false)
         {
             const string prefsKey = "DidShowAndroid8NotificationInfo";
-            
+
             bool canShowNotificationInfo = (Build.VERSION.SdkInt >= BuildVersionCodes.O) && (!_prefs.GetBoolean(prefsKey, false));
             if ((canShowNotificationInfo) && hideForever)
             {
@@ -400,7 +402,7 @@ namespace keepass2android
                 RegisterInfoTextDisplay("Android8Notification"); //this ensures that we don't show the general info texts too soon
             }
             UpdateBottomBarElementVisibility(Resource.Id.notification_info_android8_infotext, canShowNotificationInfo);
-            
+
 
         }
 
@@ -442,7 +444,7 @@ namespace keepass2android
             AppTask = AppTask.GetTaskInOnCreate(savedInstanceState, Intent);
 
             // Likely the app has been killed exit the activity 
-            if (App.Kp2a.CurrentDb== null)
+            if (App.Kp2a.CurrentDb == null)
             {
                 Finish();
                 return;
@@ -452,7 +454,7 @@ namespace keepass2android
 
 
             SetContentView(ContentResourceId);
-            
+
 
             if (FindViewById(Resource.Id.enable_autofill) != null)
             {
@@ -460,22 +462,22 @@ namespace keepass2android
                 {
                     var intent = new Intent(Settings.ActionRequestSetAutofillService);
                     intent.SetData(Android.Net.Uri.Parse("package:" + PackageName));
-		            try
-		            {
-		                StartActivity(intent);
-		            }
-		            catch (ActivityNotFoundException e)
-		            {
+                    try
+                    {
+                        StartActivity(intent);
+                    }
+                    catch (ActivityNotFoundException e)
+                    {
                         //this exception was reported by many Huawei users
-		                Kp2aLog.LogUnexpectedError(e);
-		                new AlertDialog.Builder(this)
-		                    .SetTitle(Resource.String.autofill_enable)
-		                    .SetMessage(Resource.String.autofill_enable_failed)
-		                    .SetPositiveButton(Resource.String.Ok, (o, eventArgs) => { })
-		                    .Show();
-		                const string autofillservicewasenabled = "AutofillServiceWasEnabled";
-		                _prefs.Edit().PutBoolean(autofillservicewasenabled, true).Commit();
-		                UpdateBottomBarElementVisibility(Resource.Id.autofill_infotext, false);
+                        Kp2aLog.LogUnexpectedError(e);
+                        new AlertDialog.Builder(this)
+                            .SetTitle(Resource.String.autofill_enable)
+                            .SetMessage(Resource.String.autofill_enable_failed)
+                            .SetPositiveButton(Resource.String.Ok, (o, eventArgs) => { })
+                            .Show();
+                        const string autofillservicewasenabled = "AutofillServiceWasEnabled";
+                        _prefs.Edit().PutBoolean(autofillservicewasenabled, true).Commit();
+                        UpdateBottomBarElementVisibility(Resource.Id.autofill_infotext, false);
                     }
                 };
             }
@@ -494,7 +496,7 @@ namespace keepass2android
             {
                 FindViewById(Resource.Id.hide_fingerprint_info).Click += (sender, args) =>
                 {
-                    _prefs.Edit().PutBoolean(fingerprintinfohidden_prefskey + App.Kp2a.CurrentDb.CurrentFingerprintPrefKey, true).Commit(); 
+                    _prefs.Edit().PutBoolean(fingerprintinfohidden_prefskey + App.Kp2a.CurrentDb.CurrentFingerprintPrefKey, true).Commit();
                     UpdateFingerprintInfo();
                 };
             }
@@ -614,12 +616,12 @@ namespace keepass2android
 
             SetResult(KeePass.ExitNormal);
 
-            
+
 
 
 
         }
-        
+
         private bool IsTimeForInfotext(out string lastInfoText)
         {
             DateTime lastDisplayTime = new DateTime(_prefs.GetLong("LastInfoTextTime", 0));
@@ -683,7 +685,7 @@ namespace keepass2android
             if (canShowAutofillInfo)
             {
                 RegisterInfoTextDisplay("AutofillSuggestion"); //this ensures that we don't show the general info texts too soon
-                
+
             }
             UpdateBottomBarElementVisibility(Resource.Id.autofill_infotext, canShowAutofillInfo);
         }
@@ -725,7 +727,7 @@ namespace keepass2android
                 return !isexplicit;
             });
 
-            bool disabledForDatabase = _prefs.GetBoolean(childdb_ignore_prefskey+ App.Kp2a.CurrentDb.CurrentFingerprintPrefKey, false);
+            bool disabledForDatabase = _prefs.GetBoolean(childdb_ignore_prefskey + App.Kp2a.CurrentDb.CurrentFingerprintPrefKey, false);
 
             if (canShow && !disabledForDatabase)
             {
@@ -847,7 +849,7 @@ namespace keepass2android
             {
                 var cursor = _suggestionsAdapter.Cursor;
                 cursor.MoveToPosition(position);
-                
+
                 ElementAndDatabaseId fullId = new ElementAndDatabaseId(cursor.GetString(cursor.GetColumnIndexOrThrow(SearchManager.SuggestColumnIntentDataId)));
                 var entryId = fullId.ElementId;
                 EntryActivity.Launch(_activity, App.Kp2a.GetDatabase(fullId.DatabaseId).EntriesById[entryId], -1, _activity.AppTask);
@@ -919,7 +921,7 @@ namespace keepass2android
             searchView.SetSearchableInfo(searchManager.GetSearchableInfo(ComponentName));
             searchView.SetOnSuggestionListener(new SuggestionListener(searchView.SuggestionsAdapter, this, searchItem));
             searchView.SetOnQueryTextListener(new OnQueryTextListener(this));
-            
+
             if (_prefs.GetBoolean("ActivateSearchView", false) && AppTask.CanActivateSearchViewOnStart)
             {
 
@@ -949,7 +951,7 @@ namespace keepass2android
         {
             if ((searchItem == null) || (searchItemDummy == null))
                 return;
-            if (Build.Manufacturer.ToLowerInvariant() == "samsung" && ((int) Build.VERSION.SdkInt >= 28) && (IsKp2aKeyboardActive()) && !hasCalledOtherActivity)
+            if (Build.Manufacturer.ToLowerInvariant() == "samsung" && ((int)Build.VERSION.SdkInt >= 28) && (IsKp2aKeyboardActive()) && !hasCalledOtherActivity)
             {
                 searchItem.SetVisible(false);
                 searchItemDummy.SetVisible(true);
@@ -970,17 +972,17 @@ namespace keepass2android
             string currentIme = Android.Provider.Settings.Secure.GetString(
                 ContentResolver,
                 Android.Provider.Settings.Secure.DefaultInputMethod);
-            
+
             return Kp2aInputMethodName == currentIme;
 
         }
 
         private void ActivateSearchView()
         {
-            
-                searchView.Iconified = false;
-                AppTask.CanActivateSearchViewOnStart = false;
-            
+
+            searchView.Iconified = false;
+            AppTask.CanActivateSearchViewOnStart = false;
+
         }
 
         private void UpdateOfflineModeMenu()
@@ -989,7 +991,7 @@ namespace keepass2android
             {
                 if (_syncItem != null)
                 {
-                    if (((App.Kp2a.OpenDatabases.Count() == 1)  || (EntriesBelongToCurrentDatabaseOnly))
+                    if (((App.Kp2a.OpenDatabases.Count() == 1) || (EntriesBelongToCurrentDatabaseOnly))
                         && App.Kp2a.CurrentDb.Ioc.IsLocalFile())
                         _syncItem.SetVisible(false);
                     else
@@ -997,7 +999,7 @@ namespace keepass2android
                 }
 
                 if (((App.Kp2a.OpenDatabases.Count() == 1) || (EntriesBelongToCurrentDatabaseOnly))
-                    &&  (App.Kp2a.GetFileStorage(App.Kp2a.CurrentDb.Ioc) is IOfflineSwitchable))
+                    && (App.Kp2a.GetFileStorage(App.Kp2a.CurrentDb.Ioc) is IOfflineSwitchable))
                 {
                     _offlineItem?.SetVisible(App.Kp2a.OfflineMode == false);
                     _onlineItem?.SetVisible(App.Kp2a.OfflineMode);
@@ -1010,7 +1012,7 @@ namespace keepass2android
             }
             catch (Exception e)
             {
-                Kp2aLog.LogUnexpectedError(new Exception("Cannot UpdateOfflineModeMenu " + (App.Kp2a == null) + " " + ((App.Kp2a == null) || (App.Kp2a.CurrentDb== null)) + " " + (((App.Kp2a == null) || (App.Kp2a.CurrentDb== null) || (App.Kp2a.CurrentDb.Ioc == null)) + " " + (_syncItem != null) + " " + (_offlineItem != null) + " " + (_onlineItem != null))));
+                Kp2aLog.LogUnexpectedError(new Exception("Cannot UpdateOfflineModeMenu " + (App.Kp2a == null) + " " + ((App.Kp2a == null) || (App.Kp2a.CurrentDb == null)) + " " + (((App.Kp2a == null) || (App.Kp2a.CurrentDb == null) || (App.Kp2a.CurrentDb.Ioc == null)) + " " + (_syncItem != null) + " " + (_offlineItem != null) + " " + (_onlineItem != null))));
             }
 
         }
@@ -1094,7 +1096,7 @@ namespace keepass2android
             return base.OnOptionsItemSelected(item);
         }
 
-    
+
 
         public override void OnBackPressed()
         {
@@ -1121,7 +1123,7 @@ namespace keepass2android
                         ActivityCompat.InvalidateOptionsMenu(this);
 
                         // Mark all groups as dirty now to refresh them on load
-                        
+
                         App.Kp2a.MarkAllGroupsAsDirty();
                         // We'll manually refresh this group so we can remove it
                         App.Kp2a.DirtyGroups.Remove(Group);
@@ -1270,7 +1272,7 @@ namespace keepass2android
             {
                 ListView.ChoiceMode = ChoiceMode.MultipleModal;
 
-                ListView.ItemLongClick += delegate(object sender, AdapterView.ItemLongClickEventArgs args)
+                ListView.ItemLongClick += delegate (object sender, AdapterView.ItemLongClickEventArgs args)
                 {
                     ListView.SetItemChecked(args.Position, true);
                 };
@@ -1409,7 +1411,7 @@ namespace keepass2android
             menuItem = mode.Menu.FindItem(Resource.Id.menu_navigate);
             if (menuItem != null)
             {
-                menuItem.SetVisible(((GroupBaseActivity) Activity).IsSearchResult && IsOnlyOneItemChecked());
+                menuItem.SetVisible(((GroupBaseActivity)Activity).IsSearchResult && IsOnlyOneItemChecked());
             }
 
             menuItem = mode.Menu.FindItem(Resource.Id.menu_copy);
@@ -1476,7 +1478,7 @@ namespace keepass2android
         }
 
 
-        public void  DeleteMultipleItems(GroupBaseActivity activity, List<IStructureItem> checkedItems, OnFinish onFinish, Kp2aApp app)
+        public void DeleteMultipleItems(GroupBaseActivity activity, List<IStructureItem> checkedItems, OnFinish onFinish, Kp2aApp app)
         {
             if (checkedItems.Any() == false)
                 return;

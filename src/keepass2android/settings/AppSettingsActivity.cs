@@ -57,66 +57,66 @@ namespace keepass2android
         public ToolbarPreference(Context context, IAttributeSet attrs, int defStyleAttr, int defStyleRes) : base(context, attrs, defStyleAttr, defStyleRes)
         {
         }
-#endregion
+        #endregion
 
         protected override View OnCreateView(ViewGroup parent)
         {
             parent.SetPadding(0, 0, 0, 0);
 
-    LayoutInflater inflater = (LayoutInflater) Context.GetSystemService(Context.LayoutInflaterService);
-    View layout = inflater.Inflate(Resource.Layout.toolbar, parent, false);
+            LayoutInflater inflater = (LayoutInflater)Context.GetSystemService(Context.LayoutInflaterService);
+            View layout = inflater.Inflate(Resource.Layout.toolbar, parent, false);
 
-    Toolbar toolbar = (Toolbar) layout.FindViewById<Toolbar>(Resource.Id.mytoolbar);
-    toolbar.SetNavigationIcon(Resource.Drawable.ic_arrow_back_white_24dp);
-    toolbar.Title = Title;
+            Toolbar toolbar = (Toolbar)layout.FindViewById<Toolbar>(Resource.Id.mytoolbar);
+            toolbar.SetNavigationIcon(Resource.Drawable.ic_arrow_back_white_24dp);
+            toolbar.Title = Title;
             toolbar.NavigationClick += (sender, args) =>
             {
-                PreferenceScreen prefScreen = (PreferenceScreen) PreferenceManager.FindPreference(Key);
+                PreferenceScreen prefScreen = (PreferenceScreen)PreferenceManager.FindPreference(Key);
                 if (prefScreen == null)
                     throw new Exception("didn't find preference " + Key);
                 prefScreen.Dialog.Dismiss();
             };
 
-    return layout;
-            
+            return layout;
+
         }
     }
 
 
 
-	/// <summary>
-	/// Activity to configure the application, without database settings. Does not require an unlocked database, or close when the database is locked
-	/// </summary>
-    [Activity(Label = "@string/app_name", Theme = "@style/MyTheme", ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.Keyboard | ConfigChanges.KeyboardHidden)]			
-	public class AppSettingsActivity : LockingActivity
-	{
-		private ActivityDesign _design;
-		
-		public AppSettingsActivity()
-		{
-			_design = new ActivityDesign(this);
-		}
+    /// <summary>
+    /// Activity to configure the application, without database settings. Does not require an unlocked database, or close when the database is locked
+    /// </summary>
+    [Activity(Label = "@string/app_name", Theme = "@style/MyTheme", ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.Keyboard | ConfigChanges.KeyboardHidden)]
+    public class AppSettingsActivity : LockingActivity
+    {
+        private ActivityDesign _design;
 
-		public static void Launch(Context ctx)
-		{
-			ctx.StartActivity(new Intent(ctx, typeof(AppSettingsActivity)));
-		}
+        public AppSettingsActivity()
+        {
+            _design = new ActivityDesign(this);
+        }
 
-		protected override void OnCreate(Bundle savedInstanceState) 
-		{
-			_design.ApplyTheme(); 
-			base.OnCreate(savedInstanceState);
-			
-			
-			SetContentView(Resource.Layout.preference);
+        public static void Launch(Context ctx)
+        {
+            ctx.StartActivity(new Intent(ctx, typeof(AppSettingsActivity)));
+        }
 
-		    SetSupportActionBar(FindViewById<AndroidX.AppCompat.Widget.Toolbar>(Resource.Id.mytoolbar));
+        protected override void OnCreate(Bundle savedInstanceState)
+        {
+            _design.ApplyTheme();
+            base.OnCreate(savedInstanceState);
+
+
+            SetContentView(Resource.Layout.preference);
+
+            SetSupportActionBar(FindViewById<AndroidX.AppCompat.Widget.Toolbar>(Resource.Id.mytoolbar));
 
             FragmentManager.FindFragmentById<SettingsFragment>(Resource.Id.settings_fragment).FindPreference(GetString(Resource.String.db_key)).Enabled = false;
-			
-		}
 
-	}
+        }
+
+    }
 
 }
 

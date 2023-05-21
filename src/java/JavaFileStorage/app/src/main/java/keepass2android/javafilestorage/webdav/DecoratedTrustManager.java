@@ -21,12 +21,9 @@ public class DecoratedTrustManager implements X509TrustManager {
 
     @Override
     public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
-        try
-        {
-            mTrustManager.checkClientTrusted(x509Certificates,s);
-        }
-        catch (CertificateException e)
-        {
+        try {
+            mTrustManager.checkClientTrusted(x509Certificates, s);
+        } catch (CertificateException e) {
             if ((mCertificateErrorHandler == null) || (!mCertificateErrorHandler.onValidationError(getMessage(e))))
                 throw e;
         }
@@ -35,12 +32,9 @@ public class DecoratedTrustManager implements X509TrustManager {
 
     @Override
     public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
-        try
-        {
-            mTrustManager.checkServerTrusted(x509Certificates,s);
-        }
-        catch (CertificateException e)
-        {
+        try {
+            mTrustManager.checkServerTrusted(x509Certificates, s);
+        } catch (CertificateException e) {
             if ((mCertificateErrorHandler == null) || (!mCertificateErrorHandler.onValidationError(getMessage(e))))
                 throw e;
         }
@@ -48,12 +42,12 @@ public class DecoratedTrustManager implements X509TrustManager {
     }
 
     private String getMessage(CertificateException e) {
-            String msg = e.getLocalizedMessage();
-    if (msg == null)
-    msg = e.getMessage();
-    if (msg == null)
-    msg = e.toString();
-    return msg;
+        String msg = e.getLocalizedMessage();
+        if (msg == null)
+            msg = e.getMessage();
+        if (msg == null)
+            msg = e.toString();
+        return msg;
     }
 
     @Override

@@ -24,8 +24,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 /**
- * Manages functionality related to responding to requests to scan from an HTTP link in a web page.
- * See <a href="http://code.google.com/p/zxing/wiki/ScanningFromWebPages">ScanningFromWebPages</a>.
+ * Manages functionality related to responding to requests to scan from an HTTP
+ * link in a web page.
+ * See <a href=
+ * "http://code.google.com/p/zxing/wiki/ScanningFromWebPages">ScanningFromWebPages</a>.
  *
  * @author Sean Owen
  */
@@ -55,7 +57,7 @@ final class ScanFromWebPageManager {
   String buildReplyURL(Result rawResult, ResultHandler resultHandler) {
     String result = returnUrlTemplate;
     result = replace(CODE_PLACEHOLDER,
-                     returnRaw ? rawResult.getText() : resultHandler.getDisplayContents(), result);
+        returnRaw ? rawResult.getText() : resultHandler.getDisplayContents(), result);
     result = replace(RAW_CODE_PLACEHOLDER, rawResult.getText(), result);
     result = replace(FORMAT_PLACEHOLDER, rawResult.getBarcodeFormat().toString(), result);
     result = replace(TYPE_PLACEHOLDER, resultHandler.getType().toString(), result);

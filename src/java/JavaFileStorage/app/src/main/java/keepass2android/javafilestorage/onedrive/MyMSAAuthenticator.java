@@ -39,8 +39,7 @@ public abstract class MyMSAAuthenticator implements IAuthenticator {
 
     private final Context mContext;
 
-    public MyMSAAuthenticator(Context context)
-    {
+    public MyMSAAuthenticator(Context context) {
         mContext = context;
     }
 
@@ -97,6 +96,7 @@ public abstract class MyMSAAuthenticator implements IAuthenticator {
     /**
      * The client id for this authenticator.
      * https://dev.onedrive.com/auth/msa_oauth.htm#to-register-your-app
+     * 
      * @return The client id.
      */
     public abstract String getClientId();
@@ -104,6 +104,7 @@ public abstract class MyMSAAuthenticator implements IAuthenticator {
     /**
      * The scopes for this application.
      * https://dev.onedrive.com/auth/msa_oauth.htm#authentication-scopes
+     * 
      * @return The scopes for this application.
      */
     public abstract String[] getScopes();
@@ -115,16 +116,18 @@ public abstract class MyMSAAuthenticator implements IAuthenticator {
 
     /**
      * Initializes the authenticator.
-     * @param executors The executors to schedule foreground and background tasks.
+     * 
+     * @param executors    The executors to schedule foreground and background
+     *                     tasks.
      * @param httpProvider The http provider for sending requests.
-     * @param activity The activity to create interactive UI on.
-     * @param logger The logger for diagnostic information.
+     * @param activity     The activity to create interactive UI on.
+     * @param logger       The logger for diagnostic information.
      */
     @Override
     public synchronized void init(final IExecutors executors,
-                                  final IHttpProvider httpProvider,
-                                  final Activity activity,
-                                  final ILogger logger) {
+            final IHttpProvider httpProvider,
+            final Activity activity,
+            final ILogger logger) {
         mActivity = activity;
 
         if (mInitialized) {
@@ -142,8 +145,10 @@ public abstract class MyMSAAuthenticator implements IAuthenticator {
 
     /**
      * Starts an interactive login asynchronously.
-     * @param emailAddressHint The hint for the email address during the interactive login.
-     * @param loginCallback The callback to be called when the login is complete.
+     * 
+     * @param emailAddressHint The hint for the email address during the interactive
+     *                         login.
+     * @param loginCallback    The callback to be called when the login is complete.
      */
     @Override
     public void login(final String emailAddressHint, final ICallback<IAccountInfo> loginCallback) {
@@ -172,9 +177,12 @@ public abstract class MyMSAAuthenticator implements IAuthenticator {
 
     /**
      * Starts an interactive login.
-     * @param emailAddressHint The hint for the email address during the interactive login.
+     * 
+     * @param emailAddressHint The hint for the email address during the interactive
+     *                         login.
      * @return The account info.
-     * @throws ClientException An exception occurs if the login was unable to complete for any reason.
+     * @throws ClientException An exception occurs if the login was unable to
+     *                         complete for any reason.
      */
     @Override
     public synchronized IAccountInfo login(final String emailAddressHint) throws ClientException {
@@ -190,8 +198,8 @@ public abstract class MyMSAAuthenticator implements IAuthenticator {
         final LiveAuthListener listener = new LiveAuthListener() {
             @Override
             public void onAuthComplete(final LiveStatus liveStatus,
-                                       final LiveConnectSession liveConnectSession,
-                                       final Object o) {
+                    final LiveConnectSession liveConnectSession,
+                    final Object o) {
                 if (liveStatus == LiveStatus.NOT_CONNECTED) {
                     mLogger.logDebug("Received invalid login failure from silent authentication with MSA, ignoring.");
                 } else {
@@ -202,7 +210,7 @@ public abstract class MyMSAAuthenticator implements IAuthenticator {
 
             @Override
             public void onAuthError(final LiveAuthException e,
-                                    final Object o) {
+                    final Object o) {
                 OneDriveErrorCodes code = OneDriveErrorCodes.AuthenticationFailure;
                 if (e.getError().equals(SIGN_IN_CANCELLED_MESSAGE)) {
                     code = OneDriveErrorCodes.AuthenticationCancelled;
@@ -249,6 +257,7 @@ public abstract class MyMSAAuthenticator implements IAuthenticator {
 
     /**
      * Starts a silent login asynchronously.
+     * 
      * @param loginCallback The callback to be called when the login is complete.
      */
     @Override
@@ -277,8 +286,10 @@ public abstract class MyMSAAuthenticator implements IAuthenticator {
 
     /**
      * Starts a silent login.
+     * 
      * @return The account info.
-     * @throws ClientException An exception occurs if the login was unable to complete for any reason.
+     * @throws ClientException An exception occurs if the login was unable to
+     *                         complete for any reason.
      */
     @Override
     public synchronized IAccountInfo loginSilent() throws ClientException {
@@ -301,8 +312,8 @@ public abstract class MyMSAAuthenticator implements IAuthenticator {
         final boolean waitForCallback = mAuthClient.loginSilent(new LiveAuthListener() {
             @Override
             public void onAuthComplete(final LiveStatus liveStatus,
-                                       final LiveConnectSession liveConnectSession,
-                                       final Object o) {
+                    final LiveConnectSession liveConnectSession,
+                    final Object o) {
                 if (liveStatus == LiveStatus.NOT_CONNECTED) {
                     error.set(new ClientAuthenticatorException("Failed silent login, interactive login required",
                             OneDriveErrorCodes.AuthenticationFailure));
@@ -315,7 +326,7 @@ public abstract class MyMSAAuthenticator implements IAuthenticator {
 
             @Override
             public void onAuthError(final LiveAuthException e,
-                                    final Object o) {
+                    final Object o) {
                 OneDriveErrorCodes code = OneDriveErrorCodes.AuthenticationFailure;
                 if (e.getError().equals(SIGN_IN_CANCELLED_MESSAGE)) {
                     code = OneDriveErrorCodes.AuthenticationCancelled;
@@ -344,6 +355,7 @@ public abstract class MyMSAAuthenticator implements IAuthenticator {
 
     /**
      * Log the current user out.
+     * 
      * @param logoutCallback The callback to be called when the logout is complete.
      */
     @Override
@@ -373,7 +385,9 @@ public abstract class MyMSAAuthenticator implements IAuthenticator {
 
     /**
      * Log the current user out.
-     * @throws ClientException An exception occurs if the logout was unable to complete for any reason.
+     * 
+     * @throws ClientException An exception occurs if the logout was unable to
+     *                         complete for any reason.
      */
     @Override
     public synchronized void logout() throws ClientException {
@@ -388,8 +402,8 @@ public abstract class MyMSAAuthenticator implements IAuthenticator {
         mAuthClient.logout(new LiveAuthListener() {
             @Override
             public void onAuthComplete(final LiveStatus liveStatus,
-                                       final LiveConnectSession liveConnectSession,
-                                       final Object o) {
+                    final LiveConnectSession liveConnectSession,
+                    final Object o) {
                 mLogger.logDebug("Logout completed");
                 logoutWaiter.signal();
             }
@@ -423,6 +437,7 @@ public abstract class MyMSAAuthenticator implements IAuthenticator {
 
     /**
      * Gets the current account info for this authenticator.
+     * 
      * @return NULL if no account is available.
      */
     @Override
@@ -437,6 +452,7 @@ public abstract class MyMSAAuthenticator implements IAuthenticator {
 
     /**
      * Gets the shared preferences for this authenticator.
+     * 
      * @return The shared preferences.
      */
     private SharedPreferences getSharedPreferences() {

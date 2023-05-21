@@ -39,12 +39,12 @@ final class VCardContactEncoder extends ContactEncoder {
 
   @Override
   public String[] encode(Iterable<String> names,
-                         String organization,
-                         Iterable<String> addresses,
-                         Iterable<String> phones,
-                         Iterable<String> emails,
-                         Iterable<String> urls,
-                         String note) {
+      String organization,
+      Iterable<String> addresses,
+      Iterable<String> phones,
+      Iterable<String> emails,
+      Iterable<String> urls,
+      String note) {
     StringBuilder newContents = new StringBuilder(100);
     newContents.append("BEGIN:VCARD").append(TERMINATOR);
     newContents.append("VERSION:3.0").append(TERMINATOR);
@@ -64,28 +64,28 @@ final class VCardContactEncoder extends ContactEncoder {
     newContents.append("END:VCARD").append(TERMINATOR);
     return new String[] { newContents.toString(), newDisplayContents.toString() };
   }
-  
-  private static void append(StringBuilder newContents, 
-                             StringBuilder newDisplayContents,
-                             String prefix, 
-                             String value) {
+
+  private static void append(StringBuilder newContents,
+      StringBuilder newDisplayContents,
+      String prefix,
+      String value) {
     doAppend(newContents, newDisplayContents, prefix, value, VCARD_FIELD_FORMATTER, TERMINATOR);
   }
-  
-  private static void appendUpToUnique(StringBuilder newContents, 
-                                       StringBuilder newDisplayContents,
-                                       String prefix, 
-                                       Iterable<String> values, 
-                                       int max,
-                                       Formatter formatter) {
+
+  private static void appendUpToUnique(StringBuilder newContents,
+      StringBuilder newDisplayContents,
+      String prefix,
+      Iterable<String> values,
+      int max,
+      Formatter formatter) {
     doAppendUpToUnique(newContents,
-                       newDisplayContents,
-                       prefix,
-                       values,
-                       max,
-                       formatter,
-                       VCARD_FIELD_FORMATTER,
-                       TERMINATOR);
+        newDisplayContents,
+        prefix,
+        values,
+        max,
+        formatter,
+        VCARD_FIELD_FORMATTER,
+        TERMINATOR);
   }
 
 }

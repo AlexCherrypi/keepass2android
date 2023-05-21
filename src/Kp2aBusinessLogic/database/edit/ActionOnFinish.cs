@@ -21,37 +21,37 @@ using Android.OS;
 
 namespace keepass2android
 {
-	public class ActionOnFinish: OnFinish
-	{
-		public delegate void ActionToPerformOnFinsh(bool success, String message, Activity activeActivity);
+    public class ActionOnFinish : OnFinish
+    {
+        public delegate void ActionToPerformOnFinsh(bool success, String message, Activity activeActivity);
 
-		readonly ActionToPerformOnFinsh _actionToPerform;
+        readonly ActionToPerformOnFinsh _actionToPerform;
 
-		public ActionOnFinish(Activity activity, ActionToPerformOnFinsh actionToPerform) : base(activity, null, null)
-		{
-			_actionToPerform = actionToPerform;
-		}
+        public ActionOnFinish(Activity activity, ActionToPerformOnFinsh actionToPerform) : base(activity, null, null)
+        {
+            _actionToPerform = actionToPerform;
+        }
 
-		public ActionOnFinish(Activity activity, ActionToPerformOnFinsh actionToPerform, OnFinish finish) : base(activity, finish)
-		{
-			_actionToPerform = actionToPerform;
-		}
+        public ActionOnFinish(Activity activity, ActionToPerformOnFinsh actionToPerform, OnFinish finish) : base(activity, finish)
+        {
+            _actionToPerform = actionToPerform;
+        }
 
-		//if set to true, the previously active active will be passed to ActionToPerformOnFinish instead null if no activity is on foreground
+        //if set to true, the previously active active will be passed to ActionToPerformOnFinish instead null if no activity is on foreground
         public bool AllowInactiveActivity { get; set; }
 
         public override void Run()
-		{
-			if (Message == null)
-				Message = "";
-			if (Handler != null)
-			{
-				Handler.Post(() => {_actionToPerform(Success, Message, ActiveActivity);});
-			}
-			else
-				_actionToPerform(Success, Message, AllowInactiveActivity ? (ActiveActivity ?? PreviouslyActiveActivity) :  ActiveActivity);
-			base.Run();
-		}
-	}
+        {
+            if (Message == null)
+                Message = "";
+            if (Handler != null)
+            {
+                Handler.Post(() => { _actionToPerform(Success, Message, ActiveActivity); });
+            }
+            else
+                _actionToPerform(Success, Message, AllowInactiveActivity ? (ActiveActivity ?? PreviouslyActiveActivity) : ActiveActivity);
+            base.Run();
+        }
+    }
 }
 

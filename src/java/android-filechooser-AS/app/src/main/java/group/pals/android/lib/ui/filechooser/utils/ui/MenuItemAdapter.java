@@ -30,9 +30,9 @@ public class MenuItemAdapter extends BaseAdapter {
      * Creates new instance.
      * 
      * @param context
-     *            {@link Context}
+     *                {@link Context}
      * @param itemIds
-     *            array of resource IDs of titles to be used.
+     *                array of resource IDs of titles to be used.
      */
     public MenuItemAdapter(Context context, Integer[] itemIds) {
         mContext = context;

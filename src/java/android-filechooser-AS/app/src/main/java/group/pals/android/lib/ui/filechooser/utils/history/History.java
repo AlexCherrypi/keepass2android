@@ -26,7 +26,7 @@ public interface History<A> extends Parcelable {
      * one, then does nothing.
      * 
      * @param newItem
-     *            the new item
+     *                the new item
      */
     void push(A newItem);
 
@@ -34,7 +34,7 @@ public interface History<A> extends Parcelable {
      * Finds {@code item} and if it exists, removes all items after it.
      * 
      * @param item
-     *            {@link A}
+     *             {@link A}
      * @return the total items truncated.
      * @since v4.3 beta
      */
@@ -44,7 +44,7 @@ public interface History<A> extends Parcelable {
      * Removes an item.
      * 
      * @param item
-     *            {@link A}
+     *             {@link A}
      * @since v4.0 beta
      */
     void remove(A item);
@@ -53,7 +53,7 @@ public interface History<A> extends Parcelable {
      * Removes all items by a filter.
      * 
      * @param filter
-     *            {@link HistoryFilter}
+     *               {@link HistoryFilter}
      * @since v4.0 beta
      */
     void removeAll(HistoryFilter<A> filter);
@@ -69,7 +69,7 @@ public interface History<A> extends Parcelable {
      * Gets index of item {@code a}
      * 
      * @param a
-     *            an item
+     *          an item
      * @return index of the {@code a}, or -1 if there is no one
      */
     int indexOf(A a);
@@ -78,7 +78,7 @@ public interface History<A> extends Parcelable {
      * Gets previous item of {@code a}
      * 
      * @param a
-     *            current item
+     *          current item
      * @return the previous item, can be {@code null}
      */
     A prevOf(A a);
@@ -87,7 +87,7 @@ public interface History<A> extends Parcelable {
      * Gets next item of {@code a}
      * 
      * @param a
-     *            current item
+     *          current item
      * @return the next item, can be {@code null}
      */
     A nextOf(A a);
@@ -119,7 +119,7 @@ public interface History<A> extends Parcelable {
      * Adds a {@link HistoryListener}
      * 
      * @param listener
-     *            {@link HistoryListener}
+     *                 {@link HistoryListener}
      * @since v4.0 beta
      */
     void addListener(HistoryListener<A> listener);
@@ -128,7 +128,7 @@ public interface History<A> extends Parcelable {
      * Removes a {@link HistoryListener}
      * 
      * @param listener
-     *            {@link HistoryListener}
+     *                 {@link HistoryListener}
      * @return the removed listener
      * @since v4.0 beta
      */
@@ -143,10 +143,11 @@ public interface History<A> extends Parcelable {
      * Finds items with a filter.
      * 
      * @param filter
-     *            {@link HistoryFilter}
+     *                  {@link HistoryFilter}
      * @param ascending
-     *            {@code true} if you want to process the history list ascending
-     *            (oldest to newest), {@code false} for descending.
+     *                  {@code true} if you want to process the history list
+     *                  ascending
+     *                  (oldest to newest), {@code false} for descending.
      * @return {@code true} if the desired items have been found, {@code false}
      *         otherwise.
      * @since v5.1 beta

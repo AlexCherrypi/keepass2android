@@ -34,235 +34,239 @@ using String = System.String;
 namespace keepass2android
 {
 
-	public class Database
-	{
-	    public HashSet<IStructureItem> Elements = new HashSet<IStructureItem>();
-		public Dictionary<PwUuid, PwGroup> GroupsById = new Dictionary<PwUuid, PwGroup>(new PwUuidEqualityComparer());
-		public Dictionary<PwUuid, PwEntry> EntriesById = new Dictionary<PwUuid, PwEntry>(new PwUuidEqualityComparer());
-		public PwGroup Root;
-		public PwDatabase KpDatabase;
-		public IOConnectionInfo Ioc 
-		{
-			get
-			{
-                
+    public class Database
+    {
+        public HashSet<IStructureItem> Elements = new HashSet<IStructureItem>();
+        public Dictionary<PwUuid, PwGroup> GroupsById = new Dictionary<PwUuid, PwGroup>(new PwUuidEqualityComparer());
+        public Dictionary<PwUuid, PwEntry> EntriesById = new Dictionary<PwUuid, PwEntry>(new PwUuidEqualityComparer());
+        public PwGroup Root;
+        public PwDatabase KpDatabase;
+        public IOConnectionInfo Ioc
+        {
+            get
+            {
+
                 return KpDatabase?.IOConnectionInfo;
-                
-			}
-		}
 
-		/// <summary>
-		/// if an OTP key was used, this property tells the location of the OTP auxiliary file.
-		/// Must be set after loading.
-		/// </summary>
-		public IOConnectionInfo OtpAuxFileIoc { get; set; }
+            }
+        }
 
-		public string LastFileVersion;
-		public SearchDbHelper SearchHelper;
-		
-		public IDrawableFactory DrawableFactory;
+        /// <summary>
+        /// if an OTP key was used, this property tells the location of the OTP auxiliary file.
+        /// Must be set after loading.
+        /// </summary>
+        public IOConnectionInfo OtpAuxFileIoc { get; set; }
 
-		readonly IKp2aApp _app;
+        public string LastFileVersion;
+        public SearchDbHelper SearchHelper;
+
+        public IDrawableFactory DrawableFactory;
+
+        readonly IKp2aApp _app;
 
         public Database(IDrawableFactory drawableFactory, IKp2aApp app)
         {
             DrawableFactory = drawableFactory;
             _app = app;
-			CanWrite = true; //default
+            CanWrite = true; //default
         }
 
-	    private IDatabaseFormat _databaseFormat = new KdbxDatabaseFormat(KdbxFormat.Default);
+        private IDatabaseFormat _databaseFormat = new KdbxDatabaseFormat(KdbxFormat.Default);
 
-		public bool ReloadRequested { get; set; }
+        public bool ReloadRequested { get; set; }
 
-	    public bool DidOpenFileChange()
-		{
-			return _app.GetFileStorage(Ioc).CheckForFileChangeFast(Ioc, LastFileVersion);
-		}
+        public bool DidOpenFileChange()
+        {
+            return _app.GetFileStorage(Ioc).CheckForFileChangeFast(Ioc, LastFileVersion);
+        }
 
 
-		/// <summary>
-		/// Do not call this method directly. Call App.Kp2a.LoadDatabase instead.
-		/// </summary>
-		public void LoadData(IKp2aApp app, IOConnectionInfo iocInfo, MemoryStream databaseData, CompositeKey compositeKey, ProgressDialogStatusLogger status, IDatabaseFormat databaseFormat)
-		{
-			PwDatabase pwDatabase = new PwDatabase();
+        /// <summary>
+        /// Do not call this method directly. Call App.Kp2a.LoadDatabase instead.
+        /// </summary>
+        public void LoadData(IKp2aApp app, IOConnectionInfo iocInfo, MemoryStream databaseData, CompositeKey compositeKey, ProgressDialogStatusLogger status, IDatabaseFormat databaseFormat)
+        {
+            PwDatabase pwDatabase = new PwDatabase();
 
-			IFileStorage fileStorage = _app.GetFileStorage(iocInfo);
-			Stream s = databaseData ?? fileStorage.OpenFileForRead(iocInfo);
-			var fileVersion = _app.GetFileStorage(iocInfo).GetCurrentFileVersionFast(iocInfo);
-			PopulateDatabaseFromStream(pwDatabase, s, iocInfo, compositeKey, status, databaseFormat);
-		    LastFileVersion = fileVersion;
+            IFileStorage fileStorage = _app.GetFileStorage(iocInfo);
+            Stream s = databaseData ?? fileStorage.OpenFileForRead(iocInfo);
+            var fileVersion = _app.GetFileStorage(iocInfo).GetCurrentFileVersionFast(iocInfo);
+            PopulateDatabaseFromStream(pwDatabase, s, iocInfo, compositeKey, status, databaseFormat);
+            LastFileVersion = fileVersion;
 
-		    status.UpdateSubMessage("");
+            status.UpdateSubMessage("");
 
-		    Root = pwDatabase.RootGroup;
-		    PopulateGlobals(Root);
+            Root = pwDatabase.RootGroup;
+            PopulateGlobals(Root);
 
-				
-		    KpDatabase = pwDatabase;
-		    SearchHelper = new SearchDbHelper(app);
 
-		    _databaseFormat = databaseFormat;
+            KpDatabase = pwDatabase;
+            SearchHelper = new SearchDbHelper(app);
 
-		    CanWrite = databaseFormat.CanWrite && !fileStorage.IsReadOnly(iocInfo);
-		}
+            _databaseFormat = databaseFormat;
 
-		/// <summary>
-		/// Indicates whether it is possible to make changes to this database
-		/// </summary>
-		public bool CanWrite { get; set; }
+            CanWrite = databaseFormat.CanWrite && !fileStorage.IsReadOnly(iocInfo);
+        }
 
-		public IDatabaseFormat DatabaseFormat
-		{
-			get { return _databaseFormat; }
-			set { _databaseFormat = value; }
-		}
+        /// <summary>
+        /// Indicates whether it is possible to make changes to this database
+        /// </summary>
+        public bool CanWrite { get; set; }
 
-	    public string IocAsHexString()
-	    {
-	        return IoUtil.IocAsHexString(Ioc);
-	    }
+        public IDatabaseFormat DatabaseFormat
+        {
+            get { return _databaseFormat; }
+            set { _databaseFormat = value; }
+        }
+
+        public string IocAsHexString()
+        {
+            return IoUtil.IocAsHexString(Ioc);
+        }
 
         public static string GetFingerprintPrefKey(IOConnectionInfo ioc)
-	    {
-	        var iocAsHexString = IoUtil.IocAsHexString(ioc);
+        {
+            var iocAsHexString = IoUtil.IocAsHexString(ioc);
 
-	        return "kp2a_ioc_" + iocAsHexString;
-	    }
+            return "kp2a_ioc_" + iocAsHexString;
+        }
 
 
         public static string GetFingerprintModePrefKey(IOConnectionInfo ioc)
-		{
-			return GetFingerprintPrefKey(ioc) + "_mode";
-		}
+        {
+            return GetFingerprintPrefKey(ioc) + "_mode";
+        }
 
-		public string CurrentFingerprintPrefKey	
-		{
-			get { return GetFingerprintPrefKey(Ioc); }
-		}
+        public string CurrentFingerprintPrefKey
+        {
+            get { return GetFingerprintPrefKey(Ioc); }
+        }
 
-		public string CurrentFingerprintModePrefKey
-		{
-			get { return GetFingerprintModePrefKey(Ioc); }
-		}
+        public string CurrentFingerprintModePrefKey
+        {
+            get { return GetFingerprintModePrefKey(Ioc); }
+        }
 
-		protected  virtual void PopulateDatabaseFromStream(PwDatabase pwDatabase, Stream s, IOConnectionInfo iocInfo, CompositeKey compositeKey, ProgressDialogStatusLogger status, IDatabaseFormat databaseFormat)
-		{
-			IFileStorage fileStorage = _app.GetFileStorage(iocInfo);
-			var filename = fileStorage.GetFilenameWithoutPathAndExt(iocInfo);
-			pwDatabase.Open(s, filename, iocInfo, compositeKey, status, databaseFormat);
-		}
-
-
-		public PwGroup SearchForText(String str) {
-			PwGroup group = SearchHelper.SearchForText(this, str);
-			
-			return group;
-			
-		}
-
-		public PwGroup Search(SearchParameters searchParams, IDictionary<PwUuid, KeyValuePair<string, string>> resultContexts)
-		{
-			if (SearchHelper == null)
-				throw new Exception("SearchHelper is null");
-			return SearchHelper.Search(this, searchParams, resultContexts);
-		}
-
-		
-		public PwGroup SearchForExactUrl(String url) {
-			PwGroup group = SearchHelper.SearchForExactUrl(this, url);
-			
-			return group;
-			
-		}
-
-		public PwGroup SearchForHost(String url, bool allowSubdomains) {
-			PwGroup group = SearchHelper.SearchForHost(this, url, allowSubdomains);
-			
-			return group;
-			
-		}
+        protected virtual void PopulateDatabaseFromStream(PwDatabase pwDatabase, Stream s, IOConnectionInfo iocInfo, CompositeKey compositeKey, ProgressDialogStatusLogger status, IDatabaseFormat databaseFormat)
+        {
+            IFileStorage fileStorage = _app.GetFileStorage(iocInfo);
+            var filename = fileStorage.GetFilenameWithoutPathAndExt(iocInfo);
+            pwDatabase.Open(s, filename, iocInfo, compositeKey, status, databaseFormat);
+        }
 
 
-		public void SaveData()  {
-            
-			using (IWriteTransaction trans = _app.GetFileStorage(Ioc).OpenWriteTransaction(Ioc, _app.GetBooleanPreference(PreferenceKey.UseFileTransactions)))
-			{
-				DatabaseFormat.Save(KpDatabase, trans.OpenFile());
-				
-				trans.CommitWrite();
-			}
-			
-		}
+        public PwGroup SearchForText(String str)
+        {
+            PwGroup group = SearchHelper.SearchForText(this, str);
 
-		private void PopulateGlobals(PwGroup currentGroup, bool checkForDuplicateUuids )
-		{
-			
-			var childGroups = currentGroup.Groups;
-			var childEntries = currentGroup.Entries;
+            return group;
 
-			foreach (PwEntry e in childEntries) 
-			{
-				if (checkForDuplicateUuids)
-				{
-					if (EntriesById.ContainsKey(e.Uuid))
-					{
-						throw new DuplicateUuidsException("Same UUID for entries '"+EntriesById[e.Uuid].Strings.ReadSafe(PwDefs.TitleField)+"' and '"+e.Strings.ReadSafe(PwDefs.TitleField)+"'.");
-					}
-					
-				}
-				EntriesById [e.Uuid] = e;
-			    Elements.Add(e);
-			}
+        }
 
-		    GroupsById[currentGroup.Uuid] = currentGroup;
-		    Elements.Add(currentGroup);
-			foreach (PwGroup g in childGroups) 
-			{
-				if (checkForDuplicateUuids)
-				{
-					/*Disable check. Annoying for users, no problem for KP2A.
+        public PwGroup Search(SearchParameters searchParams, IDictionary<PwUuid, KeyValuePair<string, string>> resultContexts)
+        {
+            if (SearchHelper == null)
+                throw new Exception("SearchHelper is null");
+            return SearchHelper.Search(this, searchParams, resultContexts);
+        }
+
+
+        public PwGroup SearchForExactUrl(String url)
+        {
+            PwGroup group = SearchHelper.SearchForExactUrl(this, url);
+
+            return group;
+
+        }
+
+        public PwGroup SearchForHost(String url, bool allowSubdomains)
+        {
+            PwGroup group = SearchHelper.SearchForHost(this, url, allowSubdomains);
+
+            return group;
+
+        }
+
+
+        public void SaveData()
+        {
+
+            using (IWriteTransaction trans = _app.GetFileStorage(Ioc).OpenWriteTransaction(Ioc, _app.GetBooleanPreference(PreferenceKey.UseFileTransactions)))
+            {
+                DatabaseFormat.Save(KpDatabase, trans.OpenFile());
+
+                trans.CommitWrite();
+            }
+
+        }
+
+        private void PopulateGlobals(PwGroup currentGroup, bool checkForDuplicateUuids)
+        {
+
+            var childGroups = currentGroup.Groups;
+            var childEntries = currentGroup.Entries;
+
+            foreach (PwEntry e in childEntries)
+            {
+                if (checkForDuplicateUuids)
+                {
+                    if (EntriesById.ContainsKey(e.Uuid))
+                    {
+                        throw new DuplicateUuidsException("Same UUID for entries '" + EntriesById[e.Uuid].Strings.ReadSafe(PwDefs.TitleField) + "' and '" + e.Strings.ReadSafe(PwDefs.TitleField) + "'.");
+                    }
+
+                }
+                EntriesById[e.Uuid] = e;
+                Elements.Add(e);
+            }
+
+            GroupsById[currentGroup.Uuid] = currentGroup;
+            Elements.Add(currentGroup);
+            foreach (PwGroup g in childGroups)
+            {
+                if (checkForDuplicateUuids)
+                {
+                    /*Disable check. Annoying for users, no problem for KP2A.
 					if (Groups.ContainsKey(g.Uuid))
 					{
 						throw new DuplicateUuidsException();
 					}
 					 * */
-				}
-				PopulateGlobals(g);
-			}
-		}
-		private void PopulateGlobals (PwGroup currentGroup)
-		{
-			PopulateGlobals(currentGroup, _app.CheckForDuplicateUuids);
-		}
+                }
+                PopulateGlobals(g);
+            }
+        }
+        private void PopulateGlobals(PwGroup currentGroup)
+        {
+            PopulateGlobals(currentGroup, _app.CheckForDuplicateUuids);
+        }
 
 
-	    public void UpdateGlobals()
-	    {
-	        EntriesById.Clear();
-	        GroupsById.Clear();
-	        Elements.Clear();
+        public void UpdateGlobals()
+        {
+            EntriesById.Clear();
+            GroupsById.Clear();
+            Elements.Clear();
             PopulateGlobals(Root);
-	    }
-	}
+        }
+    }
 
-	[Serializable]
-	public class DuplicateUuidsException : Exception
-	{
-		public DuplicateUuidsException()
-		{
-		}
+    [Serializable]
+    public class DuplicateUuidsException : Exception
+    {
+        public DuplicateUuidsException()
+        {
+        }
 
-		public DuplicateUuidsException(string message) : base(message)
-		{
-		}
+        public DuplicateUuidsException(string message) : base(message)
+        {
+        }
 
-		protected DuplicateUuidsException(
-			SerializationInfo info,
-			StreamingContext context) : base(info, context)
-		{
-		}
-	}
+        protected DuplicateUuidsException(
+            SerializationInfo info,
+            StreamingContext context) : base(info, context)
+        {
+        }
+    }
 }
 

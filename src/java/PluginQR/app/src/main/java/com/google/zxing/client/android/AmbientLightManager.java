@@ -27,7 +27,8 @@ import com.google.zxing.client.android.camera.CameraManager;
 import com.google.zxing.client.android.camera.FrontLightMode;
 
 /**
- * Detects ambient light and switches on the front light when very dark, and off again when sufficiently light.
+ * Detects ambient light and switches on the front light when very dark, and off
+ * again when sufficiently light.
  *
  * @author Sean Owen
  * @author Nikolaus Huber

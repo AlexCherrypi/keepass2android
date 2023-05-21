@@ -28,6 +28,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 package com.jcraft.jzlib;
+
 import java.io.*;
 
 public class InflaterInputStream extends FilterInputStream {
@@ -56,18 +57,17 @@ public class InflaterInputStream extends FilterInputStream {
   }
 
   public InflaterInputStream(InputStream in,
-                             Inflater inflater, int size) throws IOException {
+      Inflater inflater, int size) throws IOException {
     this(in, inflater, size, true);
   }
 
   public InflaterInputStream(InputStream in,
-                             Inflater inflater,
-                             int size, boolean close_in) throws IOException {
+      Inflater inflater,
+      int size, boolean close_in) throws IOException {
     super(in);
     if (in == null || inflater == null) {
       throw new NullPointerException();
-    }
-    else if (size <= 0) {
+    } else if (size <= 0) {
       throw new IllegalArgumentException("buffer size must be greater than 0");
     }
     this.inflater = inflater;
@@ -80,56 +80,58 @@ public class InflaterInputStream extends FilterInputStream {
   private byte[] byte1 = new byte[1];
 
   public int read() throws IOException {
-    if (closed) { throw new IOException("Stream closed"); }
+    if (closed) {
+      throw new IOException("Stream closed");
+    }
     return read(byte1, 0, 1) == -1 ? -1 : byte1[0] & 0xff;
   }
 
   public int read(byte[] b, int off, int len) throws IOException {
-    if (closed) { throw new IOException("Stream closed"); }
+    if (closed) {
+      throw new IOException("Stream closed");
+    }
     if (b == null) {
       throw new NullPointerException();
-    }
-    else if (off < 0 || len < 0 || len > b.length - off) {
+    } else if (off < 0 || len < 0 || len > b.length - off) {
       throw new IndexOutOfBoundsException();
-    }
-    else if (len == 0) {
+    } else if (len == 0) {
       return 0;
-    }
-    else if (eof) {
+    } else if (eof) {
       return -1;
     }
 
     int n = 0;
     inflater.setOutput(b, off, len);
-    while(!eof) {
-      if(inflater.avail_in==0)
+    while (!eof) {
+      if (inflater.avail_in == 0)
         fill();
       int err = inflater.inflate(JZlib.Z_NO_FLUSH);
       n += inflater.next_out_index - off;
       off = inflater.next_out_index;
-      switch(err) {
+      switch (err) {
         case JZlib.Z_DATA_ERROR:
           throw new IOException(inflater.msg);
         case JZlib.Z_STREAM_END:
         case JZlib.Z_NEED_DICT:
           eof = true;
-          if(err == JZlib.Z_NEED_DICT)
+          if (err == JZlib.Z_NEED_DICT)
             return -1;
           break;
         default:
-      } 
-      if(inflater.avail_out==0)
+      }
+      if (inflater.avail_out == 0)
         break;
     }
     return n;
   }
 
   public int available() throws IOException {
-    if (closed) { throw new IOException("Stream closed"); }
+    if (closed) {
+      throw new IOException("Stream closed");
+    }
     if (eof) {
       return 0;
-    }
-    else {
+    } else {
       return 1;
     }
   }
@@ -141,9 +143,11 @@ public class InflaterInputStream extends FilterInputStream {
       throw new IllegalArgumentException("negative skip length");
     }
 
-    if (closed) { throw new IOException("Stream closed"); }
+    if (closed) {
+      throw new IOException("Stream closed");
+    }
 
-    int max = (int)Math.min(n, Integer.MAX_VALUE);
+    int max = (int) Math.min(n, Integer.MAX_VALUE);
     int total = 0;
     while (total < max) {
       int len = max - total;
@@ -164,25 +168,25 @@ public class InflaterInputStream extends FilterInputStream {
     if (!closed) {
       if (myinflater)
         inflater.end();
-      if(close_in)
+      if (close_in)
         in.close();
       closed = true;
     }
   }
 
   protected void fill() throws IOException {
-    if (closed) { throw new IOException("Stream closed"); }
+    if (closed) {
+      throw new IOException("Stream closed");
+    }
     int len = in.read(buf, 0, buf.length);
     if (len == -1) {
-      if(inflater.istate.wrap == 0 &&
-         !inflater.finished()){
-        buf[0]=0;
-        len=1;
-      }
-      else if(inflater.istate.was != -1){  // in reading trailer
+      if (inflater.istate.wrap == 0 &&
+          !inflater.finished()) {
+        buf[0] = 0;
+        len = 1;
+      } else if (inflater.istate.was != -1) { // in reading trailer
         throw new IOException("footer is not found");
-      }
-      else{
+      } else {
         throw new EOFException("Unexpected end of ZLIB input stream");
       }
     }
@@ -209,11 +213,11 @@ public class InflaterInputStream extends FilterInputStream {
   }
 
   public byte[] getAvailIn() {
-    if(inflater.avail_in<=0)
+    if (inflater.avail_in <= 0)
       return null;
     byte[] tmp = new byte[inflater.avail_in];
     System.arraycopy(inflater.next_in, inflater.next_in_index,
-                     tmp, 0, inflater.avail_in);
+        tmp, 0, inflater.avail_in);
     return tmp;
   }
 
@@ -224,24 +228,23 @@ public class InflaterInputStream extends FilterInputStream {
     inflater.setOutput(empty, 0, 0);
 
     int err = inflater.inflate(JZlib.Z_NO_FLUSH);
-    if(!inflater.istate.inParsingHeader()){
+    if (!inflater.istate.inParsingHeader()) {
       return;
     }
 
     byte[] b1 = new byte[1];
-    do{
+    do {
       int i = in.read(b1);
-      if(i<=0)
+      if (i <= 0)
         throw new IOException("no input");
       inflater.setInput(b1);
       err = inflater.inflate(JZlib.Z_NO_FLUSH);
-      if(err!=0/*Z_OK*/)
+      if (err != 0/* Z_OK */)
         throw new IOException(inflater.msg);
-    }
-    while(inflater.istate.inParsingHeader());
+    } while (inflater.istate.inParsingHeader());
   }
 
-  public Inflater getInflater(){
+  public Inflater getInflater() {
     return inflater;
   }
 }

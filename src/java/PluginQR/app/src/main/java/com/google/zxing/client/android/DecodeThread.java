@@ -43,25 +43,26 @@ final class DecodeThread extends Thread {
   public static final String BARCODE_SCALED_FACTOR = "barcode_scaled_factor";
 
   private final CaptureActivity activity;
-  private final Map<DecodeHintType,Object> hints;
+  private final Map<DecodeHintType, Object> hints;
   private Handler handler;
   private final CountDownLatch handlerInitLatch;
 
   DecodeThread(CaptureActivity activity,
-               Collection<BarcodeFormat> decodeFormats,
-               Map<DecodeHintType,?> baseHints,
-               String characterSet,
-               ResultPointCallback resultPointCallback) {
+      Collection<BarcodeFormat> decodeFormats,
+      Map<DecodeHintType, ?> baseHints,
+      String characterSet,
+      ResultPointCallback resultPointCallback) {
 
     this.activity = activity;
     handlerInitLatch = new CountDownLatch(1);
 
-    hints = new EnumMap<DecodeHintType,Object>(DecodeHintType.class);
+    hints = new EnumMap<DecodeHintType, Object>(DecodeHintType.class);
     if (baseHints != null) {
       hints.putAll(baseHints);
     }
 
-    // The prefs can't change while the thread is running, so pick them up once here.
+    // The prefs can't change while the thread is running, so pick them up once
+    // here.
     if (decodeFormats == null || decodeFormats.isEmpty()) {
       SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
       decodeFormats = EnumSet.noneOf(BarcodeFormat.class);

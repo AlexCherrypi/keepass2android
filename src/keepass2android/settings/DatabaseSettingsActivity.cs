@@ -44,11 +44,11 @@ using System.Collections.Generic;
 namespace keepass2android
 {
     //http://stackoverflow.com/a/27422401/292233
-        public class SettingsFragment : PreferenceFragment
+    public class SettingsFragment : PreferenceFragment
     {
 
 
-		
+
 
         public class KeyboardSwitchPrefManager
         {
@@ -65,22 +65,22 @@ namespace keepass2android
                 var act = fragment.Activity;
                 this._act = act;
                 this._fragment = fragment;
-				this._screen = (PreferenceScreen)_fragment.FindPreference(act.GetString(Resource.String.keyboardswitch_prefs_key));
+                this._screen = (PreferenceScreen)_fragment.FindPreference(act.GetString(Resource.String.keyboardswitch_prefs_key));
 
-	            var keyboardSwapPref = _fragment.FindPreference("get_keyboardswap");
-	            var pm = act.PackageManager;
-	            var intnt = Keepass2android.Kbbridge.ImeSwitcher.GetLaunchIntentForKeyboardSwap(act);
-	            if ((intnt != null) && pm.QueryIntentActivities(intnt, 0).Any())
-	            {
-		            _screen.RemovePreference(keyboardSwapPref);
-	            }
-	            else
-	            {
-		            keyboardSwapPref.PreferenceClick += (sender, args) =>
-		            {
-						Util.GotoUrl(act, act.GetString(Resource.String.MarketURL) + "keepass2android.plugin.keyboardswap2");
-		            };
-	            }
+                var keyboardSwapPref = _fragment.FindPreference("get_keyboardswap");
+                var pm = act.PackageManager;
+                var intnt = Keepass2android.Kbbridge.ImeSwitcher.GetLaunchIntentForKeyboardSwap(act);
+                if ((intnt != null) && pm.QueryIntentActivities(intnt, 0).Any())
+                {
+                    _screen.RemovePreference(keyboardSwapPref);
+                }
+                else
+                {
+                    keyboardSwapPref.PreferenceClick += (sender, args) =>
+                    {
+                        Util.GotoUrl(act, act.GetString(Resource.String.MarketURL) + "keepass2android.plugin.keyboardswap2");
+                    };
+                }
 
                 _switchPref = (CheckBoxPreference)_fragment.FindPreference("kp2a_switch_rooted");
                 _openKp2aAutoPref =
@@ -90,7 +90,7 @@ namespace keepass2android
                     _fragment.FindPreference(act.GetString(Resource.String.OpenKp2aKeyboardAutomaticallyOnlyAfterSearch_key));
                 _switchBackPref =
                     (CheckBoxPreference)_fragment.FindPreference(act.GetString(Resource.String.AutoSwitchBackKeyboard_key));
-                
+
                 EnableSwitchPreferences(_switchPref.Checked);
 
                 _switchPref.PreferenceChange += (sender, args) =>
@@ -133,8 +133,8 @@ namespace keepass2android
         }
 
         private KeyboardSwitchPrefManager _switchPrefManager;
-		private Preference aesRounds, argon2parallelism, argon2rounds, argon2memory;
-        
+        private Preference aesRounds, argon2parallelism, argon2rounds, argon2memory;
+
 
         void OnRememberKeyFileHistoryChanged(object sender, Preference.PreferenceChangeEventArgs eventArgs)
         {
@@ -179,7 +179,7 @@ namespace keepass2android
             HashSet<string> supportedLocales = new HashSet<string>() { "en", "af", "ar", "az", "be", "bg", "ca", "cs", "da", "de", "el", "es", "eu", "fa", "fi", "fr", "gl", "he", "hr", "hu", "id", "in", "it", "iw", "ja", "ko", "ml", "nb", "nl", "nn", "no", "pl", "pt", "ro", "ru", "si", "sk", "sl", "sr", "sv", "tr", "uk", "vi", "zh" };
 
             ListPreference appLanguagePref = (ListPreference)FindPreference(GetString(Resource.String.app_language_pref_key));
-            
+
             var localesByCode = new System.Collections.Generic.Dictionary<string, List<Java.Util.Locale>>();
             foreach (var loc in Java.Util.Locale.GetAvailableLocales())
             {
@@ -369,16 +369,16 @@ namespace keepass2android
             if (autofillPref == null)
                 return;
             if ((Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.O) ||
-                !((AutofillManager) Activity.GetSystemService(Java.Lang.Class.FromType(typeof(AutofillManager))))
+                !((AutofillManager)Activity.GetSystemService(Java.Lang.Class.FromType(typeof(AutofillManager))))
                     .IsAutofillSupported)
             {
                 var passwordAccessScreen =
-                    (PreferenceScreen) FindPreference(Activity.GetString(Resource.String.password_access_prefs_key));
+                    (PreferenceScreen)FindPreference(Activity.GetString(Resource.String.password_access_prefs_key));
                 passwordAccessScreen.RemovePreference(autofillScreen);
             }
             else
             {
-                if (((AutofillManager) Activity.GetSystemService(Java.Lang.Class.FromType(typeof(AutofillManager))))
+                if (((AutofillManager)Activity.GetSystemService(Java.Lang.Class.FromType(typeof(AutofillManager))))
                     .HasEnabledAutofillServices)
                 {
                     autofillDisabledPref.Enabled = true;
@@ -411,150 +411,150 @@ namespace keepass2android
         }
 
         private void OnSendDebug(object sender, Preference.PreferenceClickEventArgs e)
-	    {
-		    Kp2aLog.SendLog(this.Activity);
-	    }
+        {
+            Kp2aLog.SendLog(this.Activity);
+        }
 
-	    private void OnDebugLogChanged(object sender, Preference.PreferenceChangeEventArgs e)
-	    {
-		    if ((bool)e.NewValue)
-		    {
-			    Kp2aLog.CreateLogFile();
-		    }
-		    else
-		    {
-			    Kp2aLog.FinishLogFile();
-		    }
+        private void OnDebugLogChanged(object sender, Preference.PreferenceChangeEventArgs e)
+        {
+            if ((bool)e.NewValue)
+            {
+                Kp2aLog.CreateLogFile();
+            }
+            else
+            {
+                Kp2aLog.FinishLogFile();
+            }
 
-	    }
+        }
 
-	    private void AlgorithmPrefChange(object sender, Preference.PreferenceChangeEventArgs preferenceChangeEventArgs)
-	    {
-			var db = App.Kp2a.CurrentDb;
-			var previousCipher = db.KpDatabase.DataCipherUuid;
-			db.KpDatabase.DataCipherUuid = new PwUuid(MemUtil.HexStringToByteArray((string)preferenceChangeEventArgs.NewValue));
+        private void AlgorithmPrefChange(object sender, Preference.PreferenceChangeEventArgs preferenceChangeEventArgs)
+        {
+            var db = App.Kp2a.CurrentDb;
+            var previousCipher = db.KpDatabase.DataCipherUuid;
+            db.KpDatabase.DataCipherUuid = new PwUuid(MemUtil.HexStringToByteArray((string)preferenceChangeEventArgs.NewValue));
 
-			SaveDb save = new SaveDb(Activity, App.Kp2a, App.Kp2a.CurrentDb, new ActionOnFinish(Activity, (success, message, activity) =>
-			{
-				if (!success)
-				{
-					db.KpDatabase.DataCipherUuid = previousCipher;
-					Toast.MakeText(activity, message, ToastLength.Long).Show();
-					return;
-				}
-				preferenceChangeEventArgs.Preference.Summary =
-					CipherPool.GlobalPool.GetCipher(db.KpDatabase.DataCipherUuid).DisplayName;
-			}));
-			ProgressTask pt = new ProgressTask(App.Kp2a, Activity, save);
-			pt.Run();
-	    }
+            SaveDb save = new SaveDb(Activity, App.Kp2a, App.Kp2a.CurrentDb, new ActionOnFinish(Activity, (success, message, activity) =>
+            {
+                if (!success)
+                {
+                    db.KpDatabase.DataCipherUuid = previousCipher;
+                    Toast.MakeText(activity, message, ToastLength.Long).Show();
+                    return;
+                }
+                preferenceChangeEventArgs.Preference.Summary =
+                    CipherPool.GlobalPool.GetCipher(db.KpDatabase.DataCipherUuid).DisplayName;
+            }));
+            ProgressTask pt = new ProgressTask(App.Kp2a, Activity, save);
+            pt.Run();
+        }
 
-	    private void UpdateKdfScreen()
-	    {
-		    var db = App.Kp2a.CurrentDb;
-			var kdf = KdfPool.Get(db.KpDatabase.KdfParameters.KdfUuid);
+        private void UpdateKdfScreen()
+        {
+            var db = App.Kp2a.CurrentDb;
+            var kdf = KdfPool.Get(db.KpDatabase.KdfParameters.KdfUuid);
 
-			var kdfpref = FindPreference(GetString(Resource.String.kdf_key));
+            var kdfpref = FindPreference(GetString(Resource.String.kdf_key));
 
 
-		    kdfpref.Summary = kdf.Name;
-			
-			var kdfscreen = ((PreferenceScreen)FindPreference(GetString(Resource.String.kdf_screen_key)));
-			if (kdf is AesKdf)
-			{
-				if (kdfscreen.FindPreference(GetString(Resource.String.rounds_key)) == null)
-					kdfscreen.AddPreference(aesRounds);
-				kdfscreen.RemovePreference(argon2rounds);
-				kdfscreen.RemovePreference(argon2memory);
-				kdfscreen.RemovePreference(argon2parallelism);
+            kdfpref.Summary = kdf.Name;
 
-				aesRounds.Enabled = db.CanWrite;
-				UpdateKdfSummary(aesRounds);
-			}
-			else
-			{
-				kdfscreen.RemovePreference(aesRounds);
-				if (kdfscreen.FindPreference("argon2rounds") == null)
-				{
-					kdfscreen.AddPreference(argon2rounds);
-					kdfscreen.AddPreference(argon2memory);
-					kdfscreen.AddPreference(argon2parallelism);
-				}
-				UpdateKdfSummary(argon2rounds);
-				UpdateKdfSummary(argon2memory);
-				UpdateKdfSummary(argon2parallelism);
-			}
-				
-	    }
+            var kdfscreen = ((PreferenceScreen)FindPreference(GetString(Resource.String.kdf_screen_key)));
+            if (kdf is AesKdf)
+            {
+                if (kdfscreen.FindPreference(GetString(Resource.String.rounds_key)) == null)
+                    kdfscreen.AddPreference(aesRounds);
+                kdfscreen.RemovePreference(argon2rounds);
+                kdfscreen.RemovePreference(argon2memory);
+                kdfscreen.RemovePreference(argon2parallelism);
 
-	    private void OnKdfChange(object sender, Preference.PreferenceChangeEventArgs preferenceChangeEventArgs)
-	    {
-		    var db = App.Kp2a.CurrentDb;
-		    var previousKdfParams = db.KpDatabase.KdfParameters;
-			Kp2aLog.Log("previous kdf: " + KdfPool.Get(db.KpDatabase.KdfParameters.KdfUuid) + " " + db.KpDatabase.KdfParameters.KdfUuid.ToHexString() );
-		    db.KpDatabase.KdfParameters =
-			    KdfPool.Get(
-				    new PwUuid(MemUtil.HexStringToByteArray((string)preferenceChangeEventArgs.NewValue)))
-				    .GetDefaultParameters();
+                aesRounds.Enabled = db.CanWrite;
+                UpdateKdfSummary(aesRounds);
+            }
+            else
+            {
+                kdfscreen.RemovePreference(aesRounds);
+                if (kdfscreen.FindPreference("argon2rounds") == null)
+                {
+                    kdfscreen.AddPreference(argon2rounds);
+                    kdfscreen.AddPreference(argon2memory);
+                    kdfscreen.AddPreference(argon2parallelism);
+                }
+                UpdateKdfSummary(argon2rounds);
+                UpdateKdfSummary(argon2memory);
+                UpdateKdfSummary(argon2parallelism);
+            }
 
-			Kp2aLog.Log("--new    kdf: " + KdfPool.Get(db.KpDatabase.KdfParameters.KdfUuid) + " " + db.KpDatabase.KdfParameters.KdfUuid.ToHexString());
-		    
-			SaveDb save = new SaveDb(Activity, App.Kp2a, App.Kp2a.CurrentDb, new ActionOnFinish(Activity, (success, message, activity) =>
-			{
-				if (!success)
-				{
-					db.KpDatabase.KdfParameters = previousKdfParams;
-					Toast.MakeText(activity, message, ToastLength.Long).Show();
-					return;
-				}
-				UpdateKdfScreen();
-				
-			}));
-			ProgressTask pt = new ProgressTask(App.Kp2a, Activity, save);
-			pt.Run();
+        }
 
-	    }
+        private void OnKdfChange(object sender, Preference.PreferenceChangeEventArgs preferenceChangeEventArgs)
+        {
+            var db = App.Kp2a.CurrentDb;
+            var previousKdfParams = db.KpDatabase.KdfParameters;
+            Kp2aLog.Log("previous kdf: " + KdfPool.Get(db.KpDatabase.KdfParameters.KdfUuid) + " " + db.KpDatabase.KdfParameters.KdfUuid.ToHexString());
+            db.KpDatabase.KdfParameters =
+                KdfPool.Get(
+                    new PwUuid(MemUtil.HexStringToByteArray((string)preferenceChangeEventArgs.NewValue)))
+                    .GetDefaultParameters();
 
-	    private void UpdateKdfSummary(Preference preference)
-		{
-			preference.Summary = ((keepass2android.settings.KdfNumberParamPreference)preference).ParamValue.ToString();
-		}
+            Kp2aLog.Log("--new    kdf: " + KdfPool.Get(db.KpDatabase.KdfParameters.KdfUuid) + " " + db.KpDatabase.KdfParameters.KdfUuid.ToHexString());
 
-	    private void PrepareNoDonationReminderPreference(Activity ctx, PreferenceScreen screen, Preference preference)
-	    {
-			ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(ctx);
+            SaveDb save = new SaveDb(Activity, App.Kp2a, App.Kp2a.CurrentDb, new ActionOnFinish(Activity, (success, message, activity) =>
+            {
+                if (!success)
+                {
+                    db.KpDatabase.KdfParameters = previousKdfParams;
+                    Toast.MakeText(activity, message, ToastLength.Long).Show();
+                    return;
+                }
+                UpdateKdfScreen();
 
-			if (!prefs.GetBoolean("DismissedDonateReminder", false))
-			{
-				screen.RemovePreference(preference);
-			}
-				
+            }));
+            ProgressTask pt = new ProgressTask(App.Kp2a, Activity, save);
+            pt.Run();
 
-	    }
-	    private void PrepareTemplates(Database db)
-	    {
-			Preference pref = FindPreference("AddTemplates_pref_key");
-		    if ((!db.DatabaseFormat.SupportsTemplates) || (AddTemplateEntries.ContainsAllTemplates(App.Kp2a.CurrentDb)))
-		    {
-			    pref.Enabled = false;
-		    }
-			else
-		    {
-			    pref.PreferenceClick += (sender, args) =>
-			    {
-					ProgressTask pt = new ProgressTask(App.Kp2a, Activity,
-									new AddTemplateEntries(Activity, App.Kp2a, new ActionOnFinish(Activity,
-										delegate
-										{
-											pref.Enabled = false;
-										})));
-					pt.Run();		
-			    };
-		    }
-			
-	    }
+        }
 
-	    private void PrepareMasterPassword()
+        private void UpdateKdfSummary(Preference preference)
+        {
+            preference.Summary = ((keepass2android.settings.KdfNumberParamPreference)preference).ParamValue.ToString();
+        }
+
+        private void PrepareNoDonationReminderPreference(Activity ctx, PreferenceScreen screen, Preference preference)
+        {
+            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(ctx);
+
+            if (!prefs.GetBoolean("DismissedDonateReminder", false))
+            {
+                screen.RemovePreference(preference);
+            }
+
+
+        }
+        private void PrepareTemplates(Database db)
+        {
+            Preference pref = FindPreference("AddTemplates_pref_key");
+            if ((!db.DatabaseFormat.SupportsTemplates) || (AddTemplateEntries.ContainsAllTemplates(App.Kp2a.CurrentDb)))
+            {
+                pref.Enabled = false;
+            }
+            else
+            {
+                pref.PreferenceClick += (sender, args) =>
+                {
+                    ProgressTask pt = new ProgressTask(App.Kp2a, Activity,
+                                    new AddTemplateEntries(Activity, App.Kp2a, new ActionOnFinish(Activity,
+                                        delegate
+                                        {
+                                            pref.Enabled = false;
+                                        })));
+                    pt.Run();
+                };
+            }
+
+        }
+
+        private void PrepareMasterPassword()
         {
             Preference changeMaster = FindPreference(GetString(Resource.String.master_pwd_key));
             if (App.Kp2a.CurrentDb.CanWrite)
@@ -569,13 +569,13 @@ namespace keepass2android
             Preference databaseName = FindPreference(GetString(Resource.String.database_name_key));
             if (!db.DatabaseFormat.HasDatabaseName)
             {
-                ((PreferenceScreen) FindPreference(GetString(Resource.String.db_key))).RemovePreference(databaseName);
+                ((PreferenceScreen)FindPreference(GetString(Resource.String.db_key))).RemovePreference(databaseName);
             }
             else
             {
                 databaseName.Enabled = db.CanWrite;
-                ((EditTextPreference) databaseName).EditText.Text = db.KpDatabase.Name;
-                ((EditTextPreference) databaseName).Text = db.KpDatabase.Name;
+                ((EditTextPreference)databaseName).EditText.Text = db.KpDatabase.Name;
+                ((EditTextPreference)databaseName).Text = db.KpDatabase.Name;
                 databaseName.PreferenceChange += (sender, e) =>
                 {
                     DateTime previousNameChanged = db.KpDatabase.NameChanged;
@@ -607,13 +607,13 @@ namespace keepass2android
             Preference defaultUser = FindPreference(GetString(Resource.String.default_username_key));
             if (!db.DatabaseFormat.HasDefaultUsername)
             {
-                ((PreferenceScreen) FindPreference(GetString(Resource.String.db_key))).RemovePreference(defaultUser);
+                ((PreferenceScreen)FindPreference(GetString(Resource.String.db_key))).RemovePreference(defaultUser);
             }
             else
             {
                 defaultUser.Enabled = db.CanWrite;
-                ((EditTextPreference) defaultUser).EditText.Text = db.KpDatabase.DefaultUserName;
-                ((EditTextPreference) defaultUser).Text = db.KpDatabase.DefaultUserName;
+                ((EditTextPreference)defaultUser).EditText.Text = db.KpDatabase.DefaultUserName;
+                ((EditTextPreference)defaultUser).Text = db.KpDatabase.DefaultUserName;
                 defaultUser.PreferenceChange += (sender, e) =>
                 {
                     DateTime previousUsernameChanged = db.KpDatabase.DefaultUserNameChanged;
@@ -649,7 +649,7 @@ namespace keepass2android
             }
             catch (Exception ex)
             {
-				Kp2aLog.LogUnexpectedError(ex);
+                Kp2aLog.LogUnexpectedError(ex);
             }
         }
 
@@ -670,7 +670,7 @@ namespace keepass2android
                     }
                     catch (Exception ex)
                     {
-						Kp2aLog.LogUnexpectedError(ex);
+                        Kp2aLog.LogUnexpectedError(ex);
                         Toast.MakeText(LocaleManager.LocalizedAppContext, ex.Message, ToastLength.Long).Show();
                     }
                 }
@@ -678,7 +678,7 @@ namespace keepass2android
 
                 builder.SetNegativeButton(App.Kp2a.GetResourceString(UiStringKey.no), (o, args) =>
                 {
-	                ((CheckBoxPreference) e.Preference).Checked = true;
+                    ((CheckBoxPreference)e.Preference).Checked = true;
                 }
                 );
                 builder.SetCancelable(false);
@@ -737,7 +737,7 @@ namespace keepass2android
         private void ExportKeyfileFromInternalFolder()
         {
             StartActivity(new Intent(Activity.ApplicationContext, typeof(ExportKeyfileActivity)));
-            
+
         }
 
         private void MoveKeyfileToInternalFolder()
@@ -856,8 +856,8 @@ namespace keepass2android
 
         }
 
-		
-        
+
+
         private void SetAlgorithm(Database db, Preference algorithm)
         {
             algorithm.Summary = CipherPool.GlobalPool.GetCipher(db.KpDatabase.DataCipherUuid).DisplayName;
@@ -871,17 +871,17 @@ namespace keepass2android
 
 #if DEBUG
             preference.Enabled = (usageCount > 1);
-#else 
-			preference.Enabled = (usageCount > 50);
+#else
+            preference.Enabled = (usageCount > 50);
 #endif
-            preference.PreferenceChange += delegate(object sender, Preference.PreferenceChangeEventArgs args)
+            preference.PreferenceChange += delegate (object sender, Preference.PreferenceChangeEventArgs args)
             {
                 if ((bool)args.NewValue)
                 {
                     new AlertDialog.Builder(ctx)
                         .SetTitle(ctx.GetString(AppNames.AppNameResource))
                         .SetCancelable(false)
-                        .SetPositiveButton(Android.Resource.String.Ok, delegate(object o, DialogClickEventArgs eventArgs)
+                        .SetPositiveButton(Android.Resource.String.Ok, delegate (object o, DialogClickEventArgs eventArgs)
                         {
                             Util.GotoDonateUrl(ctx);
                             ((Dialog)o).Dismiss();
@@ -894,36 +894,36 @@ namespace keepass2android
 
         }
 
-        
+
     }
 
-    
+
     /// <summary>
-	/// Activity to configure the application and database settings. The database must be unlocked, and this activity will close if it becomes locked.
-	/// </summary>
-    [Activity(Label = "@string/app_name", Theme = "@style/MyTheme", ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.Keyboard | ConfigChanges.KeyboardHidden)]			
-	public class DatabaseSettingsActivity : LockCloseActivity 
-	{
+    /// Activity to configure the application and database settings. The database must be unlocked, and this activity will close if it becomes locked.
+    /// </summary>
+    [Activity(Label = "@string/app_name", Theme = "@style/MyTheme", ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.Keyboard | ConfigChanges.KeyboardHidden)]
+    public class DatabaseSettingsActivity : LockCloseActivity
+    {
 
-		public DatabaseSettingsActivity()
-		{
-			
-		}
+        public DatabaseSettingsActivity()
+        {
 
-		public static void Launch(Activity ctx)
-		{
-			ctx.StartActivity(new Intent(ctx, typeof(DatabaseSettingsActivity)));
-		}
+        }
 
-	    protected override void OnCreate(Bundle savedInstanceState)
-	    {
-	        base.OnCreate(savedInstanceState);
+        public static void Launch(Activity ctx)
+        {
+            ctx.StartActivity(new Intent(ctx, typeof(DatabaseSettingsActivity)));
+        }
+
+        protected override void OnCreate(Bundle savedInstanceState)
+        {
+            base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.preference);
 
             SetSupportActionBar(FindViewById<AndroidX.AppCompat.Widget.Toolbar>(Resource.Id.mytoolbar));
 
-	    }
+        }
 
-	}
+    }
 }
 

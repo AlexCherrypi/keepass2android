@@ -26,38 +26,42 @@ using Android.Runtime;
 
 namespace keepass2android.view
 {
-	
-	public class EntryContentsView : LinearLayout {
 
-		public EntryContentsView (IntPtr javaReference, JniHandleOwnership transfer)
-			: base(javaReference, transfer)
-		{
+    public class EntryContentsView : LinearLayout
+    {
 
-		}
+        public EntryContentsView(IntPtr javaReference, JniHandleOwnership transfer)
+            : base(javaReference, transfer)
+        {
 
-		public EntryContentsView(Context context):base(context, null) {
-			InflateView();
-		}
-		
-		public EntryContentsView(Context context, IAttributeSet attrs): base(context, attrs) {
-			
-			InflateView();
-		}
-		
-		private void InflateView() {
-			LayoutInflater inflater = (LayoutInflater) Context.GetSystemService(Context.LayoutInflaterService);
-			inflater.Inflate(Resource.Layout.entry_view_contents, this);
+        }
 
-		}
+        public EntryContentsView(Context context) : base(context, null)
+        {
+            InflateView();
+        }
 
-		/*
+        public EntryContentsView(Context context, IAttributeSet attrs) : base(context, attrs)
+        {
+
+            InflateView();
+        }
+
+        private void InflateView()
+        {
+            LayoutInflater inflater = (LayoutInflater)Context.GetSystemService(Context.LayoutInflaterService);
+            inflater.Inflate(Resource.Layout.entry_view_contents, this);
+
+        }
+
+        /*
 		 * doesn't compile with mono for android
 		 * 
 		protected override LayoutParams GenerateDefaultLayoutParams() {
 			return new LayoutParams(LayoutParams.FillParent, LayoutParams.WrapContent);
 		}
 		*/
-	}
+    }
 
 }
 

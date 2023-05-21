@@ -21,7 +21,7 @@ public class HandlerThreadCompat_v5 {
      * Wrapper for {@link HandlerThread#quit()}.
      * 
      * @param thread
-     *            the handler thread.
+     *               the handler thread.
      */
     public static void quit(HandlerThread thread) {
         thread.quit();

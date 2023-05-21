@@ -34,213 +34,213 @@ using IOException = Java.IO.IOException;
 
 namespace keepass2android
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/MyTheme_ActionBar", ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.Keyboard | ConfigChanges.KeyboardHidden)]			
-	public class IconPickerActivity : LockCloseActivity
-	{
-		public const string KeyIconId = "icon_id";
-		public const string KeyCustomIconId = "custom_icon_id";
-		
-		public static void Launch(Activity act)
-		{
-			Intent i = new Intent(act, typeof(IconPickerActivity));
-			act.StartActivityForResult(i, 0);
-		}
-		
-		protected override void OnCreate(Bundle savedInstanceState)
-		{
-			base.OnCreate(savedInstanceState);
-			
-			SetContentView(Resource.Layout.icon_picker);
-			
-			GridView currIconGridView = (GridView)FindViewById(Resource.Id.IconGridView);
-			currIconGridView.Adapter = new ImageAdapter(this, App.Kp2a.CurrentDb.KpDatabase);
-			
-			currIconGridView.ItemClick += (sender, e) =>
-			{
+    [Activity(Label = "@string/app_name", Theme = "@style/MyTheme_ActionBar", ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.Keyboard | ConfigChanges.KeyboardHidden)]
+    public class IconPickerActivity : LockCloseActivity
+    {
+        public const string KeyIconId = "icon_id";
+        public const string KeyCustomIconId = "custom_icon_id";
 
-				Intent intent = new Intent();
+        public static void Launch(Activity act)
+        {
+            Intent i = new Intent(act, typeof(IconPickerActivity));
+            act.StartActivityForResult(i, 0);
+        }
 
-				if (((ImageAdapter) currIconGridView.Adapter).IsCustomIcon(e.Position))
-				{
-					intent.PutExtra(KeyCustomIconId,
-						MemUtil.ByteArrayToHexString(((ImageAdapter) currIconGridView.Adapter).GetCustomIcon(e.Position).Uuid.UuidBytes));
-				}
-				else
-				{
-					intent.PutExtra(KeyIconId, e.Position);
-				}
-				SetResult((Result)EntryEditActivity.ResultOkIconPicker, intent);
-					
-				Finish();
-			};
-		}
+        protected override void OnCreate(Bundle savedInstanceState)
+        {
+            base.OnCreate(savedInstanceState);
 
-	    private const int AddCustomIconId = 1;
-	    private const int RequestCodePickImage = 2;
+            SetContentView(Resource.Layout.icon_picker);
 
-	    public override bool OnCreateOptionsMenu(IMenu menu)
-	    {
-		    
-			base.OnCreateOptionsMenu(menu);
-			 
-			menu.Add(0, AddCustomIconId, 0, GetString(Resource.String.AddCustomIcon)); 
+            GridView currIconGridView = (GridView)FindViewById(Resource.Id.IconGridView);
+            currIconGridView.Adapter = new ImageAdapter(this, App.Kp2a.CurrentDb.KpDatabase);
 
-			return true;
-    
-	    }
+            currIconGridView.ItemClick += (sender, e) =>
+            {
 
-	    public override bool OnOptionsItemSelected(IMenuItem item)
-	    {
-		    if (item.ItemId == AddCustomIconId)
-		    {
-				Intent intent = new Intent();
-				intent.SetType("image/*");
-				intent.SetAction(Intent.ActionGetContent);
-				intent.AddCategory(Intent.CategoryOpenable);
-				StartActivityForResult(intent, RequestCodePickImage);
-		    }
+                Intent intent = new Intent();
 
-		    return base.OnOptionsItemSelected(item);
-	    }
+                if (((ImageAdapter)currIconGridView.Adapter).IsCustomIcon(e.Position))
+                {
+                    intent.PutExtra(KeyCustomIconId,
+                        MemUtil.ByteArrayToHexString(((ImageAdapter)currIconGridView.Adapter).GetCustomIcon(e.Position).Uuid.UuidBytes));
+                }
+                else
+                {
+                    intent.PutExtra(KeyIconId, e.Position);
+                }
+                SetResult((Result)EntryEditActivity.ResultOkIconPicker, intent);
 
-	    protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
-	    {
+                Finish();
+            };
+        }
 
-		    base.OnActivityResult(requestCode, resultCode, data);
+        private const int AddCustomIconId = 1;
+        private const int RequestCodePickImage = 2;
 
-			if (requestCode == RequestCodePickImage && resultCode == Result.Ok)
-				try
-				{
-					var stream = ContentResolver.OpenInputStream(data.Data);
-					var bitmap = BitmapFactory.DecodeStream(stream);
-					
-					stream.Close();
+        public override bool OnCreateOptionsMenu(IMenu menu)
+        {
 
-					float maxSize = 128;
+            base.OnCreateOptionsMenu(menu);
 
-					using (MemoryStream ms = new MemoryStream())
-					{
-						if ((bitmap.Width > maxSize) || (bitmap.Height > maxSize))
-						{
-							float scale = System.Math.Min(maxSize / bitmap.Width, maxSize / bitmap.Height);
-							var scaleWidth = (int)(bitmap.Width * scale);
-							var scaleHeight = (int)(bitmap.Height * scale);
-							var scaledBitmap = Bitmap.CreateScaledBitmap(bitmap, scaleWidth, scaleHeight, true);
-							Bitmap newRectBitmap = Bitmap.CreateBitmap((int)maxSize, (int)maxSize, Bitmap.Config.Argb8888);
-							
-							Canvas c = new Canvas(newRectBitmap);
-							c.DrawBitmap(scaledBitmap, (maxSize - scaledBitmap.Width)/2.0f, (maxSize - scaledBitmap.Height)/2.0f, null);
-							bitmap = newRectBitmap;
-						}
-						;
-						bitmap.Compress(Bitmap.CompressFormat.Png, 90, ms);
-						PwCustomIcon pwci = new PwCustomIcon(new PwUuid(true), ms.ToArray());
+            menu.Add(0, AddCustomIconId, 0, GetString(Resource.String.AddCustomIcon));
 
-						App.Kp2a.CurrentDb.KpDatabase.CustomIcons.Add(pwci);
-						
-					}
-					var gridView = ((GridView)FindViewById(Resource.Id.IconGridView));
-					((BaseAdapter)gridView.Adapter).NotifyDataSetInvalidated();
-					gridView.SmoothScrollToPosition(((BaseAdapter)gridView.Adapter).Count-1);
-				}
-				catch (FileNotFoundException e)
-				{
-					e.PrintStackTrace();
-				}
-				catch (IOException e)
-				{
-					e.PrintStackTrace();
-				}
-	    }
+            return true;
 
-	    public class ImageAdapter : BaseAdapter
-		{
-			readonly IconPickerActivity _act;
-			private readonly PwDatabase _db;
+        }
 
-			public ImageAdapter(IconPickerActivity act, PwDatabase db)
-			{
-				_act = act;
-				_db = db;
-			}
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
+            if (item.ItemId == AddCustomIconId)
+            {
+                Intent intent = new Intent();
+                intent.SetType("image/*");
+                intent.SetAction(Intent.ActionGetContent);
+                intent.AddCategory(Intent.CategoryOpenable);
+                StartActivityForResult(intent, RequestCodePickImage);
+            }
 
-			public override int Count
-			{
-				get
-				{
-					return (int)PwIcon.Count + _db.CustomIcons.Count;
-				}
-			}
-			
-			public override Java.Lang.Object GetItem(int position)
-			{
-				return null;
-			}
-			
-			public override long GetItemId(int position)
-			{
-				return 0;
-			}
+            return base.OnOptionsItemSelected(item);
+        }
 
-			public override View GetView(int position, View convertView, ViewGroup parent)
-			{
-				View currView;
-				if(convertView == null)
-				{
-					LayoutInflater li = (LayoutInflater) _act.GetSystemService(LayoutInflaterService); 
-					currView = li.Inflate(Resource.Layout.icon, null);
-				}
-				else
-				{
-					currView = convertView;
-				}
-				TextView tv = (TextView) currView.FindViewById(Resource.Id.icon_text);
-				ImageView iv = (ImageView) currView.FindViewById(Resource.Id.icon_image);
-						
-				if (position < (int)PwIcon.Count)
-				{
-					tv.Text = "" + position;
-					var drawable = App.Kp2a.CurrentDb						.DrawableFactory.GetIconDrawable(_act, App.Kp2a.CurrentDb.KpDatabase, (KeePassLib.PwIcon) position, null, false);
-					drawable = new BitmapDrawable(Util.DrawableToBitmap(drawable));
-					iv.SetImageDrawable(drawable);
-					//App.Kp2a.GetDb().DrawableFactory.AssignDrawableTo(iv, _act, App.Kp2a.GetDb().KpDatabase, (KeePassLib.PwIcon) position, null, false);
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+        {
 
-					if (
-						PreferenceManager.GetDefaultSharedPreferences(currView.Context)
-							.GetString("IconSetKey", currView.Context.PackageName) == currView.Context.PackageName)
-					{
-						Android.Graphics.PorterDuff.Mode mMode = Android.Graphics.PorterDuff.Mode.SrcAtop;
-						Color color = new Color(189, 189, 189);
-						iv.SetColorFilter(color, mMode);	
-					}
-					
-				}
-				else
-				{
-					int pos = position - (int)PwIcon.Count;
-					var icon = _db.CustomIcons[pos];
-					tv.Text = pos.ToString();
-					iv.SetColorFilter(null);
-					iv.SetImageBitmap(icon.Image);
-					
-				}
+            base.OnActivityResult(requestCode, resultCode, data);
 
-				return currView;
-			}
+            if (requestCode == RequestCodePickImage && resultCode == Result.Ok)
+                try
+                {
+                    var stream = ContentResolver.OpenInputStream(data.Data);
+                    var bitmap = BitmapFactory.DecodeStream(stream);
 
-			public bool IsCustomIcon(int position)
-			{
-				return position >= (int)PwIcon.Count;
-			}
+                    stream.Close();
 
-			public PwCustomIcon GetCustomIcon(int position)
-			{
-				if (!IsCustomIcon(position))
-					return null;
-				return _db.CustomIcons[position - (int)PwIcon.Count];
-			}
-		}
-	}
+                    float maxSize = 128;
+
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        if ((bitmap.Width > maxSize) || (bitmap.Height > maxSize))
+                        {
+                            float scale = System.Math.Min(maxSize / bitmap.Width, maxSize / bitmap.Height);
+                            var scaleWidth = (int)(bitmap.Width * scale);
+                            var scaleHeight = (int)(bitmap.Height * scale);
+                            var scaledBitmap = Bitmap.CreateScaledBitmap(bitmap, scaleWidth, scaleHeight, true);
+                            Bitmap newRectBitmap = Bitmap.CreateBitmap((int)maxSize, (int)maxSize, Bitmap.Config.Argb8888);
+
+                            Canvas c = new Canvas(newRectBitmap);
+                            c.DrawBitmap(scaledBitmap, (maxSize - scaledBitmap.Width) / 2.0f, (maxSize - scaledBitmap.Height) / 2.0f, null);
+                            bitmap = newRectBitmap;
+                        }
+                        ;
+                        bitmap.Compress(Bitmap.CompressFormat.Png, 90, ms);
+                        PwCustomIcon pwci = new PwCustomIcon(new PwUuid(true), ms.ToArray());
+
+                        App.Kp2a.CurrentDb.KpDatabase.CustomIcons.Add(pwci);
+
+                    }
+                    var gridView = ((GridView)FindViewById(Resource.Id.IconGridView));
+                    ((BaseAdapter)gridView.Adapter).NotifyDataSetInvalidated();
+                    gridView.SmoothScrollToPosition(((BaseAdapter)gridView.Adapter).Count - 1);
+                }
+                catch (FileNotFoundException e)
+                {
+                    e.PrintStackTrace();
+                }
+                catch (IOException e)
+                {
+                    e.PrintStackTrace();
+                }
+        }
+
+        public class ImageAdapter : BaseAdapter
+        {
+            readonly IconPickerActivity _act;
+            private readonly PwDatabase _db;
+
+            public ImageAdapter(IconPickerActivity act, PwDatabase db)
+            {
+                _act = act;
+                _db = db;
+            }
+
+            public override int Count
+            {
+                get
+                {
+                    return (int)PwIcon.Count + _db.CustomIcons.Count;
+                }
+            }
+
+            public override Java.Lang.Object GetItem(int position)
+            {
+                return null;
+            }
+
+            public override long GetItemId(int position)
+            {
+                return 0;
+            }
+
+            public override View GetView(int position, View convertView, ViewGroup parent)
+            {
+                View currView;
+                if (convertView == null)
+                {
+                    LayoutInflater li = (LayoutInflater)_act.GetSystemService(LayoutInflaterService);
+                    currView = li.Inflate(Resource.Layout.icon, null);
+                }
+                else
+                {
+                    currView = convertView;
+                }
+                TextView tv = (TextView)currView.FindViewById(Resource.Id.icon_text);
+                ImageView iv = (ImageView)currView.FindViewById(Resource.Id.icon_image);
+
+                if (position < (int)PwIcon.Count)
+                {
+                    tv.Text = "" + position;
+                    var drawable = App.Kp2a.CurrentDb.DrawableFactory.GetIconDrawable(_act, App.Kp2a.CurrentDb.KpDatabase, (KeePassLib.PwIcon)position, null, false);
+                    drawable = new BitmapDrawable(Util.DrawableToBitmap(drawable));
+                    iv.SetImageDrawable(drawable);
+                    //App.Kp2a.GetDb().DrawableFactory.AssignDrawableTo(iv, _act, App.Kp2a.GetDb().KpDatabase, (KeePassLib.PwIcon) position, null, false);
+
+                    if (
+                        PreferenceManager.GetDefaultSharedPreferences(currView.Context)
+                            .GetString("IconSetKey", currView.Context.PackageName) == currView.Context.PackageName)
+                    {
+                        Android.Graphics.PorterDuff.Mode mMode = Android.Graphics.PorterDuff.Mode.SrcAtop;
+                        Color color = new Color(189, 189, 189);
+                        iv.SetColorFilter(color, mMode);
+                    }
+
+                }
+                else
+                {
+                    int pos = position - (int)PwIcon.Count;
+                    var icon = _db.CustomIcons[pos];
+                    tv.Text = pos.ToString();
+                    iv.SetColorFilter(null);
+                    iv.SetImageBitmap(icon.Image);
+
+                }
+
+                return currView;
+            }
+
+            public bool IsCustomIcon(int position)
+            {
+                return position >= (int)PwIcon.Count;
+            }
+
+            public PwCustomIcon GetCustomIcon(int position)
+            {
+                if (!IsCustomIcon(position))
+                    return null;
+                return _db.CustomIcons[position - (int)PwIcon.Count];
+            }
+        }
+    }
 
 }
 

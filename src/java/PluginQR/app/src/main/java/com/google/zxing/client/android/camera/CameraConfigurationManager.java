@@ -35,19 +35,22 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * A class which deals with reading, parsing, and setting the camera parameters which are used to
+ * A class which deals with reading, parsing, and setting the camera parameters
+ * which are used to
  * configure the camera hardware.
  */
 final class CameraConfigurationManager {
 
   private static final String TAG = "CameraConfiguration";
 
-  // This is bigger than the size of a small screen, which is still supported. The routine
-  // below will still select the default (presumably 320x240) size for these. This prevents
+  // This is bigger than the size of a small screen, which is still supported. The
+  // routine
+  // below will still select the default (presumably 320x240) size for these. This
+  // prevents
   // accidental selection of very low resolution on some devices.
   private static final int MIN_PREVIEW_PIXELS = 480 * 320; // normal screen
-  //private static final float MAX_EXPOSURE_COMPENSATION = 1.5f;
-  //private static final float MIN_EXPOSURE_COMPENSATION = 0.0f;
+  // private static final float MAX_EXPOSURE_COMPENSATION = 1.5f;
+  // private static final float MIN_EXPOSURE_COMPENSATION = 0.0f;
   private static final double MAX_ASPECT_DISTORTION = 0.15;
 
   private final Context context;
@@ -95,19 +98,19 @@ final class CameraConfigurationManager {
     if (prefs.getBoolean(PreferencesActivity.KEY_AUTO_FOCUS, true)) {
       if (safeMode || prefs.getBoolean(PreferencesActivity.KEY_DISABLE_CONTINUOUS_FOCUS, false)) {
         focusMode = findSettableValue(parameters.getSupportedFocusModes(),
-                                      Camera.Parameters.FOCUS_MODE_AUTO);
+            Camera.Parameters.FOCUS_MODE_AUTO);
       } else {
         focusMode = findSettableValue(parameters.getSupportedFocusModes(),
-                                      Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE,
-                                      Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO,
-                                      Camera.Parameters.FOCUS_MODE_AUTO);
+            Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE,
+            Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO,
+            Camera.Parameters.FOCUS_MODE_AUTO);
       }
     }
     // Maybe selected auto-focus but not available, so fall through here:
     if (!safeMode && focusMode == null) {
       focusMode = findSettableValue(parameters.getSupportedFocusModes(),
-                                    Camera.Parameters.FOCUS_MODE_MACRO,
-                                    Camera.Parameters.FOCUS_MODE_EDOF);
+          Camera.Parameters.FOCUS_MODE_MACRO,
+          Camera.Parameters.FOCUS_MODE_EDOF);
     }
     if (focusMode != null) {
       parameters.setFocusMode(focusMode);
@@ -115,7 +118,7 @@ final class CameraConfigurationManager {
 
     if (prefs.getBoolean(PreferencesActivity.KEY_INVERT_SCAN, false)) {
       String colorMode = findSettableValue(parameters.getSupportedColorEffects(),
-                                           Camera.Parameters.EFFECT_NEGATIVE);
+          Camera.Parameters.EFFECT_NEGATIVE);
       if (colorMode != null) {
         parameters.setColorEffect(colorMode);
       }
@@ -127,9 +130,9 @@ final class CameraConfigurationManager {
 
     Camera.Parameters afterParameters = camera.getParameters();
     Camera.Size afterSize = afterParameters.getPreviewSize();
-    if (afterSize!= null && (cameraResolution.x != afterSize.width || cameraResolution.y != afterSize.height)) {
+    if (afterSize != null && (cameraResolution.x != afterSize.width || cameraResolution.y != afterSize.height)) {
       Log.w(TAG, "Camera said it supported preview size " + cameraResolution.x + 'x' + cameraResolution.y +
-                 ", but after setting it, preview size is " + afterSize.width + 'x' + afterSize.height);
+          ", but after setting it, preview size is " + afterSize.width + 'x' + afterSize.height);
       cameraResolution.x = afterSize.width;
       cameraResolution.y = afterSize.height;
     }
@@ -150,7 +153,7 @@ final class CameraConfigurationManager {
         String flashMode = camera.getParameters().getFlashMode();
         return flashMode != null &&
             (Camera.Parameters.FLASH_MODE_ON.equals(flashMode) ||
-             Camera.Parameters.FLASH_MODE_TORCH.equals(flashMode));
+                Camera.Parameters.FLASH_MODE_TORCH.equals(flashMode));
       }
     }
     return false;
@@ -171,39 +174,43 @@ final class CameraConfigurationManager {
     String flashMode;
     if (newSetting) {
       flashMode = findSettableValue(parameters.getSupportedFlashModes(),
-                                    Camera.Parameters.FLASH_MODE_TORCH,
-                                    Camera.Parameters.FLASH_MODE_ON);
+          Camera.Parameters.FLASH_MODE_TORCH,
+          Camera.Parameters.FLASH_MODE_ON);
     } else {
       flashMode = findSettableValue(parameters.getSupportedFlashModes(),
-                                    Camera.Parameters.FLASH_MODE_OFF);
+          Camera.Parameters.FLASH_MODE_OFF);
     }
     if (flashMode != null) {
       parameters.setFlashMode(flashMode);
     }
 
     /*
-    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-    if (!prefs.getBoolean(PreferencesActivity.KEY_DISABLE_EXPOSURE, false)) {
-      if (!safeMode) {
-        int minExposure = parameters.getMinExposureCompensation();
-        int maxExposure = parameters.getMaxExposureCompensation();
-        if (minExposure != 0 || maxExposure != 0) {
-          float step = parameters.getExposureCompensationStep();
-          int desiredCompensation;
-          if (newSetting) {
-            // Light on; set low exposue compensation
-            desiredCompensation = Math.max((int) (MIN_EXPOSURE_COMPENSATION / step), minExposure);
-          } else {
-            // Light off; set high compensation
-            desiredCompensation = Math.min((int) (MAX_EXPOSURE_COMPENSATION / step), maxExposure);
-          }
-          Log.i(TAG, "Setting exposure compensation to " + desiredCompensation + " / " + (step * desiredCompensation));
-          parameters.setExposureCompensation(desiredCompensation);
-        } else {
-          Log.i(TAG, "Camera does not support exposure compensation");
-        }
-      }
-    }
+     * SharedPreferences prefs =
+     * PreferenceManager.getDefaultSharedPreferences(context);
+     * if (!prefs.getBoolean(PreferencesActivity.KEY_DISABLE_EXPOSURE, false)) {
+     * if (!safeMode) {
+     * int minExposure = parameters.getMinExposureCompensation();
+     * int maxExposure = parameters.getMaxExposureCompensation();
+     * if (minExposure != 0 || maxExposure != 0) {
+     * float step = parameters.getExposureCompensationStep();
+     * int desiredCompensation;
+     * if (newSetting) {
+     * // Light on; set low exposue compensation
+     * desiredCompensation = Math.max((int) (MIN_EXPOSURE_COMPENSATION / step),
+     * minExposure);
+     * } else {
+     * // Light off; set high compensation
+     * desiredCompensation = Math.min((int) (MAX_EXPOSURE_COMPENSATION / step),
+     * maxExposure);
+     * }
+     * Log.i(TAG, "Setting exposure compensation to " + desiredCompensation + " / "
+     * + (step * desiredCompensation));
+     * parameters.setExposureCompensation(desiredCompensation);
+     * } else {
+     * Log.i(TAG, "Camera does not support exposure compensation");
+     * }
+     * }
+     * }
      */
   }
 
@@ -261,7 +268,7 @@ final class CameraConfigurationManager {
       double aspectRatio = (double) maybeFlippedWidth / (double) maybeFlippedHeight;
       double distortion = Math.abs(aspectRatio - screenAspectRatio);
       if (distortion > MAX_ASPECT_DISTORTION) {
-        it.remove(); 
+        it.remove();
         continue;
       }
 
@@ -272,8 +279,10 @@ final class CameraConfigurationManager {
       }
     }
 
-    // If no exact match, use largest preview size. This was not a great idea on older devices because
-    // of the additional computation needed. We're likely to get here on newer Android 4+ devices, where
+    // If no exact match, use largest preview size. This was not a great idea on
+    // older devices because
+    // of the additional computation needed. We're likely to get here on newer
+    // Android 4+ devices, where
     // the CPU is much more powerful.
     if (!supportedPreviewSizes.isEmpty()) {
       Camera.Size largestPreview = supportedPreviewSizes.get(0);
@@ -290,7 +299,7 @@ final class CameraConfigurationManager {
   }
 
   private static String findSettableValue(Collection<String> supportedValues,
-                                          String... desiredValues) {
+      String... desiredValues) {
     Log.i(TAG, "Supported values: " + supportedValues);
     String result = null;
     if (supportedValues != null) {

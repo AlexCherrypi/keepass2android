@@ -32,7 +32,7 @@ public class HistoryProviderUtils {
      * Checks and cleans up out-dated history items.
      * 
      * @param context
-     *            {@link Context}.
+     *                {@link Context}.
      */
     public static void doCleanupOutdatedHistoryItems(Context context) {
         if (BuildConfig.DEBUG)
@@ -54,7 +54,8 @@ public class HistoryProviderUtils {
                     HistoryContract.genContentUri(context),
                     String.format("%s < '%s'",
                             HistoryContract.COLUMN_MODIFICATION_TIME,
-                            DbUtils.formatNumber(validityInMillis)), null);
+                            DbUtils.formatNumber(validityInMillis)),
+                    null);
         } catch (Throwable t) {
             /*
              * Currently we just ignore it.

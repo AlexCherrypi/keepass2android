@@ -40,10 +40,10 @@ import java.util.Locale;
 public final class AddressBookResultHandler extends ResultHandler {
 
   private static final DateFormat[] DATE_FORMATS = {
-    new SimpleDateFormat("yyyyMMdd", Locale.ENGLISH),
-    new SimpleDateFormat("yyyyMMdd'T'HHmmss", Locale.ENGLISH),
-    new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH),
-    new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH),
+      new SimpleDateFormat("yyyyMMdd", Locale.ENGLISH),
+      new SimpleDateFormat("yyyyMMdd'T'HHmmss", Locale.ENGLISH),
+      new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH),
+      new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH),
   };
   static {
     for (DateFormat format : DATE_FORMATS) {
@@ -52,16 +52,17 @@ public final class AddressBookResultHandler extends ResultHandler {
   }
 
   private static final int[] BUTTON_TEXTS = {
-    R.string.button_add_contact,
-    R.string.button_show_map,
-    R.string.button_dial,
-    R.string.button_email,
+      R.string.button_add_contact,
+      R.string.button_show_map,
+      R.string.button_dial,
+      R.string.button_email,
   };
 
   private final boolean[] fields;
   private int buttonCount;
 
-  // This takes all the work out of figuring out which buttons/actions should be in which
+  // This takes all the work out of figuring out which buttons/actions should be
+  // in which
   // positions, based on which fields are present in this barcode.
   private int mapIndexToAction(int index) {
     if (index < buttonCount) {
@@ -123,21 +124,21 @@ public final class AddressBookResultHandler extends ResultHandler {
     switch (action) {
       case 0:
         addContact(addressResult.getNames(),
-                   addressResult.getNicknames(),
-                   addressResult.getPronunciation(),
-                   addressResult.getPhoneNumbers(),
-                   addressResult.getPhoneTypes(),
-                   addressResult.getEmails(),
-                   addressResult.getEmailTypes(),
-                   addressResult.getNote(),
-                   addressResult.getInstantMessenger(),
-                   address1,
-                   address1Type,
-                   addressResult.getOrg(),
-                   addressResult.getTitle(),
-                   addressResult.getURLs(),
-                   addressResult.getBirthday(),
-                   addressResult.getGeo());
+            addressResult.getNicknames(),
+            addressResult.getPronunciation(),
+            addressResult.getPhoneNumbers(),
+            addressResult.getPhoneTypes(),
+            addressResult.getEmails(),
+            addressResult.getEmailTypes(),
+            addressResult.getNote(),
+            addressResult.getInstantMessenger(),
+            address1,
+            address1Type,
+            addressResult.getOrg(),
+            addressResult.getTitle(),
+            addressResult.getURLs(),
+            addressResult.getBirthday(),
+            addressResult.getGeo());
         break;
       case 1:
         String[] names = addressResult.getNames();
@@ -166,7 +167,8 @@ public final class AddressBookResultHandler extends ResultHandler {
     return null;
   }
 
-  // Overriden so we can hyphenate phone numbers, format birthdays, and bold the name.
+  // Overriden so we can hyphenate phone numbers, format birthdays, and bold the
+  // name.
   @Override
   public CharSequence getDisplayContents() {
     AddressBookParsedResult result = (AddressBookParsedResult) getResult();

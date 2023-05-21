@@ -72,34 +72,37 @@ public final class CalendarResultHandler extends ResultHandler {
       }
 
       addCalendarEvent(calendarResult.getSummary(),
-                       calendarResult.getStart(),
-                       calendarResult.isStartAllDay(),
-                       calendarResult.getEnd(),
-                       calendarResult.getLocation(),
-                       description,
-                       calendarResult.getAttendees());
+          calendarResult.getStart(),
+          calendarResult.isStartAllDay(),
+          calendarResult.getEnd(),
+          calendarResult.getLocation(),
+          description,
+          calendarResult.getAttendees());
     }
   }
 
   /**
-   * Sends an intent to create a new calendar event by prepopulating the Add Event UI. Older
-   * versions of the system have a bug where the event title will not be filled out.
+   * Sends an intent to create a new calendar event by prepopulating the Add Event
+   * UI. Older
+   * versions of the system have a bug where the event title will not be filled
+   * out.
    *
-   * @param summary A description of the event
-   * @param start   The start time
-   * @param allDay  if true, event is considered to be all day starting from start time
-   * @param end     The end time (optional)
-   * @param location a text description of the event location
+   * @param summary     A description of the event
+   * @param start       The start time
+   * @param allDay      if true, event is considered to be all day starting from
+   *                    start time
+   * @param end         The end time (optional)
+   * @param location    a text description of the event location
    * @param description a text description of the event itself
-   * @param attendees attendees to invite
+   * @param attendees   attendees to invite
    */
   private void addCalendarEvent(String summary,
-                                Date start,
-                                boolean allDay,
-                                Date end,
-                                String location,
-                                String description,
-                                String[] attendees) {
+      Date start,
+      boolean allDay,
+      Date end,
+      String location,
+      String description,
+      String[] attendees) {
     Intent intent = new Intent(Intent.ACTION_INSERT);
     intent.setType("vnd.android.cursor.item/event");
     long startMilliseconds = start.getTime();
@@ -124,7 +127,8 @@ public final class CalendarResultHandler extends ResultHandler {
     intent.putExtra("description", description);
     if (attendees != null) {
       intent.putExtra(Intent.EXTRA_EMAIL, attendees);
-      // Documentation says this is either a String[] or comma-separated String, which is right?
+      // Documentation says this is either a String[] or comma-separated String, which
+      // is right?
     }
 
     try {
@@ -137,7 +141,6 @@ public final class CalendarResultHandler extends ResultHandler {
       launchIntent(intent); // Fail here for real if nothing can handle it
     }
   }
-
 
   @Override
   public CharSequence getDisplayContents() {
@@ -156,7 +159,8 @@ public final class CalendarResultHandler extends ResultHandler {
         // Show only year/month/day
         // if it's all-day and this is the end date, it's exclusive, so show the user
         // that it ends on the day before to make more intuitive sense.
-        // But don't do it if the event already (incorrectly?) specifies the same start/end
+        // But don't do it if the event already (incorrectly?) specifies the same
+        // start/end
         end = new Date(end.getTime() - 24 * 60 * 60 * 1000);
       }
       ParsedResult.maybeAppend(format(calResult.isEndAllDay(), end), result);

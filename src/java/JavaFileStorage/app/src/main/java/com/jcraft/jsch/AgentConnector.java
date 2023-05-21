@@ -30,7 +30,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.jcraft.jsch;
 
 public interface AgentConnector {
-  String getName();
-  boolean isAvailable();
-  void query(Buffer buffer) throws AgentProxyException;
+   String getName();
+
+   boolean isAvailable();
+
+   void query(Buffer buffer) throws AgentProxyException;
 }

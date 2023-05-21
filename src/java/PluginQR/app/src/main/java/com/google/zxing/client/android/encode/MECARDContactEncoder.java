@@ -41,12 +41,12 @@ final class MECARDContactEncoder extends ContactEncoder {
 
   @Override
   public String[] encode(Iterable<String> names,
-                         String organization,
-                         Iterable<String> addresses,
-                         Iterable<String> phones,
-                         Iterable<String> emails,
-                         Iterable<String> urls,
-                         String note) {
+      String organization,
+      Iterable<String> addresses,
+      Iterable<String> phones,
+      Iterable<String> emails,
+      Iterable<String> urls,
+      String note) {
     StringBuilder newContents = new StringBuilder(100);
     newContents.append("MECARD:");
     StringBuilder newDisplayContents = new StringBuilder(100);
@@ -73,26 +73,26 @@ final class MECARDContactEncoder extends ContactEncoder {
   }
 
   private static void append(StringBuilder newContents,
-                             StringBuilder newDisplayContents,
-                             String prefix, 
-                             String value) {
+      StringBuilder newDisplayContents,
+      String prefix,
+      String value) {
     doAppend(newContents, newDisplayContents, prefix, value, MECARD_FIELD_FORMATTER, TERMINATOR);
   }
-  
-  private static void appendUpToUnique(StringBuilder newContents, 
-                                       StringBuilder newDisplayContents,
-                                       String prefix, 
-                                       Iterable<String> values, 
-                                       int max,
-                                       Formatter formatter) {
+
+  private static void appendUpToUnique(StringBuilder newContents,
+      StringBuilder newDisplayContents,
+      String prefix,
+      Iterable<String> values,
+      int max,
+      Formatter formatter) {
     doAppendUpToUnique(newContents,
-                       newDisplayContents,
-                       prefix,
-                       values,
-                       max,
-                       formatter,
-                       MECARD_FIELD_FORMATTER,
-                       TERMINATOR);
+        newDisplayContents,
+        prefix,
+        values,
+        max,
+        formatter,
+        MECARD_FIELD_FORMATTER,
+        TERMINATOR);
   }
 
 }

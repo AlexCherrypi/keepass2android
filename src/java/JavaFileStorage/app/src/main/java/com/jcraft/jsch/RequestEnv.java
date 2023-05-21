@@ -29,20 +29,22 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
-class RequestEnv extends Request{
-  byte[] name=new byte[0];
-  byte[] value=new byte[0];
-  void setEnv(byte[] name, byte[] value){
-    this.name=name;
-    this.value=value;
+class RequestEnv extends Request {
+  byte[] name = new byte[0];
+  byte[] value = new byte[0];
+
+  void setEnv(byte[] name, byte[] value) {
+    this.name = name;
+    this.value = value;
   }
+
   @Override
-  public void request(Session session, Channel channel) throws Exception{
+  public void request(Session session, Channel channel) throws Exception {
     super.request(session, channel);
     setReply(false);
 
-    Buffer buf=new Buffer();
-    Packet packet=new Packet(buf);
+    Buffer buf = new Buffer();
+    Packet packet = new Packet(buf);
 
     packet.reset();
     buf.putByte((byte) Session.SSH_MSG_CHANNEL_REQUEST);

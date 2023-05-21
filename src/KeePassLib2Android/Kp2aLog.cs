@@ -26,102 +26,102 @@ using KeePassLib.Serialization;
 
 namespace keepass2android
 {
-	public static class Kp2aLog
-	{
-		private static bool? _logToFile;
+    public static class Kp2aLog
+    {
+        private static bool? _logToFile;
 
-		private static object _fileLocker = new object();
+        private static object _fileLocker = new object();
 
-		public static void Log(string message)
-		{
-			if (message != null)
-				Android.Util.Log.Debug("KP2A", message);
-			if (LogToFile)
-			{
-				lock (_fileLocker)
-				{
-					try
-					{
-						using (var streamWriter = File.AppendText(LogFilename))
-						{
-							string stringToLog = DateTime.Now + ":" + DateTime.Now.Millisecond + " -- " + message;
-							streamWriter.WriteLine(stringToLog);
-						}
-					}
-					catch (Exception e)
-					{
-						Android.Util.Log.Debug("KP2A", "Couldn't write to log file. " + e);
-					}
-				}
+        public static void Log(string message)
+        {
+            if (message != null)
+                Android.Util.Log.Debug("KP2A", message);
+            if (LogToFile)
+            {
+                lock (_fileLocker)
+                {
+                    try
+                    {
+                        using (var streamWriter = File.AppendText(LogFilename))
+                        {
+                            string stringToLog = DateTime.Now + ":" + DateTime.Now.Millisecond + " -- " + message;
+                            streamWriter.WriteLine(stringToLog);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Android.Util.Log.Debug("KP2A", "Couldn't write to log file. " + e);
+                    }
+                }
 
-			}
+            }
 
-		}
+        }
 
-		private static string LogFilename
-		{
-			get { return Application.Context.FilesDir.CanonicalPath +"/keepass2android.log"; }
-		}
+        private static string LogFilename
+        {
+            get { return Application.Context.FilesDir.CanonicalPath + "/keepass2android.log"; }
+        }
 
-		private static bool LogToFile
-		{
-			get
-			{
-				if (_logToFile == null)
-					_logToFile = File.Exists(LogFilename);
-				return (bool) _logToFile;
-			}
-		}
-		public static event EventHandler<Exception> OnUnexpectedError;
+        private static bool LogToFile
+        {
+            get
+            {
+                if (_logToFile == null)
+                    _logToFile = File.Exists(LogFilename);
+                return (bool)_logToFile;
+            }
+        }
+        public static event EventHandler<Exception> OnUnexpectedError;
 
-		public static void LogUnexpectedError(Exception exception)
-		{
-			Log(exception.ToString());
-			if (OnUnexpectedError != null)
-				OnUnexpectedError(null, exception);
-		}
+        public static void LogUnexpectedError(Exception exception)
+        {
+            Log(exception.ToString());
+            if (OnUnexpectedError != null)
+                OnUnexpectedError(null, exception);
+        }
 
-		public static void CreateLogFile()
-		{
-			if (!File.Exists(LogFilename))
-			{
-				File.Create(LogFilename).Dispose();
+        public static void CreateLogFile()
+        {
+            if (!File.Exists(LogFilename))
+            {
+                File.Create(LogFilename).Dispose();
                 _logToFile = true;
-			}
-			
+            }
 
-		}
 
-		public static void FinishLogFile()
-		{
-			if (File.Exists(LogFilename))
-			{
-				_logToFile = false;
-				int count = 0;
-				while (File.Exists(LogFilename + "." + count))
-					count++;
+        }
+
+        public static void FinishLogFile()
+        {
+            if (File.Exists(LogFilename))
+            {
+                _logToFile = false;
+                int count = 0;
+                while (File.Exists(LogFilename + "." + count))
+                    count++;
                 File.Move(LogFilename, LogFilename + "." + count);
-				
-			}
-				
-		}
 
-		public static void SendLog(Context ctx)
-		{
-			if (!File.Exists(LogFilename))
-				return;
-			Intent sendIntent = new Intent();
-			sendIntent.SetAction(Intent.ActionSend);
-			sendIntent.PutExtra(Intent.ExtraText, File.ReadAllText(LogFilename));
-			sendIntent.PutExtra(Intent.ExtraEmail, "crocoapps@gmail.com");
-			sendIntent.PutExtra(Intent.ExtraSubject, "Keepass2Android log");
-			sendIntent.SetType("text/plain");
-			ctx.StartActivity(Intent.CreateChooser(sendIntent, "Send log to..."));
-		}
+            }
+
+        }
+
+        public static void SendLog(Context ctx)
+        {
+            if (!File.Exists(LogFilename))
+                return;
+            Intent sendIntent = new Intent();
+            sendIntent.SetAction(Intent.ActionSend);
+            sendIntent.PutExtra(Intent.ExtraText, File.ReadAllText(LogFilename));
+            sendIntent.PutExtra(Intent.ExtraEmail, "crocoapps@gmail.com");
+            sendIntent.PutExtra(Intent.ExtraSubject, "Keepass2Android log");
+            sendIntent.SetType("text/plain");
+            ctx.StartActivity(Intent.CreateChooser(sendIntent, "Send log to..."));
+        }
 
         public static void LogTask(object task, string activityName)
         {
-			Log($"Task in activity {activityName} changed to {task?.GetType()?.Name ?? "null"}");
+            Log($"Task in activity {activityName} changed to {task?.GetType()?.Name ?? "null"}");
         }
     }
 }

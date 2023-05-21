@@ -22,61 +22,71 @@ using KeePassLib;
 namespace keepass2android
 {
 
-	public class UpdateEntry : RunnableOnFinish {
-		private readonly IKp2aApp _app;
-		private readonly Activity _ctx;
-		
-		public UpdateEntry(Activity ctx, IKp2aApp app, PwEntry oldE, PwEntry newE, OnFinish finish):base(ctx, finish) {
-			_ctx = ctx;
-			_app = app;
+    public class UpdateEntry : RunnableOnFinish
+    {
+        private readonly IKp2aApp _app;
+        private readonly Activity _ctx;
 
-			_onFinishToRun = new AfterUpdate(ctx, oldE, newE, app, finish);
-		}
-		
-		
-		public override void Run() {
-			// Commit to disk
-			SaveDb save = new SaveDb(_ctx, _app, _app.CurrentDb, OnFinishToRun);
-			save.SetStatusLogger(StatusLogger);
-			save.Run();
-		}
-		
-		private class AfterUpdate : OnFinish {
-			private readonly PwEntry _backup;
-			private readonly PwEntry _updatedEntry;
-			private readonly IKp2aApp _app;
-			
-			public AfterUpdate(Activity activity, PwEntry backup, PwEntry updatedEntry, IKp2aApp app, OnFinish finish):base(activity, finish) {
-				_backup = backup;
-				_updatedEntry = updatedEntry;
-				_app = app;
-			}
-			
-			public override void Run() {
-				if ( Success ) {
-					// Mark parent group dirty. Even only the last modification date changed, this might affect sort order
-					PwGroup parent = _updatedEntry.ParentGroup;
-					if ( parent != null ) {
+        public UpdateEntry(Activity ctx, IKp2aApp app, PwEntry oldE, PwEntry newE, OnFinish finish) : base(ctx, finish)
+        {
+            _ctx = ctx;
+            _app = app;
 
-						// Mark parent group dirty
-						_app.DirtyGroups.Add(parent);
-							
-					}
-					
-				} else {
-					StatusLogger.UpdateMessage(UiStringKey.UndoingChanges);
-					// If we fail to save, back out changes to global structure
-					//TODO test fail
-					_updatedEntry.AssignProperties(_backup, false, true, false);
-				}
-				
-				base.Run();
-			}
-			
-		}
-		
-		
-	}
+            _onFinishToRun = new AfterUpdate(ctx, oldE, newE, app, finish);
+        }
+
+
+        public override void Run()
+        {
+            // Commit to disk
+            SaveDb save = new SaveDb(_ctx, _app, _app.CurrentDb, OnFinishToRun);
+            save.SetStatusLogger(StatusLogger);
+            save.Run();
+        }
+
+        private class AfterUpdate : OnFinish
+        {
+            private readonly PwEntry _backup;
+            private readonly PwEntry _updatedEntry;
+            private readonly IKp2aApp _app;
+
+            public AfterUpdate(Activity activity, PwEntry backup, PwEntry updatedEntry, IKp2aApp app, OnFinish finish) : base(activity, finish)
+            {
+                _backup = backup;
+                _updatedEntry = updatedEntry;
+                _app = app;
+            }
+
+            public override void Run()
+            {
+                if (Success)
+                {
+                    // Mark parent group dirty. Even only the last modification date changed, this might affect sort order
+                    PwGroup parent = _updatedEntry.ParentGroup;
+                    if (parent != null)
+                    {
+
+                        // Mark parent group dirty
+                        _app.DirtyGroups.Add(parent);
+
+                    }
+
+                }
+                else
+                {
+                    StatusLogger.UpdateMessage(UiStringKey.UndoingChanges);
+                    // If we fail to save, back out changes to global structure
+                    //TODO test fail
+                    _updatedEntry.AssignProperties(_backup, false, true, false);
+                }
+
+                base.Run();
+            }
+
+        }
+
+
+    }
 
 }
 

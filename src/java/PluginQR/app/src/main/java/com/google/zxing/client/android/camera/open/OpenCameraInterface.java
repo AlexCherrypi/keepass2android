@@ -27,10 +27,11 @@ public final class OpenCameraInterface {
   }
 
   /**
-   * Opens a rear-facing camera with {@link Camera#open(int)}, if one exists, or opens camera 0.
+   * Opens a rear-facing camera with {@link Camera#open(int)}, if one exists, or
+   * opens camera 0.
    */
   public static Camera open() {
-    
+
     int numCameras = Camera.getNumberOfCameras();
     if (numCameras == 0) {
       Log.w(TAG, "No cameras!");
@@ -46,7 +47,7 @@ public final class OpenCameraInterface {
       }
       index++;
     }
-    
+
     Camera camera;
     if (index < numCameras) {
       Log.i(TAG, "Opening camera #" + index);

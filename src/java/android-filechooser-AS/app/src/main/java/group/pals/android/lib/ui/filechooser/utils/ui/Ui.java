@@ -34,12 +34,12 @@ public class Ui {
      * Shows/ hides soft input (soft keyboard).
      * 
      * @param view
-     *            {@link View}.
+     *             {@link View}.
      * @param show
-     *            {@code true} or {@code false}. If {@code true}, this method
-     *            will use a {@link Runnable} to show the IMM. So you don't need
-     *            to use it, and consider using
-     *            {@link View#removeCallbacks(Runnable)} if you want to cancel.
+     *             {@code true} or {@code false}. If {@code true}, this method
+     *             will use a {@link Runnable} to show the IMM. So you don't need
+     *             to use it, and consider using
+     *             {@link View#removeCallbacks(Runnable)} if you want to cancel.
      */
     public static void showSoftKeyboard(final View view, final boolean show) {
         final InputMethodManager imm = (InputMethodManager) view.getContext()
@@ -63,9 +63,9 @@ public class Ui {
      * Strikes out text of {@code view}.
      * 
      * @param view
-     *            {@link TextView}.
+     *                  {@link TextView}.
      * @param strikeOut
-     *            {@code true} to strike out the text.
+     *                  {@code true} to strike out the text.
      */
     public static void strikeOutText(TextView view, boolean strikeOut) {
         if (strikeOut)
@@ -81,9 +81,9 @@ public class Ui {
      * {@link Resources.Theme#resolveAttribute(int, TypedValue, boolean)}.
      * 
      * @param context
-     *            the context.
+     *                the context.
      * @param resId
-     *            The resource identifier of the desired theme attribute.
+     *                The resource identifier of the desired theme attribute.
      * @return the resource ID that {@link TypedValue#resourceId} points to, or
      *         {@code 0} if not found.
      */
@@ -98,7 +98,7 @@ public class Ui {
      * Uses a fixed size for {@code dialog} in large screens.
      * 
      * @param dialog
-     *            the dialog.
+     *               the dialog.
      */
     public static void adjustDialogSizeForLargeScreen(Dialog dialog) {
         adjustDialogSizeForLargeScreen(dialog.getWindow());
@@ -108,7 +108,7 @@ public class Ui {
      * Uses a fixed size for {@code window} in large screens.
      * 
      * @param dialogWindow
-     *            the window <i>of the dialog</i>.
+     *                     the window <i>of the dialog</i>.
      */
     public static void adjustDialogSizeForLargeScreen(Window dialogWindow) {
         if (BuildConfig.DEBUG)

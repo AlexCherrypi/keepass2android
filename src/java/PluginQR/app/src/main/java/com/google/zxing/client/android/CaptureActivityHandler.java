@@ -41,7 +41,8 @@ import java.util.Map;
 import keepass2android.plugin.qr.R;
 
 /**
- * This class handles all the messaging which comprises the state machine for capture.
+ * This class handles all the messaging which comprises the state machine for
+ * capture.
  *
  * @author dswitkin@google.com (Daniel Switkin)
  */
@@ -61,10 +62,10 @@ public final class CaptureActivityHandler extends Handler {
   }
 
   CaptureActivityHandler(CaptureActivity activity,
-                         Collection<BarcodeFormat> decodeFormats,
-                         Map<DecodeHintType,?> baseHints,
-                         String characterSet,
-                         CameraManager cameraManager) {
+      Collection<BarcodeFormat> decodeFormats,
+      Map<DecodeHintType, ?> baseHints,
+      String characterSet,
+      CameraManager cameraManager) {
     this.activity = activity;
     decodeThread = new DecodeThread(activity, decodeFormats, baseHints, characterSet,
         new ViewfinderResultPointCallback(activity.getViewfinderView()));
@@ -97,7 +98,7 @@ public final class CaptureActivityHandler extends Handler {
             // Mutable copy:
             barcode = barcode.copy(Bitmap.Config.ARGB_8888, true);
           }
-          scaleFactor = bundle.getFloat(DecodeThread.BARCODE_SCALED_FACTOR);          
+          scaleFactor = bundle.getFloat(DecodeThread.BARCODE_SCALED_FACTOR);
         }
         activity.handleDecode((Result) message.obj, barcode, scaleFactor);
         break;
@@ -119,8 +120,8 @@ public final class CaptureActivityHandler extends Handler {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         intent.setData(Uri.parse(url));
 
-        ResolveInfo resolveInfo =
-            activity.getPackageManager().resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        ResolveInfo resolveInfo = activity.getPackageManager().resolveActivity(intent,
+            PackageManager.MATCH_DEFAULT_ONLY);
         String browserPackageName = null;
         if (resolveInfo != null && resolveInfo.activityInfo != null) {
           browserPackageName = resolveInfo.activityInfo.packageName;
@@ -149,7 +150,8 @@ public final class CaptureActivityHandler extends Handler {
     Message quit = Message.obtain(decodeThread.getHandler(), R.id.quit);
     quit.sendToTarget();
     try {
-      // Wait at most half a second; should be enough time, and onPause() will timeout quickly
+      // Wait at most half a second; should be enough time, and onPause() will timeout
+      // quickly
       decodeThread.join(500L);
     } catch (InterruptedException e) {
       // continue

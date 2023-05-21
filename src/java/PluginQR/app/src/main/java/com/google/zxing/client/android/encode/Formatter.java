@@ -17,12 +17,13 @@
 package com.google.zxing.client.android.encode;
 
 /**
- * Encapsulates some simple formatting logic, to aid refactoring in {@link ContactEncoder}.
+ * Encapsulates some simple formatting logic, to aid refactoring in
+ * {@link ContactEncoder}.
  *
  * @author Sean Owen
  */
 interface Formatter {
-  
+
   String format(String source);
-  
+
 }

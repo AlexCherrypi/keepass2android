@@ -41,13 +41,15 @@ public class MyMSAAccountInfo implements IAccountInfo {
 
     /**
      * Creates an MSAAccountInfo object.
-     * @param authenticator The authenticator that this account info was created from.
+     * 
+     * @param authenticator      The authenticator that this account info was
+     *                           created from.
      * @param liveConnectSession The session this account is based off of.
-     * @param logger The logger.
+     * @param logger             The logger.
      */
     public MyMSAAccountInfo(final MyMSAAuthenticator authenticator,
-                          final LiveConnectSession liveConnectSession,
-                          final ILogger logger) {
+            final LiveConnectSession liveConnectSession,
+            final ILogger logger) {
         mAuthenticator = authenticator;
         mSession = liveConnectSession;
         mLogger = logger;
@@ -55,6 +57,7 @@ public class MyMSAAccountInfo implements IAccountInfo {
 
     /**
      * Get the type of the account.
+     * 
      * @return The MicrosoftAccount account type.
      */
     @Override
@@ -64,6 +67,7 @@ public class MyMSAAccountInfo implements IAccountInfo {
 
     /**
      * Get the access token for requests against the service root.
+     * 
      * @return The access token for requests against the service root.
      */
     @Override
@@ -73,6 +77,7 @@ public class MyMSAAccountInfo implements IAccountInfo {
 
     /**
      * Get the OneDrive service root for this account.
+     * 
      * @return the OneDrive service root for this account.
      */
     @Override
@@ -82,6 +87,7 @@ public class MyMSAAccountInfo implements IAccountInfo {
 
     /**
      * Indicates if the account access token is expired and needs to be refreshed.
+     * 
      * @return true if refresh() needs to be called and
      *         false if the account is still valid.
      */
@@ -96,7 +102,7 @@ public class MyMSAAccountInfo implements IAccountInfo {
     @Override
     public void refresh() {
         mLogger.logDebug("Refreshing access token...");
-        final MyMSAAccountInfo newInfo = (MyMSAAccountInfo)mAuthenticator.loginSilent();
+        final MyMSAAccountInfo newInfo = (MyMSAAccountInfo) mAuthenticator.loginSilent();
         mSession = newInfo.mSession;
     }
 }

@@ -65,7 +65,7 @@ public final class SearchBookContentsActivity extends Activity {
   private View queryButton;
   private ListView resultListView;
   private TextView headerView;
-  private AsyncTask<String,?,?> networkTask;
+  private AsyncTask<String, ?, ?> networkTask;
 
   private final Button.OnClickListener buttonListener = new Button.OnClickListener() {
     @Override
@@ -138,7 +138,7 @@ public final class SearchBookContentsActivity extends Activity {
 
   @Override
   protected void onPause() {
-    AsyncTask<?,?,?> oldTask = networkTask;
+    AsyncTask<?, ?, ?> oldTask = networkTask;
     if (oldTask != null) {
       oldTask.cancel(true);
       networkTask = null;
@@ -149,7 +149,7 @@ public final class SearchBookContentsActivity extends Activity {
   private void launchSearch() {
     String query = queryTextView.getText().toString();
     if (query != null && !query.isEmpty()) {
-      AsyncTask<?,?,?> oldTask = networkTask;
+      AsyncTask<?, ?, ?> oldTask = networkTask;
       if (oldTask != null) {
         oldTask.cancel(true);
       }
@@ -162,13 +162,15 @@ public final class SearchBookContentsActivity extends Activity {
     }
   }
 
-  private final class NetworkTask extends AsyncTask<String,Object,JSONObject> {
+  private final class NetworkTask extends AsyncTask<String, Object, JSONObject> {
 
     @Override
     protected JSONObject doInBackground(String... args) {
       try {
-        // These return a JSON result which describes if and where the query was found. This API may
-        // break or disappear at any time in the future. Since this is an API call rather than a
+        // These return a JSON result which describes if and where the query was found.
+        // This API may
+        // break or disappear at any time in the future. Since this is an API call
+        // rather than a
         // website, we don't use LocaleManager to change the TLD.
         String theQuery = args[0];
         String theIsbn = args[1];
@@ -203,7 +205,8 @@ public final class SearchBookContentsActivity extends Activity {
       queryButton.setEnabled(true);
     }
 
-    // Currently there is no way to distinguish between a query which had no results and a book
+    // Currently there is no way to distinguish between a query which had no results
+    // and a book
     // which is not searchable - both return zero results.
     private void handleSearchResults(JSONObject json) {
       try {
@@ -241,30 +244,30 @@ public final class SearchBookContentsActivity extends Activity {
       try {
         pageId = json.getString("page_id");
         pageNumber = json.optString("page_number");
-        snippet = json.optString("snippet_text");        
+        snippet = json.optString("snippet_text");
       } catch (JSONException e) {
         Log.w(TAG, e);
         // Never seen in the wild, just being complete.
         return new SearchBookContentsResult(getString(R.string.msg_sbc_no_page_returned), "", "", false);
       }
-      
+
       if (pageNumber == null || pageNumber.isEmpty()) {
         // This can happen for text on the jacket, and possibly other reasons.
         pageNumber = "";
       } else {
         pageNumber = getString(R.string.msg_sbc_page) + ' ' + pageNumber;
       }
-      
+
       boolean valid = snippet != null && !snippet.isEmpty();
       if (valid) {
-        // Remove all HTML tags and encoded characters.          
+        // Remove all HTML tags and encoded characters.
         snippet = TAG_PATTERN.matcher(snippet).replaceAll("");
         snippet = LT_ENTITY_PATTERN.matcher(snippet).replaceAll("<");
         snippet = GT_ENTITY_PATTERN.matcher(snippet).replaceAll(">");
         snippet = QUOTE_ENTITY_PATTERN.matcher(snippet).replaceAll("'");
         snippet = QUOT_ENTITY_PATTERN.matcher(snippet).replaceAll("\"");
       } else {
-        snippet = '(' + getString(R.string.msg_sbc_snippet_unavailable) + ')';        
+        snippet = '(' + getString(R.string.msg_sbc_snippet_unavailable) + ')';
       }
 
       return new SearchBookContentsResult(pageId, pageNumber, snippet, valid);

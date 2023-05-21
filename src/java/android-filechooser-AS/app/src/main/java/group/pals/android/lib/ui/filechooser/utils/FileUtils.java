@@ -37,7 +37,7 @@ public class FileUtils {
                 Pattern.compile(MimeTypes.REGEX_FILE_TYPE_IMAGES));
         MAP_FILE_ICONS.put(R.drawable.afc_file_plain_text,
                 Pattern.compile(MimeTypes.REGEX_FILE_TYPE_PLAIN_TEXTS));
-        
+
         MAP_FILE_ICONS.put(R.drawable.afc_file_kp2a,
                 Pattern.compile(MimeTypes.REGEX_FILE_TYPE_KEEPASS2ANDROID));
 
@@ -54,30 +54,30 @@ public class FileUtils {
      * Gets resource icon based on file type and name.
      * 
      * @param fileType
-     *            the file type, can be one of
-     *            {@link BaseFile#FILE_TYPE_DIRECTORY},
-     *            {@link BaseFile#FILE_TYPE_FILE},
-     *            {@link BaseFile#FILE_TYPE_UNKNOWN}.
+     *                 the file type, can be one of
+     *                 {@link BaseFile#FILE_TYPE_DIRECTORY},
+     *                 {@link BaseFile#FILE_TYPE_FILE},
+     *                 {@link BaseFile#FILE_TYPE_UNKNOWN}.
      * @param fileName
-     *            the file name.
+     *                 the file name.
      * @return the resource icon ID.
      */
     public static int getResIcon(int fileType, String fileName) {
         switch (fileType) {
-        case BaseFile.FILE_TYPE_DIRECTORY: {
-            return R.drawable.afc_folder;
-        }// FILE_TYPE_DIRECTORY
+            case BaseFile.FILE_TYPE_DIRECTORY: {
+                return R.drawable.afc_folder;
+            } // FILE_TYPE_DIRECTORY
 
-        case BaseFile.FILE_TYPE_FILE: {
-            for (int i = 0; i < MAP_FILE_ICONS.size(); i++)
-                if (MAP_FILE_ICONS.valueAt(i).matcher(fileName).find())
-                    return MAP_FILE_ICONS.keyAt(i);
+            case BaseFile.FILE_TYPE_FILE: {
+                for (int i = 0; i < MAP_FILE_ICONS.size(); i++)
+                    if (MAP_FILE_ICONS.valueAt(i).matcher(fileName).find())
+                        return MAP_FILE_ICONS.keyAt(i);
 
-            return R.drawable.afc_file;
-        }// FILE_TYPE_FILE
+                return R.drawable.afc_file;
+            } // FILE_TYPE_FILE
 
-        default:
-            return android.R.drawable.ic_delete;
+            default:
+                return android.R.drawable.ic_delete;
         }
     }// getResIcon()
 
@@ -88,7 +88,7 @@ public class FileUtils {
      * information.
      * 
      * @param name
-     *            name of the file
+     *             name of the file
      * @return {@code true} if the {@code name} is valid, and vice versa (if it
      *         contains invalid characters or it is {@code null}/ empty)
      */

@@ -45,9 +45,9 @@ namespace keepass2android.Io
 
         }
 
-        public class OneDrive2ItemLocation<OneDrive2PrefixContainerType> where OneDrive2PrefixContainerType: OneDrive2PrefixContainer, new()
+        public class OneDrive2ItemLocation<OneDrive2PrefixContainerType> where OneDrive2PrefixContainerType : OneDrive2PrefixContainer, new()
         {
-            
+
             public User User { get; set; } = new User();
             public Share Share { get; set; } = new Share();
             public string DriveId { get; set; }
@@ -59,7 +59,7 @@ namespace keepass2android.Io
             {
                 get
                 {
-                    OneDrive2ItemLocation< OneDrive2PrefixContainerType> copy = OneDrive2ItemLocation< OneDrive2PrefixContainerType>.FromString(this.ToString());
+                    OneDrive2ItemLocation<OneDrive2PrefixContainerType> copy = OneDrive2ItemLocation<OneDrive2PrefixContainerType>.FromString(this.ToString());
                     if (copy.LocalPath.Any())
                     {
                         //pop last:
@@ -177,16 +177,16 @@ namespace keepass2android.Io
 
         }
     }
-   
 
 
-    public abstract class OneDrive2FileStorage<OneDrive2PrefixContainerType> : IFileStorage where OneDrive2PrefixContainerType: OneDrive2PrefixContainer, new()
+
+    public abstract class OneDrive2FileStorage<OneDrive2PrefixContainerType> : IFileStorage where OneDrive2PrefixContainerType : OneDrive2PrefixContainer, new()
     {
 
         public static IPublicClientApplication _publicClientApp = null;
         private string ClientID = "8374f801-0f55-407d-80cc-9a04fe86d9b2";
-        
-        
+
+
         public abstract IEnumerable<string> Scopes
         {
             get;
@@ -223,7 +223,7 @@ namespace keepass2android.Io
                 if ("me".Equals(itemLocation.Share.Id))
                 {
                     if (verbose) Kp2aLog.Log("Path share is me");
-                    
+
 
                     if (_specialFolder == null)
                     {
@@ -378,7 +378,7 @@ namespace keepass2android.Io
                 RequiresUserInteraction = false,
                 TokenExpiryDate = authenticationResult.ExpiresOn.LocalDateTime
             };
-            
+
 
 
             if (authenticationResult.Account == null)
@@ -389,14 +389,14 @@ namespace keepass2android.Io
         }
 
 
-        
+
         private void logDebug(string str)
         {
 #if DEBUG
             Log.Debug("KP2A", "OneDrive2: " + str);
 #endif
         }
-        
+
 
         protected abstract string SpecialFolder { get; }
 
@@ -404,19 +404,19 @@ namespace keepass2android.Io
         {
             PathItemBuilder result = new PathItemBuilder(SpecialFolder);
 
-            
+
             result.itemLocation = OneDrive2ItemLocation<OneDrive2PrefixContainerType>.FromString(path);
             if (string.IsNullOrEmpty(result.itemLocation.User?.Name))
             {
                 throw new Exception("path does not contain user");
             }
-            
+
             result.client = await TryGetMsGraphClient(path, true);
 
             if (result.client == null)
                 throw new Exception("Failed to connect or authenticate to OneDrive!");
-            
-            
+
+
             return result;
 
         }
@@ -460,7 +460,7 @@ namespace keepass2android.Io
         {
             try
             {
-                
+
                 Task.Run(async () =>
                 {
                     PathItemBuilder pathItemBuilder = await GetPathItemBuilder(ioc.Path);
@@ -490,7 +490,7 @@ namespace keepass2android.Io
             try
             {
                 string path = ioc.Path;
-                
+
                 logDebug("openFileForRead. Path=" + path);
                 Stream result = Task.Run(async () =>
                 {
@@ -551,7 +551,7 @@ namespace keepass2android.Io
                 {
                     PathItemBuilder pathItemBuilder = await GetPathItemBuilder(path);
                     //for small files <2MB use the direct upload:
-                    if (stream.Length < 2* 1024 * 1024) 
+                    if (stream.Length < 2 * 1024 * 1024)
                     {
                         return await
                             pathItemBuilder
@@ -572,7 +572,7 @@ namespace keepass2android.Io
                             { "@microsoft.graph.conflictBehavior", "replace" }
                         }
                     };
-                    
+
 
                     var uploadSession = await pathItemBuilder
                                 .getPathItem()
@@ -627,7 +627,7 @@ namespace keepass2android.Io
 
         private string GetFilename(string path)
         {
-            string localPath = "/"+OneDrive2ItemLocation<OneDrive2PrefixContainerType>.FromString(path).LocalPathString;
+            string localPath = "/" + OneDrive2ItemLocation<OneDrive2PrefixContainerType>.FromString(path).LocalPathString;
             return localPath.Substring(localPath.LastIndexOf("/", StringComparison.Ordinal) + 1);
         }
 
@@ -648,7 +648,7 @@ namespace keepass2android.Io
                 {
 
                     PathItemBuilder pathItemBuilder = await GetPathItemBuilder(parentIoc.Path);
-                    
+
                     return await pathItemBuilder.getPathItem()
                         .Children
                         .Request()
@@ -740,7 +740,7 @@ namespace keepass2android.Io
         {
             try
             {
-                return Task.Run(async() => await GetFileDescriptionAsync(ioc)).Result;
+                return Task.Run(async () => await GetFileDescriptionAsync(ioc)).Result;
             }
             catch (Exception e)
             {
@@ -783,7 +783,7 @@ namespace keepass2android.Io
         public void StartSelectFile(IFileStorageSetupInitiatorActivity activity, bool isForSave, int requestCode,
             string protocolId)
         {
-            String path = ProtocolId+ "://";
+            String path = ProtocolId + "://";
             activity.StartSelectFileProcess(IOConnectionInfo.FromPath(path), isForSave, requestCode);
         }
 
@@ -827,7 +827,7 @@ namespace keepass2android.Io
 
         public void PrepareFileUsage(Context ctx, IOConnectionInfo ioc)
         {
-            if (!Task.Run(async() => await IsConnectedAsync(ioc.Path, true)).Result)
+            if (!Task.Run(async () => await IsConnectedAsync(ioc.Path, true)).Result)
             {
                 throw new Exception("MsGraph login required");
             }
@@ -919,7 +919,7 @@ namespace keepass2android.Io
             IAccount account = null;
             try
             {
-                
+
                 if (IsConnected(iocPath))
                 {
                     logDebug("Login Silent ok, connected");
@@ -984,7 +984,7 @@ namespace keepass2android.Io
             return OneDrive2ItemLocation<OneDrive2PrefixContainerType>.RootForUser(res.Account.Username, res.Account.HomeAccountId.Identifier).ToString();
         }
 
-        
+
         private void FinishActivityWithSuccess(IFileStorageSetupActivity activity, string rootPathForUser)
         {
             activity.State.PutString(FileStorageSetupDefs.ExtraPath, rootPathForUser);
@@ -1002,7 +1002,7 @@ namespace keepass2android.Io
             try
             {
                 var itemLocation = OneDrive2ItemLocation<OneDrive2PrefixContainerType>.FromString(ioc.Path);
-                string result = ProtocolId+ "://";
+                string result = ProtocolId + "://";
                 if (!string.IsNullOrEmpty(itemLocation.User?.Id))
                 {
                     result += itemLocation.User?.Name;
@@ -1025,7 +1025,7 @@ namespace keepass2android.Io
                             ". Note that SprEnging expressions like {DB_PATH} are not supported with OneDrive!");
                 return ProtocolId + "://(invalid)";
             }
-            
+
         }
 
 
@@ -1034,9 +1034,9 @@ namespace keepass2android.Io
 
             List<FileDescription> result = new List<FileDescription>();
 
-            
+
             DriveItem root = await client.Me.Drive.Root.Request().GetAsync();
-            FileDescription myEntry = GetFileDescription(parentPath.BuildShare("me","me","me", root.ParentReference?.DriveId), root);
+            FileDescription myEntry = GetFileDescription(parentPath.BuildShare("me", "me", "me", root.ParentReference?.DriveId), root);
             myEntry.DisplayName = MyOneDriveDisplayName;
 
             result.Add(myEntry);
@@ -1069,7 +1069,7 @@ namespace keepass2android.Io
 
         protected virtual string MyOneDriveDisplayName { get { return "My OneDrive"; } }
 
-        public abstract bool CanListShares { get;  }
+        public abstract bool CanListShares { get; }
 
         DriveItem TryFindFile(PathItemBuilder parent, string filename)
         {
@@ -1102,13 +1102,13 @@ namespace keepass2android.Io
         {
             try
             {
-                return Task.Run(async() => await CreateFilePathAsync(parent, newFilename)).Result;
+                return Task.Run(async () => await CreateFilePathAsync(parent, newFilename)).Result;
             }
             catch (Exception e)
             {
                 throw convertException(e);
             }
-            
+
         }
 
         private async Task<string> CreateFilePathAsync(string parent, string newFilename)
@@ -1157,7 +1157,7 @@ namespace keepass2android.Io
         }
     }
 
-    public class OneDrive2FullFileStorage: OneDrive2FileStorage<OneDrive2FullPrefixContainer> 
+    public class OneDrive2FullFileStorage : OneDrive2FileStorage<OneDrive2FullPrefixContainer>
     {
         public override IEnumerable<string> Scopes
         {
@@ -1168,7 +1168,7 @@ namespace keepass2android.Io
                         "https://graph.microsoft.com/Files.ReadWrite",
                         "https://graph.microsoft.com/Files.ReadWrite.All"
                     };
-                
+
             }
         }
 

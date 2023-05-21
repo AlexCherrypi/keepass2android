@@ -17,7 +17,7 @@ namespace keepass2android
 {
     public class AutofillDisabledQueriesPreference : ListPreference
     {
-        
+
 
         private class DisabledQuery
         {
@@ -44,10 +44,10 @@ namespace keepass2android
 
                 public CustomHolder(View row, int position, AutofillDisabledQueriesPreference pref)
                 {
-                    text = (TextView) row.FindViewById(Resource.Id.disabled_query_text);
+                    text = (TextView)row.FindViewById(Resource.Id.disabled_query_text);
                     text.Text = pref.DisabledQueries[position].DisplayName;
 
-                    checkbox = (CheckBox) row.FindViewById(Resource.Id.disabled_query_checkbox);
+                    checkbox = (CheckBox)row.FindViewById(Resource.Id.disabled_query_checkbox);
                     checkbox.Id = position;
                     checkbox.Clickable = true;
                     checkbox.Checked = true;
@@ -87,11 +87,11 @@ namespace keepass2android
                 row.Focusable = true;
                 row.FocusableInTouchMode = true;
                 */
-                ((CustomHolder) row.Tag).Checkbox.CheckedChange += (sender, args) =>
+                ((CustomHolder)row.Tag).Checkbox.CheckedChange += (sender, args) =>
                 {
                     DisabledQueriesValues[_pref.DisabledQueries[p].Query] = args.IsChecked;
                 };
-                
+
 
                 return row;
             }
@@ -108,16 +108,16 @@ namespace keepass2android
         private List<DisabledQuery> DisabledQueries
         {
             get
-            {               
+            {
                 var prefs = PreferenceManager.GetDefaultSharedPreferences(this.Context);
                 _disabledQueries = prefs.GetStringSet("AutoFillDisabledQueries", new List<string>()).Select(str =>
-                    new DisabledQuery() {Query = str, DisplayName = AutofillServiceBase.GetDisplayNameForQuery(str, Context)}).ToList();
+                    new DisabledQuery() { Query = str, DisplayName = AutofillServiceBase.GetDisplayNameForQuery(str, Context) }).ToList();
 
                 return _disabledQueries;
             }
         }
 
-        
+
 
         protected AutofillDisabledQueriesPreference(IntPtr javaReference, JniHandleOwnership transfer)
             : base(javaReference, transfer)
@@ -145,7 +145,7 @@ namespace keepass2android
 
 
             var adapter = new DisabledQueryPreferenceScreenAdapter(this, Context);
-            
+
             builder.SetAdapter(adapter, (sender, args) => { });
             builder.SetPositiveButton(Android.Resource.String.Ok, (sender, args) =>
             {

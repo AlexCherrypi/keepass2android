@@ -33,90 +33,91 @@ using Exception = System.Exception;
 namespace keepass2android
 {
 
-	public class SaveDb : RunnableOnFinish {
-		private readonly IKp2aApp _app;
-	    private readonly Database _db;
-	    private readonly bool _dontSave;
+    public class SaveDb : RunnableOnFinish
+    {
+        private readonly IKp2aApp _app;
+        private readonly Database _db;
+        private readonly bool _dontSave;
 
         /// <summary>
 		/// stream for reading the data from the original file. If this is set to a non-null value, we know we need to sync
 		/// </summary>
 		private readonly Stream _streamForOrigFile;
-		private readonly Context _ctx;
-		private Thread _workerThread;
+        private readonly Context _ctx;
+        private Thread _workerThread;
 
-		public SaveDb(Activity ctx, IKp2aApp app, Database db, OnFinish finish, bool dontSave)
-			: base(ctx, finish)
-		{
-		    _db = db;
-			_ctx = ctx;
-			_app = app;
-			_dontSave = dontSave;
+        public SaveDb(Activity ctx, IKp2aApp app, Database db, OnFinish finish, bool dontSave)
+            : base(ctx, finish)
+        {
+            _db = db;
+            _ctx = ctx;
+            _app = app;
+            _dontSave = dontSave;
         }
-		
-		/// <summary>
-		/// Constructor for sync
-		/// </summary>
-		/// <param name="ctx"></param>
-		/// <param name="app"></param>
-		/// <param name="finish"></param>
-		/// <param name="dontSave"></param>
-		/// <param name="streamForOrigFile">Stream for reading the data from the (changed) original location</param>
-		public SaveDb(Activity ctx, IKp2aApp app, OnFinish finish, Database db, bool dontSave, Stream streamForOrigFile)
-			: base(ctx, finish)
-		{
-		    _db = db;
-			_ctx = ctx;
-			_app = app;
-			_dontSave = dontSave;
-			_streamForOrigFile = streamForOrigFile;
-		}
 
-		public SaveDb(Activity ctx, IKp2aApp app, Database db, OnFinish finish)
-			: base(ctx, finish)
-		{
-			_ctx = ctx;
-			_app = app;
-		    _db = db;
-		    _dontSave = false;
-		}
+        /// <summary>
+        /// Constructor for sync
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="app"></param>
+        /// <param name="finish"></param>
+        /// <param name="dontSave"></param>
+        /// <param name="streamForOrigFile">Stream for reading the data from the (changed) original location</param>
+        public SaveDb(Activity ctx, IKp2aApp app, OnFinish finish, Database db, bool dontSave, Stream streamForOrigFile)
+            : base(ctx, finish)
+        {
+            _db = db;
+            _ctx = ctx;
+            _app = app;
+            _dontSave = dontSave;
+            _streamForOrigFile = streamForOrigFile;
+        }
 
-	    public bool ShowDatabaseIocInStatus { get; set; }
-	    
-	    public override void Run ()
-		{
+        public SaveDb(Activity ctx, IKp2aApp app, Database db, OnFinish finish)
+            : base(ctx, finish)
+        {
+            _ctx = ctx;
+            _app = app;
+            _db = db;
+            _dontSave = false;
+        }
 
-			if (!_dontSave)
-			{
-				try
-				{
-					if (_db.CanWrite == false)
-					{
-						//this should only happen if there is a problem in the UI so that the user sees an edit interface.
-						Finish(false,"Cannot save changes. File is read-only!");
-						return;
-					}
+        public bool ShowDatabaseIocInStatus { get; set; }
 
-				    string message = _app.GetResourceString(UiStringKey.saving_database);
+        public override void Run()
+        {
 
-				    if (ShowDatabaseIocInStatus)
-				        message += " (" + _app.GetFileStorage(_db.Ioc).GetDisplayName(_db.Ioc) + ")";
+            if (!_dontSave)
+            {
+                try
+                {
+                    if (_db.CanWrite == false)
+                    {
+                        //this should only happen if there is a problem in the UI so that the user sees an edit interface.
+                        Finish(false, "Cannot save changes. File is read-only!");
+                        return;
+                    }
+
+                    string message = _app.GetResourceString(UiStringKey.saving_database);
+
+                    if (ShowDatabaseIocInStatus)
+                        message += " (" + _app.GetFileStorage(_db.Ioc).GetDisplayName(_db.Ioc) + ")";
 
                     StatusLogger.UpdateMessage(message);
-                    
-					IOConnectionInfo ioc = _db.Ioc;
-					IFileStorage fileStorage = _app.GetFileStorage(ioc);
 
-					if (_streamForOrigFile == null)
-					{
-						if ((!_app.GetBooleanPreference(PreferenceKey.CheckForFileChangesOnSave))
-							|| (_db.KpDatabase.HashOfFileOnDisk == null)) //first time saving
-						{
-							PerformSaveWithoutCheck(fileStorage, ioc);
-							Finish(true);
-							return;
-						}	
-					}
+                    IOConnectionInfo ioc = _db.Ioc;
+                    IFileStorage fileStorage = _app.GetFileStorage(ioc);
+
+                    if (_streamForOrigFile == null)
+                    {
+                        if ((!_app.GetBooleanPreference(PreferenceKey.CheckForFileChangesOnSave))
+                            || (_db.KpDatabase.HashOfFileOnDisk == null)) //first time saving
+                        {
+                            PerformSaveWithoutCheck(fileStorage, ioc);
+                            Finish(true);
+                            return;
+                        }
+                    }
 
 
                     bool hasStreamForOrigFile = (_streamForOrigFile != null);
@@ -126,77 +127,77 @@ namespace keepass2android
                                           (FileHashChanged(ioc, _db.KpDatabase.HashOfFileOnDisk) ==
                                            FileHashChange.Changed); //if that fails, hash the file and compare:
 
-					if (hasHashChanged)
-					{
-						Kp2aLog.Log("Conflict. " + hasStreamForOrigFile + " " + hasChangeFast + " " + hasHashChanged);
+                    if (hasHashChanged)
+                    {
+                        Kp2aLog.Log("Conflict. " + hasStreamForOrigFile + " " + hasChangeFast + " " + hasHashChanged);
 
-						bool alwaysMerge = (PreferenceManager.GetDefaultSharedPreferences(Application.Context)
+                        bool alwaysMerge = (PreferenceManager.GetDefaultSharedPreferences(Application.Context)
                             .GetBoolean("AlwaysMergeOnConflict", false));
 
-						if (alwaysMerge)
+                        if (alwaysMerge)
                         {
                             MergeAndFinish(fileStorage, ioc);
-						}
+                        }
                         else
                         {
-                            
 
-						//ask user...
-						_app.AskYesNoCancel(UiStringKey.TitleSyncQuestion, UiStringKey.MessageSyncQuestion, 
-							UiStringKey.YesSynchronize,
-							UiStringKey.NoOverwrite,
-							//yes = sync
-							(sender, args) =>
-							{
-								Action runHandler = () => { MergeAndFinish(fileStorage, ioc); };
-								RunInWorkerThread(runHandler);
-							},
-							//no = overwrite
-							(sender, args) =>
-							{
-								RunInWorkerThread(() =>
-									{
-										PerformSaveWithoutCheck(fileStorage, ioc);
-										Finish(true);
-									});
-							},
-							//cancel 
-							(sender, args) =>
-							{
-								RunInWorkerThread(() => Finish(false));
-							},
-							_ctx
-							);
+
+                            //ask user...
+                            _app.AskYesNoCancel(UiStringKey.TitleSyncQuestion, UiStringKey.MessageSyncQuestion,
+                                UiStringKey.YesSynchronize,
+                                UiStringKey.NoOverwrite,
+                                //yes = sync
+                                (sender, args) =>
+                                {
+                                    Action runHandler = () => { MergeAndFinish(fileStorage, ioc); };
+                                    RunInWorkerThread(runHandler);
+                                },
+                                //no = overwrite
+                                (sender, args) =>
+                                {
+                                    RunInWorkerThread(() =>
+                                        {
+                                            PerformSaveWithoutCheck(fileStorage, ioc);
+                                            Finish(true);
+                                        });
+                                },
+                                //cancel 
+                                (sender, args) =>
+                                {
+                                    RunInWorkerThread(() => Finish(false));
+                                },
+                                _ctx
+                                );
                         }
-						
-					}
-					else
-					{
-						PerformSaveWithoutCheck(fileStorage, ioc);
-						Finish(true);
-					}
 
-				}
-				catch (Exception e)
-				{
-					/* TODO KPDesktop:
+                    }
+                    else
+                    {
+                        PerformSaveWithoutCheck(fileStorage, ioc);
+                        Finish(true);
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    /* TODO KPDesktop:
 					 * catch(Exception exSave)
 			{
 				MessageService.ShowSaveWarning(pd.IOConnectionInfo, exSave, true);
 				bSuccess = false;
 			}
 */
-					Kp2aLog.LogUnexpectedError(e);
-					Finish(false, e.Message);
-					return;
-				}
-			}
-			else
-			{
-				Finish(true);
-			}
-			
-		}
+                    Kp2aLog.LogUnexpectedError(e);
+                    Finish(false, e.Message);
+                    return;
+                }
+            }
+            else
+            {
+                Finish(true);
+            }
+
+        }
 
         private void MergeAndFinish(IFileStorage fileStorage, IOConnectionInfo ioc)
         {
@@ -210,135 +211,135 @@ namespace keepass2android
         }
 
         private void RunInWorkerThread(Action runHandler)
-		{
-			try
-			{
-				_workerThread = new Thread(() =>
-					{
-						try
-						{
-							runHandler();
-						}
-						catch (Exception e)
-						{
-							Kp2aLog.LogUnexpectedError(e);
-							Kp2aLog.Log("Error in worker thread of SaveDb: " + e);
-							Finish(false, e.Message);
-						}
-						
-					});
-				_workerThread.Start();
-			}
-			catch (Exception e)
-			{
-				Kp2aLog.LogUnexpectedError(e);
-				Kp2aLog.Log("Error starting worker thread of SaveDb: "+e);
-				Finish(false, e.Message);
-			}
-			
-		}
+        {
+            try
+            {
+                _workerThread = new Thread(() =>
+                    {
+                        try
+                        {
+                            runHandler();
+                        }
+                        catch (Exception e)
+                        {
+                            Kp2aLog.LogUnexpectedError(e);
+                            Kp2aLog.Log("Error in worker thread of SaveDb: " + e);
+                            Finish(false, e.Message);
+                        }
 
-		public void JoinWorkerThread()
-		{
-			if (_workerThread != null)
-				_workerThread.Join();
-		}
+                    });
+                _workerThread.Start();
+            }
+            catch (Exception e)
+            {
+                Kp2aLog.LogUnexpectedError(e);
+                Kp2aLog.Log("Error starting worker thread of SaveDb: " + e);
+                Finish(false, e.Message);
+            }
 
-		private void MergeIn(IFileStorage fileStorage, IOConnectionInfo ioc)
-		{
-			StatusLogger.UpdateSubMessage(_app.GetResourceString(UiStringKey.SynchronizingDatabase));
+        }
 
-			PwDatabase pwImp = new PwDatabase();
-			PwDatabase pwDatabase = _db.KpDatabase;
-			pwImp.New(new IOConnectionInfo(), pwDatabase.MasterKey, _app.GetFileStorage(ioc).GetFilenameWithoutPathAndExt(ioc));
-			pwImp.MemoryProtection = pwDatabase.MemoryProtection.CloneDeep();
-			pwImp.MasterKey = pwDatabase.MasterKey;
-			var stream = GetStreamForBaseFile(fileStorage, ioc);
+        public void JoinWorkerThread()
+        {
+            if (_workerThread != null)
+                _workerThread.Join();
+        }
 
-			_db.DatabaseFormat.PopulateDatabaseFromStream(pwImp, stream, null);
-			
+        private void MergeIn(IFileStorage fileStorage, IOConnectionInfo ioc)
+        {
+            StatusLogger.UpdateSubMessage(_app.GetResourceString(UiStringKey.SynchronizingDatabase));
 
-			pwDatabase.MergeIn(pwImp, PwMergeMethod.Synchronize, null); 
+            PwDatabase pwImp = new PwDatabase();
+            PwDatabase pwDatabase = _db.KpDatabase;
+            pwImp.New(new IOConnectionInfo(), pwDatabase.MasterKey, _app.GetFileStorage(ioc).GetFilenameWithoutPathAndExt(ioc));
+            pwImp.MemoryProtection = pwDatabase.MemoryProtection.CloneDeep();
+            pwImp.MasterKey = pwDatabase.MasterKey;
+            var stream = GetStreamForBaseFile(fileStorage, ioc);
 
-		}
+            _db.DatabaseFormat.PopulateDatabaseFromStream(pwImp, stream, null);
 
-		private Stream GetStreamForBaseFile(IFileStorage fileStorage, IOConnectionInfo ioc)
-		{
-			//if we have the original file already available: use it
-			if (_streamForOrigFile != null)
-				return _streamForOrigFile;
 
-			//if the file storage caches, it might return the local data in case of a conflict. This would result in data loss
-			// so we need to ensure we get the data from remote (only if the remote file is available. if not, we won't overwrite anything)
-			CachingFileStorage cachingFileStorage = fileStorage as CachingFileStorage;
-			if (cachingFileStorage != null)
-			{
-				return cachingFileStorage.OpenRemoteForReadIfAvailable(ioc);
-			}
-			return fileStorage.OpenFileForRead(ioc);
-		}
+            pwDatabase.MergeIn(pwImp, PwMergeMethod.Synchronize, null);
 
-		private void PerformSaveWithoutCheck(IFileStorage fileStorage, IOConnectionInfo ioc)
-		{
-			StatusLogger.UpdateSubMessage("");
-			_db.SaveData();
-			_db.LastFileVersion = fileStorage.GetCurrentFileVersionFast(ioc);
-		}
+        }
 
-		public byte[] HashOriginalFile(IOConnectionInfo iocFile)
-		{
-			if (iocFile == null) { Debug.Assert(false); return null; } // Assert only
+        private Stream GetStreamForBaseFile(IFileStorage fileStorage, IOConnectionInfo ioc)
+        {
+            //if we have the original file already available: use it
+            if (_streamForOrigFile != null)
+                return _streamForOrigFile;
 
-			Stream sIn;
-			try
-			{
-				IFileStorage fileStorage = _app.GetFileStorage(iocFile);
-				CachingFileStorage cachingFileStorage = fileStorage as CachingFileStorage;
-				if (cachingFileStorage != null)
-				{
-					string hash;
-					cachingFileStorage.GetRemoteDataAndHash(iocFile, out hash);
-					return MemUtil.HexStringToByteArray(hash);
-				}
-				else
-				{
-					sIn = fileStorage.OpenFileForRead(iocFile);	
-				}
-				
-				if (sIn == null) throw new FileNotFoundException();
-			}
-			catch (Exception) { return null; }
+            //if the file storage caches, it might return the local data in case of a conflict. This would result in data loss
+            // so we need to ensure we get the data from remote (only if the remote file is available. if not, we won't overwrite anything)
+            CachingFileStorage cachingFileStorage = fileStorage as CachingFileStorage;
+            if (cachingFileStorage != null)
+            {
+                return cachingFileStorage.OpenRemoteForReadIfAvailable(ioc);
+            }
+            return fileStorage.OpenFileForRead(ioc);
+        }
 
-			byte[] pbHash;
-			try
-			{
-				SHA256Managed sha256 = new SHA256Managed();
-				pbHash = sha256.ComputeHash(sIn);
-			}
-			catch (Exception) { Debug.Assert(false); sIn.Close(); return null; }
+        private void PerformSaveWithoutCheck(IFileStorage fileStorage, IOConnectionInfo ioc)
+        {
+            StatusLogger.UpdateSubMessage("");
+            _db.SaveData();
+            _db.LastFileVersion = fileStorage.GetCurrentFileVersionFast(ioc);
+        }
 
-			sIn.Close();
-			return pbHash;
-		}
+        public byte[] HashOriginalFile(IOConnectionInfo iocFile)
+        {
+            if (iocFile == null) { Debug.Assert(false); return null; } // Assert only
 
-		enum FileHashChange
-		{
-			Equal,
-			Changed,
-			FileNotAvailable
-		}
+            Stream sIn;
+            try
+            {
+                IFileStorage fileStorage = _app.GetFileStorage(iocFile);
+                CachingFileStorage cachingFileStorage = fileStorage as CachingFileStorage;
+                if (cachingFileStorage != null)
+                {
+                    string hash;
+                    cachingFileStorage.GetRemoteDataAndHash(iocFile, out hash);
+                    return MemUtil.HexStringToByteArray(hash);
+                }
+                else
+                {
+                    sIn = fileStorage.OpenFileForRead(iocFile);
+                }
 
-		private FileHashChange FileHashChanged(IOConnectionInfo ioc, byte[] hashOfFileOnDisk)
-		{
-			StatusLogger.UpdateSubMessage(_app.GetResourceString(UiStringKey.CheckingTargetFileForChanges));
-			byte[] fileHash = HashOriginalFile(ioc);
-			if (fileHash == null)
-				return FileHashChange.FileNotAvailable;
-			return MemUtil.ArraysEqual(fileHash, hashOfFileOnDisk) ? FileHashChange.Equal : FileHashChange.Changed;
-		}
+                if (sIn == null) throw new FileNotFoundException();
+            }
+            catch (Exception) { return null; }
 
-		
-	}
+            byte[] pbHash;
+            try
+            {
+                SHA256Managed sha256 = new SHA256Managed();
+                pbHash = sha256.ComputeHash(sIn);
+            }
+            catch (Exception) { Debug.Assert(false); sIn.Close(); return null; }
+
+            sIn.Close();
+            return pbHash;
+        }
+
+        enum FileHashChange
+        {
+            Equal,
+            Changed,
+            FileNotAvailable
+        }
+
+        private FileHashChange FileHashChanged(IOConnectionInfo ioc, byte[] hashOfFileOnDisk)
+        {
+            StatusLogger.UpdateSubMessage(_app.GetResourceString(UiStringKey.CheckingTargetFileForChanges));
+            byte[] fileHash = HashOriginalFile(ioc);
+            if (fileHash == null)
+                return FileHashChange.FileNotAvailable;
+            return MemUtil.ArraysEqual(fileHash, hashOfFileOnDisk) ? FileHashChange.Equal : FileHashChange.Changed;
+        }
+
+
+    }
 
 }
 

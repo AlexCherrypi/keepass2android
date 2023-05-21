@@ -17,9 +17,10 @@
 #ifndef LATINIME_CHAR_UTILS_H
 #define LATINIME_CHAR_UTILS_H
 
-namespace latinime {
+namespace latinime
+{
 
-unsigned short latin_tolower(unsigned short c);
+    unsigned short latin_tolower(unsigned short c);
 
 }; // namespace latinime
 

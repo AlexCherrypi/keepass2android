@@ -12,7 +12,7 @@ using keepass2android.services.Kp2aAutofill;
 
 namespace keepass2android.services
 {
-    class Kp2aAutofillIntentBuilder: IAutofillIntentBuilder
+    class Kp2aAutofillIntentBuilder : IAutofillIntentBuilder
     {
         private static int _pendingIntentRequestCode = 0;
 

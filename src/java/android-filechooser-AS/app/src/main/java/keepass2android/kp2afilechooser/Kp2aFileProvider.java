@@ -5,8 +5,6 @@ package keepass2android.kp2afilechooser;
  *
  */
 
-
-
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.MatrixCursor;
@@ -34,32 +32,32 @@ import group.pals.android.lib.ui.filechooser.utils.Utils;
 
 public abstract class Kp2aFileProvider extends BaseFileProvider {
 
-
     /**
      * Gets the authority of this provider.
      * 
-     * abstract because the concrete authority can be decided by the overriding class.
+     * abstract because the concrete authority can be decided by the overriding
+     * class.
      *
      * @return the authority.
      */
     public abstract String getAuthority();
-    
+
     /**
      * The unique ID of this provider.
      */
     public static final String _ID = "9dab9818-0a8b-47ef-88cc-10fe538bf8f7";
-    
+
     /**
      * Used for debugging or something...
      */
     private static final String CLASSNAME = Kp2aFileProvider.class.getName();
-    
-    //cache for FileEntry objects to reduce network traffic
-    private HashMap<String, FileEntry> fileEntryMap = new HashMap<String, FileEntry>();
-    //during write operations it is not desired to put entries to the cache. This set indicates which 
-    //files cannot be cached currently:
-    private Set<String> cacheBlockedFiles = new HashSet<String>();
 
+    // cache for FileEntry objects to reduce network traffic
+    private HashMap<String, FileEntry> fileEntryMap = new HashMap<String, FileEntry>();
+    // during write operations it is not desired to put entries to the cache. This
+    // set indicates which
+    // files cannot be cached currently:
+    private Set<String> cacheBlockedFiles = new HashSet<String>();
 
     @Override
     public boolean onCreate() {
@@ -87,39 +85,35 @@ public abstract class Kp2aFileProvider extends BaseFileProvider {
             Log.d("KP2A_FC_P", "delete() >> " + uri);
 
         int count = 0;
-        
-        
 
         switch (URI_MATCHER.match(uri)) {
-        case URI_FILE: {
-            boolean isRecursive = ProviderUtils.getBooleanQueryParam(uri,
-                    BaseFile.PARAM_RECURSIVE, true);
-            String filename = extractFile(uri);
-            removeFromCache(filename, isRecursive);
-            blockFromCache(filename);
-            if (deletePath(filename, isRecursive))
-            {
-	            getContext()
-	                            .getContentResolver()
-	                            .notifyChange(
-	                                    BaseFile.genContentUriBase(
-	                                            
-	                                                    getAuthority())
-	                                            .buildUpon()
-	                                            .appendPath(
-	                                                    getParentPath(filename)
-	                                                    )
-	                                            .build(), null);
-	            count = 1; //success
+            case URI_FILE: {
+                boolean isRecursive = ProviderUtils.getBooleanQueryParam(uri,
+                        BaseFile.PARAM_RECURSIVE, true);
+                String filename = extractFile(uri);
+                removeFromCache(filename, isRecursive);
+                blockFromCache(filename);
+                if (deletePath(filename, isRecursive)) {
+                    getContext()
+                            .getContentResolver()
+                            .notifyChange(
+                                    BaseFile.genContentUriBase(
+
+                                            getAuthority())
+                                            .buildUpon()
+                                            .appendPath(
+                                                    getParentPath(filename))
+                                            .build(),
+                                    null);
+                    count = 1; // success
+                }
+                blockFromCache(filename);
+                break;// URI_FILE
             }
-            blockFromCache(filename);
-            break;// URI_FILE
-        }
 
-        default:
-            throw new IllegalArgumentException("UNKNOWN URI " + uri);
+            default:
+                throw new IllegalArgumentException("UNKNOWN URI " + uri);
         }
-
 
         if (count > 0)
             getContext().getContentResolver().notifyChange(uri, null);
@@ -127,60 +121,51 @@ public abstract class Kp2aFileProvider extends BaseFileProvider {
         return count;
     }// delete()
 
-    
-
-
-
-	
-
-	@Override
+    @Override
     public Uri insert(Uri uri, ContentValues values) {
         if (Utils.doLog())
             Log.d("KP2A_FC_P", "insert() >> " + uri);
 
         switch (URI_MATCHER.match(uri)) {
-        case URI_DIRECTORY:
-            String dirname = extractFile(uri);
-            String newDirName = uri.getQueryParameter(BaseFile.PARAM_NAME);
-            String newFullName = removeTrailingSlash(dirname)+"/"+newDirName;
+            case URI_DIRECTORY:
+                String dirname = extractFile(uri);
+                String newDirName = uri.getQueryParameter(BaseFile.PARAM_NAME);
+                String newFullName = removeTrailingSlash(dirname) + "/" + newDirName;
 
-            boolean success = false;
+                boolean success = false;
 
-            switch (ProviderUtils.getIntQueryParam(uri,
-                    BaseFile.PARAM_FILE_TYPE, BaseFile.FILE_TYPE_DIRECTORY)) {
-            case BaseFile.FILE_TYPE_DIRECTORY:
-            	success = createDirectory(dirname, newDirName);
-                break;// FILE_TYPE_DIRECTORY
+                switch (ProviderUtils.getIntQueryParam(uri,
+                        BaseFile.PARAM_FILE_TYPE, BaseFile.FILE_TYPE_DIRECTORY)) {
+                    case BaseFile.FILE_TYPE_DIRECTORY:
+                        success = createDirectory(dirname, newDirName);
+                        break;// FILE_TYPE_DIRECTORY
 
-            case BaseFile.FILE_TYPE_FILE:
-                //not supported at the moment
-                break;// FILE_TYPE_FILE
+                    case BaseFile.FILE_TYPE_FILE:
+                        // not supported at the moment
+                        break;// FILE_TYPE_FILE
+
+                    default:
+                        return null;
+                }
+
+                if (success) {
+                    Uri newUri = BaseFile
+                            .genContentIdUriBase(
+                                    getAuthority())
+                            .buildUpon()
+                            .appendPath(newFullName).build();
+                    getContext().getContentResolver().notifyChange(uri, null);
+                    return newUri;
+                }
+                return null;// URI_FILE
 
             default:
-                return null;
-            }
-
-            if (success) 
-            {
-                Uri newUri = BaseFile
-                        .genContentIdUriBase(
-                                getAuthority())
-                        .buildUpon()
-                        .appendPath( newFullName).build();
-                getContext().getContentResolver().notifyChange(uri, null);
-                return newUri;
-            }
-            return null;// URI_FILE
-
-        default:
-            throw new IllegalArgumentException("UNKNOWN URI " + uri);
+                throw new IllegalArgumentException("UNKNOWN URI " + uri);
         }
-        
+
     }// insert()
 
-    
-
-	@Override
+    @Override
     public Cursor query(Uri uri, String[] projection, String selection,
             String[] selectionArgs, String sortOrder) {
         if (Utils.doLog())
@@ -189,45 +174,42 @@ public abstract class Kp2aFileProvider extends BaseFileProvider {
                     uri.getLastPathSegment(), URI_MATCHER.match(uri)));
 
         switch (URI_MATCHER.match(uri)) {
-        case URI_API: {
-            /*
-             * If there is no command given, return provider ID and name.
-             */
-            MatrixCursor matrixCursor = new MatrixCursor(new String[] {
-                    BaseFile.COLUMN_PROVIDER_ID, BaseFile.COLUMN_PROVIDER_NAME,
-                    BaseFile.COLUMN_PROVIDER_ICON_ATTR });
-            matrixCursor.newRow().add(_ID)
-                    .add("KP2A")
-                    .add(R.attr.afc_badge_file_provider_localfile);
-            return matrixCursor;
-        }
-        case URI_API_COMMAND: {
-            return doAnswerApiCommand(uri);
-        }// URI_API
+            case URI_API: {
+                /*
+                 * If there is no command given, return provider ID and name.
+                 */
+                MatrixCursor matrixCursor = new MatrixCursor(new String[] {
+                        BaseFile.COLUMN_PROVIDER_ID, BaseFile.COLUMN_PROVIDER_NAME,
+                        BaseFile.COLUMN_PROVIDER_ICON_ATTR });
+                matrixCursor.newRow().add(_ID)
+                        .add("KP2A")
+                        .add(R.attr.afc_badge_file_provider_localfile);
+                return matrixCursor;
+            }
+            case URI_API_COMMAND: {
+                return doAnswerApiCommand(uri);
+            } // URI_API
 
-        case URI_DIRECTORY: {
-            return doListFiles(uri);
-        }// URI_DIRECTORY
+            case URI_DIRECTORY: {
+                return doListFiles(uri);
+            } // URI_DIRECTORY
 
-        case URI_FILE: {
-            return doRetrieveFileInfo(uri);
-        }// URI_FILE
+            case URI_FILE: {
+                return doRetrieveFileInfo(uri);
+            } // URI_FILE
 
-        default:
-            throw new IllegalArgumentException("UNKNOWN URI " + uri);
+            default:
+                throw new IllegalArgumentException("UNKNOWN URI " + uri);
         }
     }// query()
 
     private MatrixCursor getCheckConnectionCursor(Uri uri) {
-        try
-        {
+        try {
             checkConnection(uri);
             Log.d("KP2A_FC_P", "checking connection for " + uri + " ok.");
             return null;
-        }
-        catch (Exception e)
-        {
-            Log.d("KP2A_FC_P","Check connection failed with: " + e.toString());
+        } catch (Exception e) {
+            Log.d("KP2A_FC_P", "Check connection failed with: " + e.toString());
 
             MatrixCursor matrixCursor = new MatrixCursor(BaseFileProviderUtils.CONNECTION_CHECK_CURSOR_COLUMNS);
             RowBuilder newRow = matrixCursor.newRow();
@@ -242,20 +224,16 @@ public abstract class Kp2aFileProvider extends BaseFileProvider {
     }
 
     private void checkConnection(Uri uri) throws Exception {
-       try
-       {
-           String path = Uri.parse(
-                   uri.getQueryParameter(BaseFile.PARAM_SOURCE)).toString();
-           StringBuilder sb = new StringBuilder();
-           FileEntry result = getFileEntry(path, sb);
-           if (result == null)
-               throw new Exception(sb.toString());
+        try {
+            String path = Uri.parse(
+                    uri.getQueryParameter(BaseFile.PARAM_SOURCE)).toString();
+            StringBuilder sb = new StringBuilder();
+            FileEntry result = getFileEntry(path, sb);
+            if (result == null)
+                throw new Exception(sb.toString());
 
-
-        }
-        catch (FileNotFoundException ex)
-        {
-            Log.d("KP2A_FC_P","File not found. Ignore.");
+        } catch (FileNotFoundException ex) {
+            Log.d("KP2A_FC_P", "File not found. Ignore.");
 
             return;
         }
@@ -276,9 +254,9 @@ public abstract class Kp2aFileProvider extends BaseFileProvider {
         MatrixCursor matrixCursor = null;
 
         String lastPathSegment = uri.getLastPathSegment();
-        
+
         Log.d("KP2A_FC_P", "lastPathSegment:" + lastPathSegment);
-        
+
         if (BaseFile.CMD_CANCEL.equals(lastPathSegment)) {
             int taskId = ProviderUtils.getIntQueryParam(uri,
                     BaseFile.PARAM_TASK_ID, 0);
@@ -291,63 +269,58 @@ public abstract class Kp2aFileProvider extends BaseFileProvider {
             }
             return null;
         } else if (BaseFile.CMD_GET_DEFAULT_PATH.equals(lastPathSegment)) {
-        	
-        	return null;
-        	
-        }// get default path
+
+            return null;
+
+        } // get default path
         else if (BaseFile.CMD_IS_ANCESTOR_OF.equals(lastPathSegment)) {
             return doCheckAncestor(uri);
         } else if (BaseFile.CMD_GET_PARENT.equals(lastPathSegment)) {
-        	
-        	{
-        		String path = Uri.parse(
-                    uri.getQueryParameter(BaseFile.PARAM_SOURCE)).toString();
-	
-	            String parentPath = getParentPath(path);
-	            
-        		
-        		if (parentPath == null)
-	            {
-        			if (Utils.doLog())
-        				Log.d(CLASSNAME, "parent file is null");
-	                return null;
-	            }
+
+            {
+                String path = Uri.parse(
+                        uri.getQueryParameter(BaseFile.PARAM_SOURCE)).toString();
+
+                String parentPath = getParentPath(path);
+
+                if (parentPath == null) {
+                    if (Utils.doLog())
+                        Log.d(CLASSNAME, "parent file is null");
+                    return null;
+                }
                 FileEntry e;
                 try {
                     e = this.getFileEntryCached(parentPath);
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                     return null;
                 }
                 if (e == null)
                     return null;
 
-	            matrixCursor = BaseFileProviderUtils.newBaseFileCursor();
-	
-	            int type = parentPath != null ? BaseFile.FILE_TYPE_DIRECTORY 
-	            		: BaseFile.FILE_TYPE_NOT_EXISTED;
-	            
-	           
-	            RowBuilder newRow = matrixCursor.newRow();
-	            newRow.add(0);// _ID
-	            newRow.add(BaseFile
-	                    .genContentIdUriBase(
-	                            getAuthority())
-	                    .buildUpon().appendPath(parentPath)
-	                    .build().toString());
-	            newRow.add(e.path);
-	            newRow.add(e.displayName);
-	            newRow.add(e.canRead); //can read
-	            newRow.add(e.canWrite); //can write
-	            newRow.add(0);
-	            newRow.add(type);
-	            newRow.add(0);
-	            newRow.add(FileUtils.getResIcon(type, e.displayName));
-	            return matrixCursor;
-	        }
-          	
+                matrixCursor = BaseFileProviderUtils.newBaseFileCursor();
+
+                int type = parentPath != null ? BaseFile.FILE_TYPE_DIRECTORY
+                        : BaseFile.FILE_TYPE_NOT_EXISTED;
+
+                RowBuilder newRow = matrixCursor.newRow();
+                newRow.add(0);// _ID
+                newRow.add(BaseFile
+                        .genContentIdUriBase(
+                                getAuthority())
+                        .buildUpon().appendPath(parentPath)
+                        .build().toString());
+                newRow.add(e.path);
+                newRow.add(e.displayName);
+                newRow.add(e.canRead); // can read
+                newRow.add(e.canWrite); // can write
+                newRow.add(0);
+                newRow.add(type);
+                newRow.add(0);
+                newRow.add(FileUtils.getResIcon(type, e.displayName));
+                return matrixCursor;
+            }
+
         } else if (BaseFile.CMD_SHUTDOWN.equals(lastPathSegment)) {
             /*
              * TODO Stop all tasks. If the activity call this command in
@@ -360,26 +333,25 @@ public abstract class Kp2aFileProvider extends BaseFileProvider {
             // mMapInterruption.put(mMapInterruption.keyAt(i), true);
             // }
 
-        } else if (BaseFile.CMD_CHECK_CONNECTION.equals(lastPathSegment))
-        {
-            Log.d("KP2A_FC_P","Check connection...");
+        } else if (BaseFile.CMD_CHECK_CONNECTION.equals(lastPathSegment)) {
+            Log.d("KP2A_FC_P", "Check connection...");
             return getCheckConnectionCursor(uri);
         }
 
         return matrixCursor;
     }// doAnswerApiCommand()
 
-    
-/*
-	private String addProtocol(String path) {
-		if (path == null)
-			return null;
-		if (path.startsWith(getProtocolId()+"://"))
-			return path;
-		return getProtocolId()+"://"+path;
-	}*/
+    /*
+     * private String addProtocol(String path) {
+     * if (path == null)
+     * return null;
+     * if (path.startsWith(getProtocolId()+"://"))
+     * return path;
+     * return getProtocolId()+"://"+path;
+     * }
+     */
 
-	/**
+    /**
      * Lists the content of a directory, if available.
      * 
      * @param uri
@@ -422,27 +394,27 @@ public abstract class Kp2aFileProvider extends BaseFileProvider {
         listFiles(taskId, dirName, showHiddenFiles, filterMode, limit,
                 positiveRegex, negativeRegex, files, hasMoreFiles);
         if (!mMapInterruption.get(taskId)) {
-        	
+
             try {
-				sortFiles(taskId, files, sortAscending, sortBy);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+                sortFiles(taskId, files, sortAscending, sortBy);
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
             if (!mMapInterruption.get(taskId)) {
-                
-            	for (int i = 0; i < files.size(); i++) {
+
+                for (int i = 0; i < files.size(); i++) {
                     if (mMapInterruption.get(taskId))
                         break;
 
                     FileEntry f = files.get(i);
                     updateFileEntryCache(f);
-                    
+
                     if (Utils.doLog())
-                    	Log.d(CLASSNAME, "listing " + f.path +" for "+dirName);
-                    
+                        Log.d(CLASSNAME, "listing " + f.path + " for " + dirName);
+
                     addFileInfo(matrixCursor, i, f);
-                }// for files
+                } // for files
 
                 /*
                  * The last row contains:
@@ -465,13 +437,14 @@ public abstract class Kp2aFileProvider extends BaseFileProvider {
                         .buildUpon()
                         .appendPath(dirName)
                         .appendQueryParameter(BaseFile.PARAM_HAS_MORE_FILES,
-                                Boolean.toString(hasMoreFiles[0])).build()
+                                Boolean.toString(hasMoreFiles[0]))
+                        .build()
                         .toString());
                 newRow.add(dirName);
                 String displayName = getFileEntryCached(dirName).displayName;
                 newRow.add(displayName);
-                
-                Log.d(CLASSNAME, "Returning name " + displayName+" for " +dirName);
+
+                Log.d(CLASSNAME, "Returning name " + displayName + " for " + dirName);
             }
         }
 
@@ -493,33 +466,31 @@ public abstract class Kp2aFileProvider extends BaseFileProvider {
         return matrixCursor;
     }// doListFiles()
 
-
-
-	private RowBuilder addFileInfo(MatrixCursor matrixCursor, int id,
-			FileEntry f) {
-		int type = !f.isDirectory ? BaseFile.FILE_TYPE_FILE : BaseFile.FILE_TYPE_DIRECTORY;
-		RowBuilder newRow = matrixCursor.newRow();
-		newRow.add(id);// _ID
-		newRow.add(BaseFile
-		        .genContentIdUriBase(
-		                getAuthority())
-		        .buildUpon().appendPath(f.path)
-		        .build().toString());
-		newRow.add(f.path);
-		if (f.displayName == null)
-			Log.w("KP2AJ", "displayName is null for " + f.path);
-		newRow.add(f.displayName);
-		newRow.add(f.canRead ? 1 : 0);
-		newRow.add(f.canWrite ? 1 : 0);
-		newRow.add(f.sizeInBytes);
-		newRow.add(type);
-		if (f.lastModifiedTime > 0)
-			newRow.add(f.lastModifiedTime);
-		else 
-			newRow.add(null);
-		newRow.add(FileUtils.getResIcon(type, f.displayName));
-		return newRow;
-	}
+    private RowBuilder addFileInfo(MatrixCursor matrixCursor, int id,
+            FileEntry f) {
+        int type = !f.isDirectory ? BaseFile.FILE_TYPE_FILE : BaseFile.FILE_TYPE_DIRECTORY;
+        RowBuilder newRow = matrixCursor.newRow();
+        newRow.add(id);// _ID
+        newRow.add(BaseFile
+                .genContentIdUriBase(
+                        getAuthority())
+                .buildUpon().appendPath(f.path)
+                .build().toString());
+        newRow.add(f.path);
+        if (f.displayName == null)
+            Log.w("KP2AJ", "displayName is null for " + f.path);
+        newRow.add(f.displayName);
+        newRow.add(f.canRead ? 1 : 0);
+        newRow.add(f.canWrite ? 1 : 0);
+        newRow.add(f.sizeInBytes);
+        newRow.add(type);
+        if (f.lastModifiedTime > 0)
+            newRow.add(f.lastModifiedTime);
+        else
+            newRow.add(null);
+        newRow.add(FileUtils.getResIcon(type, f.displayName));
+        return newRow;
+    }
 
     /**
      * Retrieves file information of a single file.
@@ -534,112 +505,107 @@ public abstract class Kp2aFileProvider extends BaseFileProvider {
         MatrixCursor matrixCursor = BaseFileProviderUtils.newBaseFileCursor();
 
         String filename = extractFile(uri);
-        
+
         FileEntry f = getFileEntryCached(filename);
         if (f == null)
-        	addDeletedFileInfo(matrixCursor, filename);
-        else	
-        	addFileInfo(matrixCursor, 0, f);
-        
+            addDeletedFileInfo(matrixCursor, filename);
+        else
+            addFileInfo(matrixCursor, 0, f);
+
         return matrixCursor;
     }// doRetrieveFileInfo()
 
-   
+    // puts the file entry in the cache for later reuse with retrieveFileInfo
+    private void updateFileEntryCache(FileEntry f) {
+        if (f != null)
+            fileEntryMap.put(f.path, f);
+    }
 
-    //puts the file entry in the cache for later reuse with retrieveFileInfo
-	private void updateFileEntryCache(FileEntry f) {
-		if (f != null)
-			fileEntryMap.put(f.path, f);
-	}
-	//removes the file entry from the cache (if cached). Should be called whenever the file changes
-	private void removeFromCache(String filename, boolean recursive) {
-		fileEntryMap.remove(filename);
-		
-		if (recursive)
-		{
-			Set<String> keys = fileEntryMap.keySet();
-			Set<String> keysToRemove = new HashSet<String>();
-			for (String key: keys)
-			{
-				if (key.startsWith(key))
-					keysToRemove.add(key);
-			}
-			for (String key: keysToRemove)
-			{
-				fileEntryMap.remove(key);	
-			}
-			
-		}
-		
-		
-	}
-	
-	private void blockFromCache(String filename) {
-		cacheBlockedFiles.add(filename);
-	}
-	
-	private void unblockFromCache(String filename) {
-		cacheBlockedFiles.remove(filename);
-	}
+    // removes the file entry from the cache (if cached). Should be called whenever
+    // the file changes
+    private void removeFromCache(String filename, boolean recursive) {
+        fileEntryMap.remove(filename);
 
-	//returns the file entry from the cache if present or queries the concrete provider method to return the file info
+        if (recursive) {
+            Set<String> keys = fileEntryMap.keySet();
+            Set<String> keysToRemove = new HashSet<String>();
+            for (String key : keys) {
+                if (key.startsWith(key))
+                    keysToRemove.add(key);
+            }
+            for (String key : keysToRemove) {
+                fileEntryMap.remove(key);
+            }
+
+        }
+
+    }
+
+    private void blockFromCache(String filename) {
+        cacheBlockedFiles.add(filename);
+    }
+
+    private void unblockFromCache(String filename) {
+        cacheBlockedFiles.remove(filename);
+    }
+
+    // returns the file entry from the cache if present or queries the concrete
+    // provider method to return the file info
     private FileEntry getFileEntryCached(String filename) {
-    	//check if enry is cached:
-    	FileEntry cachedEntry = fileEntryMap.get(filename);
-    	if (cachedEntry != null)
-    	{
-    		if (Utils.doLog())
-    			Log.d(CLASSNAME, "getFileEntryCached: from cache. " + filename);
-    		return cachedEntry;
-    	}
-    	
-		if (Utils.doLog())
-			Log.d(CLASSNAME, "getFileEntryCached: not in cache :-( " + filename);
+        // check if enry is cached:
+        FileEntry cachedEntry = fileEntryMap.get(filename);
+        if (cachedEntry != null) {
+            if (Utils.doLog())
+                Log.d(CLASSNAME, "getFileEntryCached: from cache. " + filename);
+            return cachedEntry;
+        }
 
+        if (Utils.doLog())
+            Log.d(CLASSNAME, "getFileEntryCached: not in cache :-( " + filename);
 
-        FileEntry newEntry ;
+        FileEntry newEntry;
         try {
-            //it's not -> query the information.
-           newEntry = getFileEntry(filename, null);
+            // it's not -> query the information.
+            newEntry = getFileEntry(filename, null);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
-		
-		if (!cacheBlockedFiles.contains(filename))
-			updateFileEntryCache(newEntry);
-		
-		return newEntry;
-	}
 
-	private void addDeletedFileInfo(MatrixCursor matrixCursor, String filename) {
-    	int type = BaseFile.FILE_TYPE_NOT_EXISTED;
-    	RowBuilder newRow = matrixCursor.newRow();
-		newRow.add(0);// _ID
-		newRow.add(BaseFile
-		        .genContentIdUriBase(
-		                getAuthority())
-		        .buildUpon().appendPath(filename)
-		        .build().toString());
-		newRow.add(filename);
-		newRow.add(filename);
-		newRow.add(0);
-		newRow.add(0);
-		newRow.add(0);
-		newRow.add(type);
-		newRow.add(null);
-		newRow.add(FileUtils.getResIcon(type, filename));
-	}
+        if (!cacheBlockedFiles.contains(filename))
+            updateFileEntryCache(newEntry);
 
-	/**
+        return newEntry;
+    }
+
+    private void addDeletedFileInfo(MatrixCursor matrixCursor, String filename) {
+        int type = BaseFile.FILE_TYPE_NOT_EXISTED;
+        RowBuilder newRow = matrixCursor.newRow();
+        newRow.add(0);// _ID
+        newRow.add(BaseFile
+                .genContentIdUriBase(
+                        getAuthority())
+                .buildUpon().appendPath(filename)
+                .build().toString());
+        newRow.add(filename);
+        newRow.add(filename);
+        newRow.add(0);
+        newRow.add(0);
+        newRow.add(0);
+        newRow.add(type);
+        newRow.add(null);
+        newRow.add(FileUtils.getResIcon(type, filename));
+    }
+
+    /**
      * Sorts {@code files}.
      * 
      * @param taskId
-     *            the task ID.
+     *                  the task ID.
      * @param files
-     *            list of files.
+     *                  list of files.
      * @param ascending
-     *            {@code true} or {@code false}.
+     *                  {@code true} or {@code false}.
      * @param sortBy
      * @throws Exception
      */
@@ -664,22 +630,22 @@ public abstract class Kp2aFileProvider extends BaseFileProvider {
                     int res = mCollator.compare(lhs.path, rhs.path);
 
                     switch (sortBy) {
-                    case BaseFile.SORT_BY_NAME:
-                        break;// SortByName
+                        case BaseFile.SORT_BY_NAME:
+                            break;// SortByName
 
-                    case BaseFile.SORT_BY_SIZE:
-                        if (lhs.sizeInBytes > rhs.sizeInBytes)
-                            res = 1;
-                        else if (lhs.sizeInBytes < rhs.sizeInBytes)
-                            res = -1;
-                        break;// SortBySize
+                        case BaseFile.SORT_BY_SIZE:
+                            if (lhs.sizeInBytes > rhs.sizeInBytes)
+                                res = 1;
+                            else if (lhs.sizeInBytes < rhs.sizeInBytes)
+                                res = -1;
+                            break;// SortBySize
 
-                    case BaseFile.SORT_BY_MODIFICATION_TIME:
-                        if (lhs.lastModifiedTime > rhs.lastModifiedTime)
-                            res = 1;
-                        else if (lhs.lastModifiedTime < rhs.lastModifiedTime)
-                            res = -1;
-                        break;// SortByDate
+                        case BaseFile.SORT_BY_MODIFICATION_TIME:
+                            if (lhs.lastModifiedTime > rhs.lastModifiedTime)
+                                res = 1;
+                            else if (lhs.lastModifiedTime < rhs.lastModifiedTime)
+                                res = -1;
+                            break;// SortByDate
                     }
 
                     return ascending ? res : -res;
@@ -688,15 +654,12 @@ public abstract class Kp2aFileProvider extends BaseFileProvider {
         } catch (CancellationException e) {
             if (Utils.doLog())
                 Log.d("KP2A_FC_P", "sortFiles() >> cancelled...");
-        }
-        catch (Exception e)
-        {
-            Log.d("KP2A_FC_P", "sortFiles() >> "+e);
+        } catch (Exception e) {
+            Log.d("KP2A_FC_P", "sortFiles() >> " + e);
             throw e;
         }
     }// sortFiles()
 
-    
     /**
      * Checks ancestor with {@link BaseFile#CMD_IS_ANCESTOR_OF},
      * {@link BaseFile#PARAM_SOURCE} and {@link BaseFile#PARAM_TARGET}.
@@ -717,22 +680,20 @@ public abstract class Kp2aFileProvider extends BaseFileProvider {
         boolean validate = ProviderUtils.getBooleanQueryParam(uri,
                 BaseFile.PARAM_VALIDATE, true);
         if (validate) {
-         //not supported
+            // not supported
         }
-        
+
         if (!source.endsWith("/"))
-        	source += "/";
-        
-        
+            source += "/";
+
         String targetParent = getParentPath(target);
-        if (targetParent != null && targetParent.startsWith(source))
-        {
-        	if (Utils.doLog())
-        		Log.d("KP2A_FC_P", source+" is parent of "+target);
+        if (targetParent != null && targetParent.startsWith(source)) {
+            if (Utils.doLog())
+                Log.d("KP2A_FC_P", source + " is parent of " + target);
             return BaseFileProviderUtils.newClosedCursor();
         }
         if (Utils.doLog())
-    		Log.d("KP2A_FC_P", source+" is no parent of "+target);
+            Log.d("KP2A_FC_P", source + " is no parent of " + target);
 
         return null;
     }// doCheckAncestor()
@@ -757,76 +718,68 @@ public abstract class Kp2aFileProvider extends BaseFileProvider {
 
         return fileName;
     }// extractFile()
-    
-    private static String removeTrailingSlash(String path)
-    {
-    	if (path.endsWith("/")) {
-    		return path.substring(0, path.length() - 1);
-    	}
-    	return path;
+
+    private static String removeTrailingSlash(String path) {
+        if (path.endsWith("/")) {
+            return path.substring(0, path.length() - 1);
+        }
+        return path;
     }
 
-    private String getParentPath(String path)
-    {
-    	path = removeTrailingSlash(path);
-    	if (path.indexOf("://") == -1)
-    	{
-    		Log.d("KP2A_FC_P", "invalid path: " + path);
-    		return null; 
-    	}
-    	String pathWithoutProtocol = path.substring(path.indexOf("://")+3);
-    	int lastSlashPos = path.lastIndexOf("/");
-    	if (pathWithoutProtocol.indexOf("/") == -1)
-    	{
-    		Log.d("KP2A_FC_P", "parent of " + path +" is null");
-    		return null;
-    	}
-    	else
-    	{
-    		String parent = path.substring(0, lastSlashPos)+"/";
-    		Log.d("KP2A_FC_P", "parent of " + path +" is "+parent);
-    		return parent;
-    	}
+    private String getParentPath(String path) {
+        path = removeTrailingSlash(path);
+        if (path.indexOf("://") == -1) {
+            Log.d("KP2A_FC_P", "invalid path: " + path);
+            return null;
+        }
+        String pathWithoutProtocol = path.substring(path.indexOf("://") + 3);
+        int lastSlashPos = path.lastIndexOf("/");
+        if (pathWithoutProtocol.indexOf("/") == -1) {
+            Log.d("KP2A_FC_P", "parent of " + path + " is null");
+            return null;
+        } else {
+            String parent = path.substring(0, lastSlashPos) + "/";
+            Log.d("KP2A_FC_P", "parent of " + path + " is " + parent);
+            return parent;
+        }
     }
-    
-    
 
-	protected abstract FileEntry getFileEntry(String path, StringBuilder errorMessageBuilder) throws Exception;
-    
-	/**
+    protected abstract FileEntry getFileEntry(String path, StringBuilder errorMessageBuilder) throws Exception;
+
+    /**
      * Lists all file inside {@code dirName}.
      * 
      * @param taskId
-     *            the task ID.
+     *                        the task ID.
      * @param dirName
-     *            the source directory.
+     *                        the source directory.
      * @param showHiddenFiles
-     *            {@code true} or {@code false}.
+     *                        {@code true} or {@code false}.
      * @param filterMode
-     *            can be one of {@link BaseFile#FILTER_DIRECTORIES_ONLY},
-     *            {@link BaseFile#FILTER_FILES_ONLY},
-     *            {@link BaseFile#FILTER_FILES_AND_DIRECTORIES}.
+     *                        can be one of
+     *                        {@link BaseFile#FILTER_DIRECTORIES_ONLY},
+     *                        {@link BaseFile#FILTER_FILES_ONLY},
+     *                        {@link BaseFile#FILTER_FILES_AND_DIRECTORIES}.
      * @param limit
-     *            the limit.
+     *                        the limit.
      * @param positiveRegex
-     *            the positive regex filter.
+     *                        the positive regex filter.
      * @param negativeRegex
-     *            the negative regex filter.
+     *                        the negative regex filter.
      * @param results
-     *            the results.
+     *                        the results.
      * @param hasMoreFiles
-     *            the first item will contain a value representing that there is
-     *            more files (exceeding {@code limit}) or not.
+     *                        the first item will contain a value representing that
+     *                        there is
+     *                        more files (exceeding {@code limit}) or not.
      */
     protected abstract void listFiles(final int taskId, final String dirName,
             final boolean showHiddenFiles, final int filterMode,
             final int limit, String positiveRegex, String negativeRegex,
             final List<FileEntry> results, final boolean hasMoreFiles[]);
 
-    
     protected abstract boolean deletePath(String filename, boolean isRecursive);
-    protected abstract boolean createDirectory(String dirname, String newDirName);
-    
 
+    protected abstract boolean createDirectory(String dirname, String newDirName);
 
 }

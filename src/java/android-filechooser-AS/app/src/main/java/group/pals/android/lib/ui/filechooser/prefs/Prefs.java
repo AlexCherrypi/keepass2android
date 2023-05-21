@@ -44,7 +44,7 @@ public class Prefs {
      * Generates global database filename.
      * 
      * @param name
-     *            the database filename.
+     *             the database filename.
      * @return the global database filename.
      */
     public static final String genDatabaseFilename(String name) {
@@ -55,7 +55,7 @@ public class Prefs {
      * Gets new {@link SharedPreferences}
      * 
      * @param context
-     *            the context.
+     *                the context.
      * @return {@link SharedPreferences}
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -71,7 +71,7 @@ public class Prefs {
      * (such as {@link PreferenceActivity}, {@link PreferenceFragment}...).
      * 
      * @param pm
-     *            {@link PreferenceManager}.
+     *           {@link PreferenceManager}.
      * @since v4.9 beta
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)

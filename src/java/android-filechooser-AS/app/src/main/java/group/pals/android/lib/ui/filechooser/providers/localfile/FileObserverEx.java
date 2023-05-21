@@ -51,9 +51,9 @@ public class FileObserverEx extends FileObserver {
      * Creates new instance.
      * 
      * @param context
-     *            the context.
+     *                the context.
      * @param path
-     *            the path to the directory that you want to watch for changes.
+     *                the path to the directory that you want to watch for changes.
      */
     public FileObserverEx(final Context context, final String path,
             final Uri notificationUri) {
@@ -71,11 +71,11 @@ public class FileObserverEx extends FileObserver {
                                     path, msg.what));
 
                 switch (msg.what) {
-                case MSG_NOTIFY_CHANGES:
-                    context.getContentResolver().notifyChange(notificationUri,
-                            null);
-                    mLastEventTime = SystemClock.elapsedRealtime();
-                    break;
+                    case MSG_NOTIFY_CHANGES:
+                        context.getContentResolver().notifyChange(notificationUri,
+                                null);
+                        mLastEventTime = SystemClock.elapsedRealtime();
+                        break;
                 }
             }// handleMessage()
         };

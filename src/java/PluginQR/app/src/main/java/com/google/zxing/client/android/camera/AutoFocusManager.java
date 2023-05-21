@@ -43,14 +43,13 @@ final class AutoFocusManager implements Camera.AutoFocusCallback {
   private boolean active;
   private final boolean useAutoFocus;
   private final Camera camera;
-  private AsyncTask<?,?,?> outstandingTask;
+  private AsyncTask<?, ?, ?> outstandingTask;
 
   AutoFocusManager(Context context, Camera camera) {
     this.camera = camera;
     SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
     String currentFocusMode = camera.getParameters().getFocusMode();
-    useAutoFocus =
-        sharedPrefs.getBoolean(PreferencesActivity.KEY_AUTO_FOCUS, true) &&
+    useAutoFocus = sharedPrefs.getBoolean(PreferencesActivity.KEY_AUTO_FOCUS, true) &&
         FOCUS_MODES_CALLING_AF.contains(currentFocusMode);
     Log.i(TAG, "Current focus mode '" + currentFocusMode + "'; use auto focus? " + useAutoFocus);
     start();
@@ -92,7 +91,7 @@ final class AutoFocusManager implements Camera.AutoFocusCallback {
     active = false;
   }
 
-  private final class AutoFocusTask extends AsyncTask<Object,Object,Object> {
+  private final class AutoFocusTask extends AsyncTask<Object, Object, Object> {
     @Override
     protected Object doInBackground(Object... voids) {
       try {

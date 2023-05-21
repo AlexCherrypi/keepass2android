@@ -124,7 +124,6 @@ public class BaseFileContract {
          */
         public static final String PATH_API = "api";
 
-
         /*
          * COMMANDS.
          */
@@ -187,7 +186,6 @@ public class BaseFileContract {
          * let the providers know when they can shutdown the background jobs.
          */
         public static final String CMD_SHUTDOWN = "shutdown";
-
 
         public static final String CMD_CHECK_CONNECTION = "check_connection";
 
@@ -398,7 +396,7 @@ public class BaseFileContract {
          * Generates content URI API for a provider.
          * 
          * @param authority
-         *            the authority of file provider.
+         *                  the authority of file provider.
          * @return The API URI for a provider. Default will return provider name
          *         and ID.
          */
@@ -413,7 +411,7 @@ public class BaseFileContract {
          * directory (or a file), use {@link #genContentIdUriBase(String)}.
          * 
          * @param authority
-         *            the authority of file provider.
+         *                  the authority of file provider.
          * @return The base URI for a single directory. You append it with the
          *         URI to full path of the directory.
          */
@@ -426,7 +424,7 @@ public class BaseFileContract {
          * Generates content URI base for a single file.
          * 
          * @param authority
-         *            the authority of file provider.
+         *                  the authority of file provider.
          * @return The base URI for a single file. You append it with the URI to
          *         full path of a single file.
          */

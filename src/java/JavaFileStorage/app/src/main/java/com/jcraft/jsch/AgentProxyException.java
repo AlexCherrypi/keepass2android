@@ -30,11 +30,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.jcraft.jsch;
 
 public class AgentProxyException extends Exception {
-  private static final long serialVersionUID=-1L;
-  public AgentProxyException(String message){
+  private static final long serialVersionUID = -1L;
+
+  public AgentProxyException(String message) {
     super(message);
   }
-  public AgentProxyException(String message, Throwable e){
+
+  public AgentProxyException(String message, Throwable e) {
     super(message, e);
   }
 }

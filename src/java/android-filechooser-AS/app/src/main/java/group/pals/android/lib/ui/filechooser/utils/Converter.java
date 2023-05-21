@@ -20,7 +20,7 @@ public class Converter {
      * {@code http://stackoverflow.com/a/5599842/942821}.
      * 
      * @param size
-     *            the size in bytes.
+     *             the size in bytes.
      * @return e.g.:
      *         <p/>
      *         <ul>

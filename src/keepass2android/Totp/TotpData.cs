@@ -20,15 +20,15 @@ namespace PluginTOTP
         public bool IsTotpEntry { get; set; }
 
         public byte[] TotpSecret { get; set; }
-		public string TotpSeed
+        public string TotpSeed
         {
             set { TotpSecret = Base32.Decode(value.Trim()); }
             get { return Base32.Encode(TotpSecret); }
         }
-		public string Duration { get; set; }
+        public string Duration { get; set; }
         public string Encoder { get; set; }
         public string Length { get; set; }
-		public string TimeCorrectionUrl { get; set; }
+        public string TimeCorrectionUrl { get; set; }
 
         public string HashAlgorithm { get; set; }
 

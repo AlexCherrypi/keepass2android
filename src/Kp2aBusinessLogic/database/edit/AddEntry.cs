@@ -21,91 +21,100 @@ using KeePassLib;
 
 namespace keepass2android
 {
-	public class AddEntry : RunnableOnFinish {
-		protected Database Db
-		{
-			get { return _app.CurrentDb; }
-		}
+    public class AddEntry : RunnableOnFinish
+    {
+        protected Database Db
+        {
+            get { return _app.CurrentDb; }
+        }
 
-		private readonly IKp2aApp _app;
-		private readonly PwEntry _entry;
-		private readonly PwGroup _parentGroup;
-		private readonly Activity _ctx;
-	    private readonly Database _db;
+        private readonly IKp2aApp _app;
+        private readonly PwEntry _entry;
+        private readonly PwGroup _parentGroup;
+        private readonly Activity _ctx;
+        private readonly Database _db;
 
-	    public static AddEntry GetInstance(Activity ctx, IKp2aApp app, PwEntry entry, PwGroup parentGroup, OnFinish finish, Database db) {
+        public static AddEntry GetInstance(Activity ctx, IKp2aApp app, PwEntry entry, PwGroup parentGroup, OnFinish finish, Database db)
+        {
 
-			return new AddEntry(ctx, db, app, entry, parentGroup, finish);
-		}
-		
-		public AddEntry(Activity ctx, Database db, IKp2aApp app, PwEntry entry, PwGroup parentGroup, OnFinish finish):base(ctx, finish) {
-			_ctx = ctx;
-		    _db = db;
-		    _parentGroup = parentGroup;
-			_app = app;
-			_entry = entry;
-			
-			_onFinishToRun = new AfterAdd(ctx, app.CurrentDb, entry, app,OnFinishToRun);
-		}
-		
-		
-		public override void Run() {	
-			StatusLogger.UpdateMessage(UiStringKey.AddingEntry);
+            return new AddEntry(ctx, db, app, entry, parentGroup, finish);
+        }
 
-			//make sure we're not adding the entry if it was added before.
-			//(this might occur in very rare cases where the user dismissis the save dialog 
-			//by rotating the screen while saving and then presses save again)
-			if (_parentGroup.FindEntry(_entry.Uuid, false) == null)
-			{
-				_parentGroup.AddEntry(_entry, true);	
-			}
+        public AddEntry(Activity ctx, Database db, IKp2aApp app, PwEntry entry, PwGroup parentGroup, OnFinish finish) : base(ctx, finish)
+        {
+            _ctx = ctx;
+            _db = db;
+            _parentGroup = parentGroup;
+            _app = app;
+            _entry = entry;
 
-		    // Add entry to global
-		    _db.EntriesById[_entry.Uuid] = _entry;
-		    _db.Elements.Add(_entry);
+            _onFinishToRun = new AfterAdd(ctx, app.CurrentDb, entry, app, OnFinishToRun);
+        }
+
+
+        public override void Run()
+        {
+            StatusLogger.UpdateMessage(UiStringKey.AddingEntry);
+
+            //make sure we're not adding the entry if it was added before.
+            //(this might occur in very rare cases where the user dismissis the save dialog 
+            //by rotating the screen while saving and then presses save again)
+            if (_parentGroup.FindEntry(_entry.Uuid, false) == null)
+            {
+                _parentGroup.AddEntry(_entry, true);
+            }
+
+            // Add entry to global
+            _db.EntriesById[_entry.Uuid] = _entry;
+            _db.Elements.Add(_entry);
 
             // Commit to disk
             SaveDb save = new SaveDb(_ctx, _app, _app.CurrentDb, OnFinishToRun);
-			save.SetStatusLogger(StatusLogger);
-			save.Run();
-		}
-		
-		private class AfterAdd : OnFinish {
-			private readonly Database _db;
-			private readonly PwEntry _entry;
-		    private readonly IKp2aApp _app;
+            save.SetStatusLogger(StatusLogger);
+            save.Run();
+        }
 
-		    public AfterAdd(Activity activity, Database db, PwEntry entry, IKp2aApp app, OnFinish finish):base(activity, finish) {
-				_db = db;
-				_entry = entry;
-		        _app = app;
-		    }
-			
+        private class AfterAdd : OnFinish
+        {
+            private readonly Database _db;
+            private readonly PwEntry _entry;
+            private readonly IKp2aApp _app;
 
-
-			public override void Run() {
-				if ( Success ) {
-					
-					PwGroup parent = _entry.ParentGroup; 
-					
-					// Mark parent group dirty
-					_app.DirtyGroups.Add(parent);
-					
+            public AfterAdd(Activity activity, Database db, PwEntry entry, IKp2aApp app, OnFinish finish) : base(activity, finish)
+            {
+                _db = db;
+                _entry = entry;
+                _app = app;
+            }
 
 
-				} else
-				{
-					StatusLogger.UpdateMessage(UiStringKey.UndoingChanges);
-					//TODO test fail
-					_entry.ParentGroup.Entries.Remove(_entry);
-				}
-				
-				base.Run();
-			}
-		}
-		
-		
-	}
+
+            public override void Run()
+            {
+                if (Success)
+                {
+
+                    PwGroup parent = _entry.ParentGroup;
+
+                    // Mark parent group dirty
+                    _app.DirtyGroups.Add(parent);
+
+
+
+                }
+                else
+                {
+                    StatusLogger.UpdateMessage(UiStringKey.UndoingChanges);
+                    //TODO test fail
+                    _entry.ParentGroup.Entries.Remove(_entry);
+                }
+
+                base.Run();
+            }
+        }
+
+
+    }
 
 }
 

@@ -32,35 +32,42 @@ import com.google.zxing.DecodeHintType;
  * @author Lachezar Dobrev
  */
 final class DecodeHintManager {
-  
+
   private static final String TAG = DecodeHintManager.class.getSimpleName();
 
   // This pattern is used in decoding integer arrays.
   private static final Pattern COMMA = Pattern.compile(",");
 
-  private DecodeHintManager() {}
+  private DecodeHintManager() {
+  }
 
   /**
-   * <p>Split a query string into a list of name-value pairs.</p>
+   * <p>
+   * Split a query string into a list of name-value pairs.
+   * </p>
    * 
-   * <p>This is an alternative to the {@link Uri#getQueryParameterNames()} and
+   * <p>
+   * This is an alternative to the {@link Uri#getQueryParameterNames()} and
    * {@link Uri#getQueryParameters(String)}, which are quirky and not suitable
-   * for exist-only Uri parameters.</p>
+   * for exist-only Uri parameters.
+   * </p>
    * 
-   * <p>This method ignores multiple parameters with the same name and returns the
+   * <p>
+   * This method ignores multiple parameters with the same name and returns the
    * first one only. This is technically incorrect, but should be acceptable due
-   * to the method of processing Hints: no multiple values for a hint.</p>
+   * to the method of processing Hints: no multiple values for a hint.
+   * </p>
    * 
    * @param query query to split
    * @return name-value pairs
    */
-  private static Map<String,String> splitQuery(String query) {
-    Map<String,String> map = new HashMap<String,String>();
+  private static Map<String, String> splitQuery(String query) {
+    Map<String, String> map = new HashMap<String, String>();
     int pos = 0;
     while (pos < query.length()) {
       if (query.charAt(pos) == '&') {
         // Skip consecutive ampersand separators.
-        pos ++;
+        pos++;
         continue;
       }
       int amp = query.indexOf('&', pos);
@@ -103,7 +110,7 @@ final class DecodeHintManager {
       String name = query.substring(pos, equ);
       name = name.replace('+', ' '); // Preemptively decode +
       name = Uri.decode(name);
-      String text = query.substring(equ+1, amp);
+      String text = query.substring(equ + 1, amp);
       text = text.replace('+', ' '); // Preemptively decode +
       text = Uri.decode(text);
       if (!map.containsKey(name)) {
@@ -114,7 +121,7 @@ final class DecodeHintManager {
     return map;
   }
 
-  static Map<DecodeHintType,?> parseDecodeHints(Uri inputUri) {
+  static Map<DecodeHintType, ?> parseDecodeHints(Uri inputUri) {
     String query = inputUri.getEncodedQuery();
     if (query == null || query.isEmpty()) {
       return null;
@@ -125,7 +132,7 @@ final class DecodeHintManager {
 
     Map<DecodeHintType, Object> hints = new EnumMap<DecodeHintType, Object>(DecodeHintType.class);
 
-    for (DecodeHintType hintType: DecodeHintType.values()) {
+    for (DecodeHintType hintType : DecodeHintType.values()) {
 
       if (hintType == DecodeHintType.CHARACTER_SET ||
           hintType == DecodeHintType.NEED_RESULT_POINT_CALLBACK ||
@@ -159,9 +166,9 @@ final class DecodeHintManager {
         // An empty parameter is simply a flag-style parameter, assuming true
         if (parameterText.isEmpty()) {
           hints.put(hintType, Boolean.TRUE);
-        } else if ("0".equals(parameterText) || 
-                   "false".equalsIgnoreCase(parameterText) || 
-                   "no".equalsIgnoreCase(parameterText)) {
+        } else if ("0".equals(parameterText) ||
+            "false".equalsIgnoreCase(parameterText) ||
+            "no".equalsIgnoreCase(parameterText)) {
           hints.put(hintType, Boolean.FALSE);
         } else {
           hints.put(hintType, Boolean.TRUE);
@@ -181,7 +188,8 @@ final class DecodeHintManager {
           try {
             array[i] = Integer.parseInt(values[i]);
           } catch (NumberFormatException ignored) {
-            Log.w(TAG, "Skipping array of integers hint " + hintType + " due to invalid numeric value: '" + values[i] + '\'');
+            Log.w(TAG,
+                "Skipping array of integers hint " + hintType + " due to invalid numeric value: '" + values[i] + '\'');
             array = null;
             break;
           }
@@ -190,7 +198,7 @@ final class DecodeHintManager {
           hints.put(hintType, array);
         }
         continue;
-      } 
+      }
       Log.w(TAG, "Unsupported hint type '" + hintType + "' of type " + hintType.getValueType());
     }
 
@@ -203,9 +211,9 @@ final class DecodeHintManager {
     if (extras == null || extras.isEmpty()) {
       return null;
     }
-    Map<DecodeHintType,Object> hints = new EnumMap<DecodeHintType,Object>(DecodeHintType.class);
+    Map<DecodeHintType, Object> hints = new EnumMap<DecodeHintType, Object>(DecodeHintType.class);
 
-    for (DecodeHintType hintType: DecodeHintType.values()) {
+    for (DecodeHintType hintType : DecodeHintType.values()) {
 
       if (hintType == DecodeHintType.CHARACTER_SET ||
           hintType == DecodeHintType.NEED_RESULT_POINT_CALLBACK ||
